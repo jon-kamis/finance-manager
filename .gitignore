@@ -1,2 +1,5 @@
 ### Eclipse ###
 .metadata/
+
+### Postgres ###
+financemanager-db/postgres-data/

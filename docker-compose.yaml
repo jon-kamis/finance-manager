@@ -1,0 +1,32 @@
+services:
+
+  financemanager:
+    build: ./financemanager-backend
+    ports:
+      - '8080:8080'
+    depends_on:
+      postgres:
+        condition: service_healthy
+        restart: true
+
+  postgres:
+    image: 'postgres:latest'
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: FMDB
+    healthcheck:
+      test: ["CMD-SHELL", 'pg_isready -U postgres']
+      interval: 5s
+      timeout: 50s
+      retries: 10
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./financemanager-db/postgres-data:/var/lib/postgresql/data
+      - ./financemanager-db/sql/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql

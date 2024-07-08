@@ -1,0 +1,21 @@
+FROM eclipse-temurin:latest as builder
+
+WORKDIR /app
+
+COPY .mvn/ .mvn/
+COPY mvnw pom.xml ./
+RUN ./mvnw dependency:go-offline
+COPY ./src ./src
+RUN ./mvnw clean install -DSkipTests
+RUN ./mvnw package
+
+FROM eclipse-temurin:latest
+
+RUN addgroup spring 
+RUN useradd -g spring spring
+USER spring:spring
+
+WORKDIR /app
+EXPOSE 8080
+COPY --from=builder /app/target/*.jar /app/*.jar
+ENTRYPOINT ["java", "-jar", "/app/*.jar"]

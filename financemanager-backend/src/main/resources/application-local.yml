@@ -3,7 +3,9 @@ spring:
     activate:
       on-profile: local
   datasource:
-    url: jdbc:postgresql://db:5432/financemanager
     driver-class-name: org.postgresql.Driver
+    url: "jdbc:postgresql://localhost:5432/financemanager"
     username: postgres
     password: postgres
+  jpa:
+    show-sql: true

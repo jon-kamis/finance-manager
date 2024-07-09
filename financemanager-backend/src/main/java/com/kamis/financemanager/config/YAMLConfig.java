@@ -12,4 +12,5 @@ import lombok.Data;
 @Data
 public class YAMLConfig {
 
+	private String genericInternalServerErrorMessage;
 }

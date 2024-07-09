@@ -4,7 +4,14 @@ spring:
   application:
     name: Finance Manager
   jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    database: POSTGRESQL
     properties:
       hibernate:
         default_schema: FMDB
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+# Error messages
+genericInternalServerErrorMessage: An unexpected error has occured

@@ -1,11 +1,11 @@
 package com.kamis.financemanager.database.domain;
 
-import org.springframework.data.annotation.Id;
-
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -32,4 +32,7 @@ public class User {
 	
 	@Column(name="email")
 	private String email;
+	
+	@Embedded
+	private AuditInfo auditInfo;
 }

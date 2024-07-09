@@ -1,4 +1,4 @@
-package com.kamis.financemanager.rest.users.domain;
+package com.kamis.financemanager.rest.domain.users;
 
 import lombok.Data;
 

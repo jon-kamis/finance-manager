@@ -9,3 +9,5 @@ spring:
     password: postgres
   jpa:
     show-sql: true
+  logging:
+    log-level: DEBUG

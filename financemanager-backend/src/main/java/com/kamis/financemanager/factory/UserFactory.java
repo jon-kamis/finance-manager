@@ -1,20 +1,19 @@
 package com.kamis.financemanager.factory;
 
-import java.util.Optional;
-
 import com.kamis.financemanager.database.domain.User;
 import com.kamis.financemanager.exception.FinanceManagerException;
 import com.kamis.financemanager.rest.domain.users.UserResponse;
 
 public class UserFactory {
 
-	public static UserResponse buildUserResponse(Optional<User> optional) throws FinanceManagerException {
+	/**
+	 * Builds a UserResponse object from a User object
+	 * @param u The user object to convert User object
+	 * @return A UserResponse containing data from the user object
+	 * @throws FinanceManagerException
+	 */
+	public static UserResponse buildUserResponse(User u) throws FinanceManagerException {
 		
-		if (!optional.isPresent()) {
-			throw new FinanceManagerException();
-		}
-		
-		User u = optional.get();
 		
 		UserResponse resp = new UserResponse();
 		resp.setDisplayName(u.getLastName() + ", " + u.getFirstName());

@@ -13,4 +13,5 @@ import lombok.Data;
 public class YAMLConfig {
 
 	private String genericInternalServerErrorMessage;
+	private String jwtSecret;
 }

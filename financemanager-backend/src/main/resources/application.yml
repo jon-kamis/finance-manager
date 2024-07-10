@@ -13,5 +13,8 @@ server:
   servlet:
     context-path: /api
 
+#Security
+jwtSecret: financemanagersecretthatyoushouldoverridewithanenvironmentvar
+
 # Error messages
 genericInternalServerErrorMessage: An unexpected error has occured

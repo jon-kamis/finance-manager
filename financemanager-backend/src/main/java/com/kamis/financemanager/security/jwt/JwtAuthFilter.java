@@ -11,6 +11,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.kamis.financemanager.database.domain.User;
 import com.kamis.financemanager.database.repository.UserRepository;
+import com.kamis.financemanager.database.repository.UserRoleRepository;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -24,9 +25,12 @@ public class JwtAuthFilter extends OncePerRequestFilter{
 	
 	private final UserRepository userRepository;
 	
-	public JwtAuthFilter(JwtService jwtService, UserRepository userRepository){
+	private final UserRoleRepository userRoleRepository;
+	
+	public JwtAuthFilter(JwtService jwtService, UserRepository userRepository, UserRoleRepository userRoleRepository){
 		this.jwtService = jwtService;
 		this.userRepository = userRepository;
+		this.userRoleRepository = userRoleRepository;
 	}
 	
 	@Override
@@ -49,7 +53,7 @@ public class JwtAuthFilter extends OncePerRequestFilter{
 				User user = optUser.get();
 				
 				if (jwtService.validateToken(token,  user)) {
-					UserDetails userInfo = new UserInfo(user); 
+					UserDetails userInfo = new UserInfo(user, userRoleRepository.findByUserId(user.getId())); 
 					UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userInfo, null, userInfo.getAuthorities());
 					SecurityContextHolder.getContext().setAuthentication(authToken);
 				}

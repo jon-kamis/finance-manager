@@ -14,4 +14,21 @@ public class YAMLConfig {
 
 	private String genericInternalServerErrorMessage;
 	private String jwtSecret;
+	private String genericNotFoundErrorMsg;
+	private String requiredFieldsBlankError;
+
+	//Registration Messages
+	private String usernameExistsError;
+	private String emailExistsError;
+	private String invalidPasswordError;
+	private String userRegisteredMessage;
+	
+	// Auth messages
+	private String invalidCredentialsErrorMsg;
+	
+	//Role Constants
+	private String defaultUserRole;
+	
+	//App info
+	private String applicationUsername;
 }

@@ -18,6 +18,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import com.kamis.financemanager.database.repository.UserRepository;
+import com.kamis.financemanager.database.repository.UserRoleRepository;
 import com.kamis.financemanager.security.jwt.JwtAuthFilter;
 import com.kamis.financemanager.security.jwt.JwtService;
 
@@ -35,6 +36,9 @@ public class SecurityConfig {
 
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private UserRoleRepository userRoleRepository;
 
 	@Bean
 	PasswordEncoder passwordEncoder() {
@@ -59,9 +63,10 @@ public class SecurityConfig {
 		http.authorizeHttpRequests(authorizeHttpRequest -> authorizeHttpRequest
 				.requestMatchers("/actuator/health", "/actuator/metrics", "/actuator/metrics/**", "/v3/api-docs/**",
 						"/swagger-ui/**", "/swagger-ui.html", "/api/monitor/**", "/auth/**")
-				.permitAll().anyRequest().authenticated());
+				.permitAll()
+				.anyRequest().authenticated());
 
-		http.addFilterBefore(new JwtAuthFilter(jwtService, userRepository), UsernamePasswordAuthenticationFilter.class); // custom
+		http.addFilterBefore(new JwtAuthFilter(jwtService, userRepository, userRoleRepository), UsernamePasswordAuthenticationFilter.class); // custom
 																															// protocol
 																															// Authorization
 		return http.build();

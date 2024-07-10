@@ -25,10 +25,10 @@ public class UserInfo implements UserDetails {
 	private String password;
 	private List<GrantedAuthority> authorities;
 	
-	public UserInfo(User user) {
+	public UserInfo(User user, List<UserRole> roles) {
 		name = user.getUsername();
 		password = user.getPassword();
-		authorities = user.getUserRoles().stream()
+		authorities = roles.stream()
 				.map(UserRole::getRole)
 				.map(r -> r.getName())
 				.map(SimpleGrantedAuthority::new)

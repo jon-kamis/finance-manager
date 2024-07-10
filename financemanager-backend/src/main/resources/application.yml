@@ -16,5 +16,22 @@ server:
 #Security
 jwtSecret: financemanagersecretthatyoushouldoverridewithanenvironmentvar
 
-# Error messages
+# generic error messages
 genericInternalServerErrorMessage: An unexpected error has occured
+genericNotFoundErrorMsg: "the requested entity was not found"
+requiredFieldsBlankError: "one or more required fields was empty"
+
+#Registration Messages
+usernameExistsError: "username already exists"
+emailExistsError: "email already exists"
+invalidPasswordError: "password must contain at least one letter"
+userRegisteredMessage: "user registered successfully"
+
+# Auth messages
+invalidCredentialsErrorMsg: "invalid credentials"
+
+# Role constants
+defaultUserRole: "user"
+
+# Application details
+applicationUsername: financemanager_user1

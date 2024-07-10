@@ -47,9 +47,8 @@ public class LoginService{
 		}
 		
 		User u = optUser.get();
-		if (u.getUsername().equals(request.getUsername())) {
-			String encodedPass = encoder.encode(request.getPassword());
-			if (u.getPassword().equals(encodedPass)) {
+		if (u.getUsername().equals(request.getUsername())) {	
+			if (encoder.matches(request.getPassword(), u.getPassword())) {
 				log.debug("{} login successful", method);
 				log.debug(LoggingConstants.EXIT_LOG, method);
 				return true;

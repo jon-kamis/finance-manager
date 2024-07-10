@@ -5,8 +5,9 @@
 DROP SCHEMA public;
 CREATE SCHEMA FMDB;
 
+CREATE SEQUENCE FMDB.users_id_seq;
 CREATE TABLE FMDB.users (
-    id integer unique NOT NULL,
+    id integer unique NOT NULL default nextval('FMDB.users_id_seq'),
     username character varying(255) NOT NULL,
     first_name character varying(255),
     last_name character varying(255),
@@ -17,52 +18,26 @@ CREATE TABLE FMDB.users (
     last_update_by character varying(255)
 );
 
-
---
--- Name: users_id_seq; Type: SEQUENCE; Schema: FMDB; Owner: -
---
-
-ALTER TABLE FMDB.users ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
-    SEQUENCE NAME users_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1
-);
-
 --
 -- Name: roles; Type: TABLE; Schema: FMDB; Owner: -
 --
 
+CREATE SEQUENCE FMDB.roles_id_seq;
 CREATE TABLE FMDB.roles (
-    id integer unique NOT NULL,
+    id integer unique NOT NULL default nextval('FMDB.roles_id_seq'),
     role_name character varying(255) unique NOT NULL,
     create_dt timestamp without time zone,
     last_update_dt timestamp without time zone,
     last_update_by character varying(255)
 );
 
-
---
--- Name: roles_id_seq; Type: SEQUENCE; Schema: FMDB; Owner: -
---
-
-ALTER TABLE FMDB.roles ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
-    SEQUENCE NAME roles_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1
-);
-
 --
 -- Name: user_roles; Type: TABLE; Schema: FMDB; Owner: -
 --
 
+CREATE SEQUENCE FMDB.user_roles_id_seq;
 CREATE TABLE FMDB.user_roles (
-    id integer NOT NULL,
+    id integer NOT NULL default nextval('FMDB.user_roles_id_seq'),
     user_id integer references FMDB.users(id),
     role_id integer references FMDB.roles(id),
     create_dt timestamp without time zone,
@@ -70,23 +45,9 @@ CREATE TABLE FMDB.user_roles (
     last_update_by character varying(255)
 );
 
-
---
--- Name: user_roles_id_seq; Type: SEQUENCE; Schema: FMDB; Owner: -
---
-
-ALTER TABLE FMDB.user_roles ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
-    SEQUENCE NAME user_roles_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1
-);
-
-
+CREATE SEQUENCE FMDB.loans_id_seq;
 CREATE TABLE FMDB.loans (
-    id integer NOT NULL,
+    id integer NOT NULL default nextval('FMDB.loans_id_seq'),
     user_id integer NOT NULL,
     account_name character varying(255) NOT NULL,
     principal NUMERIC(10,2) NOT NULL,
@@ -99,19 +60,6 @@ CREATE TABLE FMDB.loans (
     create_dt timestamp without time zone,
     last_update_dt timestamp without time zone,
     last_update_by character varying(255)
-);
-
---
--- Name: loan_id_seq; Type: SEQUENCE; Schema: FMDB; Owner: -
---
-
-ALTER TABLE FMDB.loans ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
-    SEQUENCE NAME loan_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1
 );
 
 COPY FMDB.users (id, username, first_name, last_name, email, password, create_dt, last_update_dt, last_update_by) FROM stdin with delimiter as ',';

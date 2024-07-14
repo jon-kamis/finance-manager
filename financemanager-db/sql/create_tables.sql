@@ -37,7 +37,7 @@ CREATE TABLE FMDB.roles (
 
 CREATE SEQUENCE FMDB.user_roles_id_seq;
 CREATE TABLE FMDB.user_roles (
-    id integer NOT NULL default nextval('FMDB.user_roles_id_seq'),
+    id integer unique NOT NULL default nextval('FMDB.user_roles_id_seq'),
     user_id integer references FMDB.users(id),
     role_id integer references FMDB.roles(id),
     create_dt timestamp without time zone,
@@ -47,16 +47,30 @@ CREATE TABLE FMDB.user_roles (
 
 CREATE SEQUENCE FMDB.loans_id_seq;
 CREATE TABLE FMDB.loans (
-    id integer NOT NULL default nextval('FMDB.loans_id_seq'),
-    user_id integer NOT NULL,
+    id integer unique NOT NULL default nextval('FMDB.loans_id_seq'),
+    user_id integer NOT NULL references FMDB.users(id),
     account_name character varying(255) NOT NULL,
     principal NUMERIC(10,2) NOT NULL,
-    origination_dt timestamp,
-    balance NUMERIC(10,2) NOT NULL,
+    first_payment_dt timestamp,
     interest NUMERIC(10,2),
     payment NUMERIC(10,2),
     rate NUMERIC(10,5),
     term integer not null,
+    create_dt timestamp without time zone,
+    last_update_dt timestamp without time zone,
+    last_update_by character varying(255)
+);
+
+CREATE SEQUENCE FMDB.loan_payments_id_seq;
+CREATE TABLE FMDB.loan_payments (
+    id integer unique NOT NULL default nextval('FMDB.payments_id_seq'),
+    loan_id integer NOT NULL references FMDB.loans(id),
+    payment_number integer NOT NULL,
+    payment_dt timestamp NOT NULL,
+    principal NUMERIC(10,2) NOT NULL,
+    interest NUMERIC(10,2) NOT NULL,
+    amount NUMERIC(10,2) NOT NULL,
+    balance NUMERIC(10,2) NOT NULL,
     create_dt timestamp without time zone,
     last_update_dt timestamp without time zone,
     last_update_by character varying(255)

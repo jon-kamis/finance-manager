@@ -46,6 +46,9 @@ public class User {
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
 	private List<UserRole> userRoles;
 	
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+	private List<Loan> loans;
+	
 	@Embedded
 	private AuditInfo auditInfo;
 	

@@ -1,12 +1,17 @@
 package com.kamis.financemanager.database.domain;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import com.kamis.financemanager.enums.PaymentFrequencyEnum;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -29,8 +34,11 @@ public class Loan {
 	@Column(name = "id", insertable = false, updatable = false)
 	private Integer id;
 	
+	@Column(name="user_id")
+	private Integer userId;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "user_id", insertable = false, updatable = false)
 	private User user;
 	
 	@Column(name="account_name")
@@ -54,9 +62,26 @@ public class Loan {
 	@Column(name="term")
 	private Integer term;
 	
+    @Enumerated(EnumType.STRING)
+	private PaymentFrequencyEnum frequency;
+	
 	@OneToMany(mappedBy = "loan", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
 	private List<LoanPayment> payments;
 	
 	@Embedded
 	private AuditInfo auditInfo;
+	
+	/**
+	 * Adds a LoanPayment to this loan
+	 * @param payment The LoanPayment to add
+	 */
+	public void AddLoanPayment(LoanPayment payment) {
+		
+		if (this.payments == null) {
+			this.payments = new ArrayList<>();
+		}
+		
+		payment.setLoan(this);
+		this.payments.add(payment);
+	}
 }

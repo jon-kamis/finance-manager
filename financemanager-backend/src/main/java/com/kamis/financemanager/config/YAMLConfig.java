@@ -12,18 +12,25 @@ import lombok.Data;
 @Data
 public class YAMLConfig {
 
+	//Generic Messages
 	private String genericInternalServerErrorMessage;
+	private String genericMethodNotAllowedErrorMsg;
 	private String jwtSecret;
 	private String genericNotFoundErrorMsg;
 	private String requiredFieldsBlankError;
-
+	private String userIdRequiredError;
+    private String genericSuccessMessage;
+	
+    //Loan messages
+    private String invalidLoanPaymentFrequencyError;
+    
 	//Registration Messages
 	private String usernameExistsError;
 	private String emailExistsError;
 	private String invalidPasswordError;
 	private String userRegisteredMessage;
 	
-	// Auth messages
+	//Auth messages
 	private String invalidCredentialsErrorMsg;
 	
 	//Role Constants

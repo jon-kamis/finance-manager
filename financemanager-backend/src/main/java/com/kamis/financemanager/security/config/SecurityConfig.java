@@ -17,8 +17,10 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import com.kamis.financemanager.config.YAMLConfig;
 import com.kamis.financemanager.database.repository.UserRepository;
 import com.kamis.financemanager.database.repository.UserRoleRepository;
+import com.kamis.financemanager.security.SecurityService;
 import com.kamis.financemanager.security.jwt.JwtAuthFilter;
 import com.kamis.financemanager.security.jwt.JwtService;
 
@@ -32,6 +34,9 @@ public class SecurityConfig {
 	}
 
 	@Autowired
+	private YAMLConfig myConfig;
+	
+	@Autowired
 	private JwtService jwtService;
 
 	@Autowired
@@ -43,6 +48,11 @@ public class SecurityConfig {
 	@Bean
 	PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
+	}
+	
+	@Bean 
+	public SecurityService securityService() {
+		return new SecurityService(userRepository, myConfig);
 	}
 
 	@Bean

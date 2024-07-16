@@ -18,6 +18,13 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	public Optional<User> findByUsername(String username);
 	
 	/**
+	 * Fetch a User by its id
+	 * @param id the id of the user to search for
+	 * @return An Optional User object containing the user with the given id if one exists
+	 */
+	public Optional<User> findById(int id);
+	
+	/**
 	 * Counts the number of users with a given username
 	 * @param username The username of the user to search for
 	 * @return An integer representing the number of users with the given username

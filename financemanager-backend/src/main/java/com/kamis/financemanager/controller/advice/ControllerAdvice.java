@@ -3,6 +3,8 @@ package com.kamis.financemanager.controller.advice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -23,26 +25,42 @@ public class ControllerAdvice extends LoggingConstants {
 	
 	@ExceptionHandler(FinanceManagerException.class)
 	public ResponseEntity<?> handleFinanceManagerException(FinanceManagerException e) {
-		String method = "ControllerAdvice.handleGenericException";
-		log.trace(ENTER_LOG, method);
-		
+
 		ErrorResponse resp = new ErrorResponse();
 		resp.setMessage(e.getMessage());
 		
-		log.trace(EXIT_LOG, method);
+		log.info("{}", e);
 		return new ResponseEntity<>(resp, e.getStatusCode());
+	}
+	
+	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+	@ResponseBody
+	@ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+	public ErrorResponse handleUnsupportedMethodException(Exception e) {
+
+		ErrorResponse resp = new ErrorResponse(myConfig.getGenericMethodNotAllowedErrorMsg());
+		
+		log.info("{}", e);
+		return resp;
+	}
+	
+	@ExceptionHandler(AuthorizationDeniedException.class)
+	@ResponseBody
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	public ErrorResponse handleAuthorizationDeniedException(AuthorizationDeniedException e) {
+
+		ErrorResponse resp = new ErrorResponse(myConfig.getGenericAccessDeniedErrorMsg());
+		log.info("{}", e);
+		return resp;
 	}
 	
 	@ExceptionHandler(Exception.class)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	public ErrorResponse handleGenericException(Exception e) {
-		String method = "ControllerAdvice.handleGenericException";
-		log.trace(ENTER_LOG, method);
-		
+
 		ErrorResponse resp = new ErrorResponse(myConfig.getGenericInternalServerErrorMessage());
-		log.error(ERROR_TEMPLATE, method, e);
-		log.trace(EXIT_LOG, method);
+		log.info("{}", e);
 		return resp;
 	}
 }

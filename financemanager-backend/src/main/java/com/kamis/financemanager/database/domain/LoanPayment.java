@@ -36,17 +36,23 @@ public class LoanPayment {
 	@Column(name="principal")
 	private Float principal;
 	
+	@Column(name="principal_to_date")
+	private Float principalToDate;
+	
 	@Column(name="interest")
 	private Float interest;
 	
-	@Column(name="payment")
-	private Float payment;
+	@Column(name="interest_to_date")
+	private Float interestToDate;
 	
-	@Column(name="rate")
-	private Float rate;
+	@Column(name="amount")
+	private Float amount;
 	
-	@Column(name="term")
-	private Integer term;
+	@Column(name="payment_number")
+	private Integer paymentNumber;
+
+	@Column(name="balance")
+	private Float balance;
 	
 	@Embedded
 	private AuditInfo auditInfo;

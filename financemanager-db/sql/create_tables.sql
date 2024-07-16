@@ -51,7 +51,9 @@ CREATE TABLE FMDB.loans (
     user_id integer NOT NULL references FMDB.users(id),
     account_name character varying(255) NOT NULL,
     principal NUMERIC(10,2) NOT NULL,
+    balance NUMERIC(10,2),
     first_payment_dt timestamp,
+    frequency character varying(255) NOT NULL,
     interest NUMERIC(10,2),
     payment NUMERIC(10,2),
     rate NUMERIC(10,5),
@@ -68,7 +70,9 @@ CREATE TABLE FMDB.loan_payments (
     payment_number integer NOT NULL,
     payment_dt timestamp NOT NULL,
     principal NUMERIC(10,2) NOT NULL,
+    principal_to_date NUMERIC(10,2) NOT NULL,
     interest NUMERIC(10,2) NOT NULL,
+    interest_to_date NUMERIC(10,2) NOT NULL,
     amount NUMERIC(10,2) NOT NULL,
     balance NUMERIC(10,2) NOT NULL,
     create_dt timestamp without time zone,
@@ -77,7 +81,7 @@ CREATE TABLE FMDB.loan_payments (
 );
 
 COPY FMDB.users (id, username, first_name, last_name, email, password, create_dt, last_update_dt, last_update_by) FROM stdin with delimiter as ',';
-1,admin,admin,admin,admin@fm.com,$2a$10$S9nLk.BzkZuSPXvdn6JXoO0VX/tf8QNebc0ct8J39n.mU8Gzz.pPS,2023-11-13 00:00:00,2023-11-13 00:00:00,admin
+1,admin,admin,admin,admin@fm.com,$2a$10$QpsNZZqtHP6mnvDTjb6iWeAwD/oTVZCLwoss.s7siB6dtn9/gMJOa,2023-11-13 00:00:00,2023-11-13 00:00:00,admin
 \.
 
 COPY FMDB.roles (id, role_name, create_dt, last_update_dt, last_update_by) FROM stdin with delimiter as ',';

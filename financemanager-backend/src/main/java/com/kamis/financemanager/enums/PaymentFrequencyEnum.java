@@ -6,7 +6,7 @@ public enum PaymentFrequencyEnum {
 	BIWEEKLY("bi-weekly"),
 	WEEKLY("weekly");
 
-	String frequency;
+	private String frequency;
 	
 	PaymentFrequencyEnum(String frequency) {
 		this.frequency = frequency;
@@ -19,6 +19,10 @@ public enum PaymentFrequencyEnum {
 	        }
 	    }
 	    return null;
+	}
+	
+	public String getFrequency() {
+		return frequency;
 	}
 		
 }

@@ -17,6 +17,7 @@ server:
 jwtSecret: financemanagersecretthatyoushouldoverridewithanenvironmentvar
 
 # generic error messages
+genericAccessDeniedErrorMsg: access denied
 genericInternalServerErrorMessage: an unexpected error has occured
 genericMethodNotAllowedErrorMsg: method not allowed
 genericNotFoundErrorMsg: "the requested entity was not found"
@@ -32,6 +33,7 @@ userRegisteredMessage: "user registered successfully"
 
 # Loan Messages
 invalidLoanPaymentFrequencyError: Valid frequencies for loan payments are monthly, bi-weekly, and weekly
+invalidLoanSortingOptionsErrorMsg: invalid sorting option. valid options are 'age', 'balance', and 'name'
 
 # Auth messages
 invalidCredentialsErrorMsg: "invalid credentials"
@@ -41,3 +43,6 @@ defaultUserRole: "user"
 
 # Application details
 applicationUsername: financemanager_user1
+
+# Sorting constants
+invalidSortTypeErrorMsg: "invalid sortType parameter. valid options are 'asc', and 'desc'"

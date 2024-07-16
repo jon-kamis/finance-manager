@@ -56,6 +56,9 @@ public class Loan {
 	@Column(name="payment")
 	private Float payment;
 	
+	@Column(name="balance")
+	private Float balance;
+	
 	@Column(name="rate")
 	private Float rate;
 	

@@ -51,6 +51,7 @@ CREATE TABLE FMDB.loans (
     user_id integer NOT NULL references FMDB.users(id),
     account_name character varying(255) NOT NULL,
     principal NUMERIC(10,2) NOT NULL,
+    balance NUMERIC(10,2),
     first_payment_dt timestamp,
     frequency character varying(255) NOT NULL,
     interest NUMERIC(10,2),

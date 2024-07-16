@@ -1,8 +1,13 @@
 package com.kamis.financemanager.business;
 
+import java.util.List;
+import java.util.Optional;
+
 import com.kamis.financemanager.database.domain.Loan;
+import com.kamis.financemanager.database.domain.LoanPayment;
 import com.kamis.financemanager.exception.FinanceManagerException;
 import com.kamis.financemanager.rest.domain.loans.LoanPostRequest;
+import com.kamis.financemanager.rest.domain.loans.PagedLoanResponse;
 
 public interface LoanBusiness {
 
@@ -30,4 +35,25 @@ public interface LoanBusiness {
 	 * @throws FinanceManagerException
 	 */
 	public Loan calculatePaymentSchedule(Loan loan) throws FinanceManagerException;
+
+	/**
+	 * Retrieves all loans for a given user
+	 * @param userId The user to search for
+	 * @param name filter results by name
+	 * @param sortBy sort by field
+	 * @param sortType direction to sort
+	 * @param page the page of results to return
+	 * @param pageSize the pageSize of results to return
+	 * @return A PagedLoanResponse of all loans matching the given criteria
+	 */
+	public PagedLoanResponse getUserLoans(Integer userId, String name,
+			String sortBy, String sortType, Integer page,
+			Integer pageSize) throws FinanceManagerException;
+
+	/**
+	 * Returns the current Loan balance based on its payments
+	 * @param payments The payments list to scan for the current balance
+	 * @return A float representing the current balance of a loan based on its payments
+	 */
+	public float getLoanBalance(List<LoanPayment> payments);
 }

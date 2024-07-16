@@ -13,6 +13,7 @@ import lombok.Data;
 public class YAMLConfig {
 
 	//Generic Messages
+	private String genericAccessDeniedErrorMsg;
 	private String genericInternalServerErrorMessage;
 	private String genericMethodNotAllowedErrorMsg;
 	private String jwtSecret;
@@ -23,6 +24,7 @@ public class YAMLConfig {
 	
     //Loan messages
     private String invalidLoanPaymentFrequencyError;
+    private String invalidLoanSortingOptionsErrorMsg;
     
 	//Registration Messages
 	private String usernameExistsError;
@@ -38,4 +40,7 @@ public class YAMLConfig {
 	
 	//App info
 	private String applicationUsername;
+	
+	//Sorting constants
+	private String invalidSortTypeErrorMsg;
 }

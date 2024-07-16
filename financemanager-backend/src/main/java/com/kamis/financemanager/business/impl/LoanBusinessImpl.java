@@ -57,7 +57,7 @@ public class LoanBusinessImpl implements LoanBusiness {
 		
 		loan = loanBusiness.calculateLoanPament(loan);
 		loan = loanBusiness.calculatePaymentSchedule(loan);
-		loan.setBalance(getLoanBalance(loan.getPayments()));
+		loan.setBalance(getLoanBalance(loan));
 		
 		return loanRepository.saveAndFlush(loan) != null;
 	}
@@ -246,12 +246,13 @@ public class LoanBusinessImpl implements LoanBusiness {
 	}
 
 	@Override
-	public float getLoanBalance(List<LoanPayment> payments) {
+	public float getLoanBalance(Loan loan) {
 		
-		if (payments == null || payments.isEmpty()) {
+		if (loan == null || loan.getPayments() == null || loan.getPayments().isEmpty()) {
 			return 0;
 		}
 		
+		List<LoanPayment> payments = loan.getPayments();
 		payments.sort(Comparator.comparing(LoanPayment::getPaymentNumber).reversed());
 		
 		Date today = new Date();
@@ -261,7 +262,7 @@ public class LoanBusinessImpl implements LoanBusiness {
 		if (lastPay.isPresent()) {
 			return lastPay.get().getBalance();
 		} else {
-			return 0;
+			return loan.getPrincipal();
 		}
 	}
 

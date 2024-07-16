@@ -8,6 +8,9 @@ spring:
     properties:
       hibernate:
         default_schema: FMDB
+  sql:
+    init:
+      mode: always
 server:
   port: 8080
   servlet:

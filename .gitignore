@@ -2,4 +2,4 @@
 .metadata/
 
 ### Postgres ###
-financemanager-db/postgres-data/
+**/postgres-data/

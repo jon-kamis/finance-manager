@@ -52,8 +52,8 @@ public interface LoanBusiness {
 
 	/**
 	 * Returns the current Loan balance based on its payments
-	 * @param payments The payments list to scan for the current balance
-	 * @return A float representing the current balance of a loan based on its payments
+	 * @param loan The loan to calculate the current balance for
+	 * @return A float representing the current balance of a loan based on its payments.
 	 */
-	public float getLoanBalance(List<LoanPayment> payments);
+	public float getLoanBalance(Loan loan);
 }

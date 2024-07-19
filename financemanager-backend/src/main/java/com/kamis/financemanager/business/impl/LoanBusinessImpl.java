@@ -26,6 +26,7 @@ import com.kamis.financemanager.database.repository.LoanRepository;
 import com.kamis.financemanager.exception.FinanceManagerException;
 import com.kamis.financemanager.factory.LoanFactory;
 import com.kamis.financemanager.rest.domain.loans.LoanPostRequest;
+import com.kamis.financemanager.rest.domain.loans.LoanResponse;
 import com.kamis.financemanager.rest.domain.loans.PagedLoanResponse;
 import com.kamis.financemanager.validation.LoanValidation;
 
@@ -264,6 +265,18 @@ public class LoanBusinessImpl implements LoanBusiness {
 		} else {
 			return loan.getPrincipal();
 		}
+	}
+
+	@Override
+	public LoanResponse getLoanById(Integer userId, Integer loanId) {
+		Optional<Loan> optLoan = loanRepository.findByIdAndUserId(loanId, userId);
+		
+		if (optLoan.isEmpty()) {
+			log.info("Loan with id: {} and userId: {} not found", loanId, userId);
+			return null;
+		}
+		
+		return LoanFactory.buildLoanResponse(optLoan.get());
 	}
 
 }

@@ -8,9 +8,6 @@ spring:
     properties:
       hibernate:
         default_schema: FMDB
-  sql:
-    init:
-      mode: always
 server:
   port: 8080
   servlet:
@@ -24,6 +21,7 @@ genericAccessDeniedErrorMsg: access denied
 genericInternalServerErrorMessage: an unexpected error has occured
 genericMethodNotAllowedErrorMsg: method not allowed
 genericNotFoundErrorMsg: "the requested entity was not found"
+genericNotFoundMessage: "resource not found"
 requiredFieldsBlankError: "one or more required fields was empty"
 userIdRequiredError: "userId is required"
 genericSuccessMessage: "operation successful"

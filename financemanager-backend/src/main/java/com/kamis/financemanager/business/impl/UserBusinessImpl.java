@@ -18,6 +18,9 @@ import com.kamis.financemanager.factory.UserFactory;
 import com.kamis.financemanager.rest.domain.auth.RegistrationRequest;
 import com.kamis.financemanager.rest.domain.users.UserResponse;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Component
 public class UserBusinessImpl implements UserBusiness {
 
@@ -78,10 +81,15 @@ public class UserBusinessImpl implements UserBusiness {
 		User user = UserFactory.buildUserForRegistration(request);
 		
 		//Fetch default user role
-		Role role = roleRepository.findByName(myConfig.getDefaultUserRole());
+		Optional<Role> role = roleRepository.findByName(myConfig.getDefaultUserRole());
+		
+		if (role.isEmpty()) {
+			log.error("Default user role {} does not exist", myConfig.getDefaultUserRole());
+			throw new FinanceManagerException(myConfig.getGenericInternalServerErrorMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 		
 		//Add default user role
-		user.addRole(role, myConfig.getApplicationUsername());
+		user.addRole(role.get(), myConfig.getApplicationUsername());
 		
 		return userRepository.saveAndFlush(user) != null;
 	}

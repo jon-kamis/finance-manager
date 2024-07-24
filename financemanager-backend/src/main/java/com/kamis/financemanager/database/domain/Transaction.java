@@ -1,5 +1,6 @@
 package com.kamis.financemanager.database.domain;
 
+import java.util.Date;
 import java.util.List;
 
 import com.kamis.financemanager.enums.PaymentFrequencyEnum;
@@ -58,6 +59,12 @@ public class Transaction {
 	
 	@OneToMany(mappedBy = "transaction", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
 	private List<TransactionDay> transactionDays;
+	
+	@Column(name="effective_dt")
+	private Date effectiveDate;
+	
+	@Column(name="expiration_dt")
+	private Date expirationDate;
 	
 	@Embedded
 	private AuditInfo auditInfo;

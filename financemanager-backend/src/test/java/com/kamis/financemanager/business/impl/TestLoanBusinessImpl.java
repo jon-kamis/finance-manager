@@ -8,6 +8,7 @@ import static org.mockito.ArgumentMatchers.any;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -39,7 +41,9 @@ import com.kamis.financemanager.database.repository.LoanRepository;
 import com.kamis.financemanager.database.repository.RoleRepository;
 import com.kamis.financemanager.database.repository.UserRepository;
 import com.kamis.financemanager.database.repository.UserRoleRepository;
+import com.kamis.financemanager.enums.PaymentFrequencyEnum;
 import com.kamis.financemanager.exception.FinanceManagerException;
+import com.kamis.financemanager.rest.domain.loans.LoanPostRequest;
 import com.kamis.financemanager.rest.domain.loans.LoanResponse;
 import com.kamis.financemanager.rest.domain.loans.PagedLoanResponse;
 
@@ -424,5 +428,47 @@ public class TestLoanBusinessImpl {
 		response = loanBusinessActual.getUserLoans(user.getId(), "loan", "name", "asc", 1, 10);
 		assert (response.getItems().get(0).getName().compareTo(response.getItems().get(1).getName()) <= 0);
 		assert (response.getItems().get(1).getName().compareTo(response.getItems().get(2).getName()) <= 0);
+	}
+	
+	@Test
+	public void testLoanPaymentCalcMonthly() {
+		
+		Loan loan = new Loan();
+		loan.setPrincipal((float)60000);
+		loan.setFrequency(PaymentFrequencyEnum.MONTHLY);
+		loan.setRate((float)0.045);
+		loan.setTerm(60);
+		
+		loan = loanBusinessActual.calculateLoanPament(loan);
+		assertEquals((float)1118.59, loan.getPayment());
+
+	}
+	
+	@Test
+	public void testLoanPaymentCalcBiWeekly() {
+		
+		Loan loan = new Loan();
+		loan.setPrincipal((float)60000);
+		loan.setFrequency(PaymentFrequencyEnum.BIWEEKLY);
+		loan.setRate((float)0.045);
+		loan.setTerm(60);
+		
+		loan = loanBusinessActual.calculateLoanPament(loan);
+		assertEquals((float)515.8, loan.getPayment());
+
+	}
+	
+	@Test
+	public void testLoanPaymentCalcWeekly() {
+		
+		Loan loan = new Loan();
+		loan.setPrincipal((float)60000);
+		loan.setFrequency(PaymentFrequencyEnum.WEEKLY);
+		loan.setRate((float)0.045);
+		loan.setTerm(60);
+		
+		loan = loanBusinessActual.calculateLoanPament(loan);
+		assertEquals((float)257.81, loan.getPayment());
+
 	}
 }

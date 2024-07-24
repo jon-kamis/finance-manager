@@ -93,7 +93,7 @@ public class LoanBusinessImpl implements LoanBusiness {
 		n = n * (loan.getTerm() / 12);
 		payment = (float) (p / ((Math.pow((i+1), n) - 1) / (i * Math.pow((i+1), n))));
 
-		loan.setPayment(payment);
+		loan.setPayment(((float)Math.round(payment * 100)) / 100);
 		return loan;
 	}
 

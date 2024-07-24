@@ -30,7 +30,6 @@ import com.kamis.financemanager.database.domain.User;
 import com.kamis.financemanager.database.repository.LoanRepository;
 import com.kamis.financemanager.database.repository.RoleRepository;
 import com.kamis.financemanager.database.repository.UserRepository;
-import com.kamis.financemanager.database.repository.UserRoleRepository;
 import com.kamis.financemanager.exception.FinanceManagerException;
 import com.kamis.financemanager.security.jwt.JwtService;
 import com.kamis.financemanager.security.jwt.JwtTestUtils;
@@ -124,9 +123,6 @@ public class TestLoanController {
 
 	@Autowired
 	private UserRepository userRepository;
-
-	@Autowired
-	private UserRoleRepository userRoleRepository;
 
 	@Autowired
 	private RoleRepository roleRepository;

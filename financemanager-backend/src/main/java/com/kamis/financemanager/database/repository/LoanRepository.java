@@ -1,6 +1,7 @@
 package com.kamis.financemanager.database.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -61,5 +62,13 @@ public interface LoanRepository extends JpaRepository<Loan, Integer> {
 	 * @return An int count representing the number of results
 	 */
 	public int countByUserId(Integer userId);
+
+	/**
+	 * Fetches a single loan by its userId and its loanId
+	 * @param loanId The id of the Loan to search for
+	 * @param userId The userId of the Loan to search for
+	 * @return An optional Loan containing the loan matching the given criteria if one exists
+	 */
+	public Optional<Loan> findByIdAndUserId(Integer loanId, Integer userId);
 	
 }

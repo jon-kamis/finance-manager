@@ -15,6 +15,7 @@ public class YAMLConfig {
 	//Generic Messages
 	private String genericAccessDeniedErrorMsg;
 	private String genericInternalServerErrorMessage;
+	private String genericNotFoundMessage;
 	private String genericMethodNotAllowedErrorMsg;
 	private String jwtSecret;
 	private String genericNotFoundErrorMsg;

@@ -17,6 +17,7 @@ import com.kamis.financemanager.exception.FinanceManagerException;
 import com.kamis.financemanager.rest.domain.error.ErrorResponse;
 import com.kamis.financemanager.rest.domain.generic.SuccessMessageResponse;
 import com.kamis.financemanager.rest.domain.loans.LoanPostRequest;
+import com.kamis.financemanager.rest.domain.loans.LoanResponse;
 import com.kamis.financemanager.rest.domain.loans.PagedLoanResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -48,6 +49,7 @@ public class LoanController {
 					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
 			@ApiResponse(responseCode = "500", description = "INTERNAL_SERVER_ERROR", content = {
 					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }) })
+	@PreAuthorize("@securityService.isOwner(authentication, #userId)")
 	@PostMapping("/users/{userId}/loans")
 	public SuccessMessageResponse createLoan(
 			@Parameter(description = "id of the user to create loan for") @PathVariable Integer userId,
@@ -99,6 +101,37 @@ public class LoanController {
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} else {
 			throw new FinanceManagerException(myConfig.getGenericInternalServerErrorMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@Operation(summary = "Get all loans for a user")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "CREATED", content = {
+			@Content(mediaType = "application/json", schema = @Schema(implementation = PagedLoanResponse.class)) }),
+			@ApiResponse(responseCode = "401", description = "UNAUTHORIZED", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
+			@ApiResponse(responseCode = "403", description = "FORBIDDEN", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
+			@ApiResponse(responseCode = "404", description = "NOT_FOUND", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
+			@ApiResponse(responseCode = "500", description = "INTERNAL_SERVER_ERROR", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }) })
+	@PreAuthorize("@securityService.hasAccess(authentication, #userId)")
+	@GetMapping("/users/{userId}/loans/{loanId}")
+	public ResponseEntity<?> getLoansById(
+			@Parameter(description = "id of the user to fetch loan for") @PathVariable Integer userId,
+			@Parameter(description = "id of the loan to search for") @PathVariable Integer loanId) {
+		log.info("creating loan for user with id {}", userId);
+
+		if (userId == null) {
+			throw new FinanceManagerException(myConfig.getUserIdRequiredError(), HttpStatus.UNPROCESSABLE_ENTITY);
+		}
+
+		LoanResponse response = loanBusiness.getLoanById(userId, loanId);
+
+		if (response != null) {
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		} else {
+			throw new FinanceManagerException(myConfig.getGenericNotFoundMessage(), HttpStatus.NOT_FOUND);
 		}
 	}
 }

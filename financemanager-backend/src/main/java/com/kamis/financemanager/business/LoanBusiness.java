@@ -1,12 +1,9 @@
 package com.kamis.financemanager.business;
 
-import java.util.List;
-import java.util.Optional;
-
 import com.kamis.financemanager.database.domain.Loan;
-import com.kamis.financemanager.database.domain.LoanPayment;
 import com.kamis.financemanager.exception.FinanceManagerException;
 import com.kamis.financemanager.rest.domain.loans.LoanPostRequest;
+import com.kamis.financemanager.rest.domain.loans.LoanResponse;
 import com.kamis.financemanager.rest.domain.loans.PagedLoanResponse;
 
 public interface LoanBusiness {
@@ -56,4 +53,12 @@ public interface LoanBusiness {
 	 * @return A float representing the current balance of a loan based on its payments.
 	 */
 	public float getLoanBalance(Loan loan);
+
+	/**
+	 * Returns a specific loan by its id and userId if one exists
+	 * @param userId The userId of the loan to fetch
+	 * @param loanId The id of the loan to fetch
+	 * @return A Loan object matching the given criteria or null if one is not found
+	 */
+	public LoanResponse getLoanById(Integer userId, Integer loanId);
 }

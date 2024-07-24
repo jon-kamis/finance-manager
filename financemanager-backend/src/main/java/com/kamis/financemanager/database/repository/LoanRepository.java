@@ -24,6 +24,15 @@ public interface LoanRepository extends JpaRepository<Loan, Integer> {
 	public List<Loan> getLoansByUserIdAndName(Integer userId, String name);
 	
 	/**
+	 * Fetches a loan by userId and name
+	 * @param userId The userId to filter loans by
+	 * @param name The name to filter loans by
+	 * @return An optional loan matching the given criteria
+	 */
+	@Query("select l from Loan l where l.userId = :userId and l.name = :name")
+	public Optional<Loan> getLoanByUserIdAndName(Integer userId, String name);
+	
+	/**
 	 * Fetches a list of loans by userId and name
 	 * @param userId The userId to filter loans by
 	 * @param name The name to filter loans by

@@ -136,13 +136,13 @@ public class LoanBusinessImpl implements LoanBusiness {
 		
 		while (total > 0) {
 			amount = loan.getPayment();
-			interest = (total * loan.getRate()) / paysPerYear;
+			interest = ((float)Math.round(((total * loan.getRate()) / paysPerYear) * 100)) / 100;
 			principal = loan.getPayment() - interest;
 						
 			if (total - principal > 0) {
 				total -= principal;
 			} else {
-				principal = total - interest;
+				principal = total;
 				amount = total + interest;
 				total = 0;
 			}

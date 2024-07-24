@@ -8,7 +8,7 @@ CREATE SCHEMA FMDB;
 CREATE SEQUENCE IF NOT EXISTS FMDB.users_id_seq;
 CREATE TABLE IF NOT EXISTS FMDB.users (
     id integer unique NOT NULL default nextval('FMDB.users_id_seq'),
-    username character varying(255) NOT NULL,
+    username character varying(255) unique NOT NULL,
     first_name character varying(255),
     last_name character varying(255),
     email character varying(255),
@@ -75,6 +75,29 @@ CREATE TABLE IF NOT EXISTS FMDB.loan_payments (
     interest_to_date NUMERIC(10,2) NOT NULL,
     amount NUMERIC(10,2) NOT NULL,
     balance NUMERIC(10,2) NOT NULL,
+    create_dt timestamp without time zone,
+    last_update_dt timestamp without time zone,
+    last_update_by character varying(255)
+);
+
+CREATE SEQUENCE IF NOT EXISTS FMDB.transactions_id_seq;
+CREATE TABLE IF NOT EXISTS FMDB.transactions (
+    id integer unique NOT NULL default nextval('FMDB.transactions_id_seq'),
+    user_id integer NOT NULL references FMDB.users(id),
+    transaction_type character varying(255) NOT NULL,
+    category character varying(255) NOT NULL,
+    frequency character varying(255) NOT NULL,
+    amount NUMERIC(10,2) NOT NULL,
+    create_dt timestamp without time zone,
+    last_update_dt timestamp without time zone,
+    last_update_by character varying(255)
+);
+
+CREATE SEQUENCE IF NOT EXISTS FMDB.transaction_days_id_seq;
+CREATE TABLE IF NOT EXISTS FMDB.transaction_days (
+    id integer unique NOT NULL default nextval('FMDB.transaction_days_id_seq'),
+    transaction_id integer NOT NULL references FMDB.transactions(id),
+    day integer NOT NULL,
     create_dt timestamp without time zone,
     last_update_dt timestamp without time zone,
     last_update_by character varying(255)

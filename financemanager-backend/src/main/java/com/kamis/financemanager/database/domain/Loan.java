@@ -66,6 +66,7 @@ public class Loan {
 	private Integer term;
 	
     @Enumerated(EnumType.STRING)
+    @Column(name="frequency")
 	private PaymentFrequencyEnum frequency;
 	
 	@OneToMany(mappedBy = "loan", fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})

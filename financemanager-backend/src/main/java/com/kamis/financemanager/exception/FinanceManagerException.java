@@ -20,6 +20,11 @@ public class FinanceManagerException extends RuntimeException{
 		
 	}
 	
+	public FinanceManagerException(String message) {
+		this.message = message;
+		
+	}
+	
 	public HttpStatusCode getStatusCode() {
 		return statusCode;
 	}

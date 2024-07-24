@@ -103,6 +103,10 @@ public class LoanFactory {
 	public static List<LoanPaymentItemResponse> buildPaymentScheduleResponseList(List<LoanPayment> payments) {
 		List<LoanPaymentItemResponse> responseList = new ArrayList<>();
 		
+		if (payments == null) {
+			return responseList;
+		}
+		
 		for (LoanPayment p : payments) {
 			responseList.add(buildPaymentScheduleResponse(p));
 		}

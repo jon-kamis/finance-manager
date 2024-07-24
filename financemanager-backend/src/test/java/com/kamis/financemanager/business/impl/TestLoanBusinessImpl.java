@@ -41,9 +41,7 @@ import com.kamis.financemanager.exception.FinanceManagerException;
 import com.kamis.financemanager.rest.domain.loans.LoanResponse;
 
 import jakarta.transaction.Transactional;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @ActiveProfiles(profiles = "test")
 @ExtendWith(MockitoExtension.class)
 @RunWith(SpringRunner.class)
@@ -89,6 +87,7 @@ public class TestLoanBusinessImpl {
 	}
 
 	@BeforeEach
+	@Transactional
 	public void setUp() {
 
 		userRoleRepository.deleteAll();
@@ -96,20 +95,19 @@ public class TestLoanBusinessImpl {
 		loanRepository.deleteAll();
 		userRepository.deleteAll();
 		
-		roleRepository.save(AppTestUtils.buildRole("admin"));
-		roleRepository.save(AppTestUtils.buildRole("user"));
+		roleRepository.saveAndFlush(AppTestUtils.buildRole("admin"));
+		roleRepository.saveAndFlush(AppTestUtils.buildRole("user"));
 
 		Optional<Role> optAdminRole = roleRepository.findByName("admin");
 		Optional<Role> optUserRole = roleRepository.findByName("user");
-
 		
 		if (optAdminRole.isEmpty() || optUserRole.isEmpty()) {
 			throw new FinanceManagerException("Failed to retrieve loans during populate data",
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-		userRepository.save(AppTestUtils.buildUser("admin", optAdminRole.get()));
-		userRepository.save(AppTestUtils.buildUser("user", optUserRole.get()));
+		userRepository.saveAndFlush(AppTestUtils.buildUser("admin", optAdminRole.get()));
+		userRepository.saveAndFlush(AppTestUtils.buildUser("user", optUserRole.get()));
 	
 		Optional<User> optAdmin = userRepository.findByUsername("admin");
 		Optional<User> optUser = userRepository.findByUsername("user");
@@ -120,13 +118,13 @@ public class TestLoanBusinessImpl {
 		
 		LocalDate date = LocalDate.now();
 		
-		loanRepository.save(AppTestUtils.buildLoan(optAdmin.get(), "loan1", 1000, 1000, date));
-		loanRepository.save(AppTestUtils.buildLoan(optAdmin.get(), "loan2", 100, 100, date.plusWeeks(1)));
-		loanRepository.save(AppTestUtils.buildLoan(optAdmin.get(), "loan3", 10, 10, date.plusWeeks(2)));
+		loanRepository.saveAndFlush(AppTestUtils.buildLoan(optAdmin.get(), "loan1", 1000, 1000, date));
+		loanRepository.saveAndFlush(AppTestUtils.buildLoan(optAdmin.get(), "loan2", 100, 100, date.plusWeeks(1)));
+		loanRepository.saveAndFlush(AppTestUtils.buildLoan(optAdmin.get(), "loan3", 10, 10, date.plusWeeks(2)));
 		
-		loanRepository.save(AppTestUtils.buildLoan(optUser.get(), "loan1", 1000, 1000, date));
-		loanRepository.save(AppTestUtils.buildLoan(optUser.get(), "loan2", 100, 100, date.plusWeeks(1)));
-		loanRepository.save(AppTestUtils.buildLoan(optUser.get(), "loan3", 10, 10, date.plusWeeks(2)));
+		loanRepository.saveAndFlush(AppTestUtils.buildLoan(optUser.get(), "loan1", 1000, 1000, date));
+		loanRepository.saveAndFlush(AppTestUtils.buildLoan(optUser.get(), "loan2", 100, 100, date.plusWeeks(1)));
+		loanRepository.saveAndFlush(AppTestUtils.buildLoan(optUser.get(), "loan3", 10, 10, date.plusWeeks(2)));
 		
 	}
 
@@ -138,7 +136,7 @@ public class TestLoanBusinessImpl {
 
 		Mockito.when(loanBusinessMock.getLoanBalance(any())).thenCallRealMethod();
 
-		Loan loan = TestUtils.mockPaymentsForBalanceTestActive();
+		Loan loan = BusinessTestUtils.mockPaymentsForBalanceTestActive();
 
 		float balance = loanBusinessMock.getLoanBalance(loan);
 
@@ -154,7 +152,7 @@ public class TestLoanBusinessImpl {
 
 		Mockito.when(loanBusinessMock.getLoanBalance(any())).thenCallRealMethod();
 
-		Loan loan = TestUtils.mockPaymentsForBalanceTestFutureLoan();
+		Loan loan = BusinessTestUtils.mockPaymentsForBalanceTestFutureLoan();
 
 		float balance = loanBusinessMock.getLoanBalance(loan);
 
@@ -188,26 +186,21 @@ public class TestLoanBusinessImpl {
 	@Transactional
 	public void testGetLoanById() {
 
-		List<Loan> allLoans = loanRepository.findAll();
-		for (Loan l : allLoans) {
-			log.info("Loan: {}", l.toString());
-		}
-		
-		Optional<User> user = userRepository.findByUsername("user");
-
-		if (user.isEmpty()) {
+		Optional<User> optUser = userRepository.findByUsername("user");
+		if (optUser.isEmpty()) {
 			throw new FinanceManagerException("user test data not populated", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
-		log.info("User Loans: {}", user.get().getLoans());
-
-		Loan loan = user.get().getLoans().get(0);
-
+		User user = optUser.get();
+		
+		List<Loan>loans = loanRepository.findByUserId(user.getId());
+		Loan loan = loans.get(0);
+		
 		// Good Loan
-		LoanResponse loanResponse = loanBusinessActual.getLoanById(user.get().getId(), loan.getId());
+		LoanResponse loanResponse = loanBusinessActual.getLoanById(user.getId(), loan.getId());
 
 		assertNotNull(loanResponse);
-		assertEquals(user.get().getId(), loanResponse.getUserId());
+		assertEquals(user.getId(), loanResponse.getUserId());
 		assertEquals(loan.getId(), loanResponse.getId());
 
 		// UserId is wrong

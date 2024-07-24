@@ -65,6 +65,7 @@ public class AppTestUtils {
 		
 		loan.setBalance(balance);
 		loan.setName(name);
+		loan.setRate((float)0.045);		
 		loan.setPrincipal(principal);
 		loan.setFirstPaymentDate(Date.from(startDt.atStartOfDay(ZoneId.systemDefault()).toInstant()));
 		loan.setFrequency(PaymentFrequencyEnum.BIWEEKLY);

@@ -12,7 +12,7 @@ import com.kamis.financemanager.database.domain.LoanPayment;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class TestUtils {
+public class BusinessTestUtils {
 
 	public static Loan mockPaymentsForBalanceTestActive() {
 

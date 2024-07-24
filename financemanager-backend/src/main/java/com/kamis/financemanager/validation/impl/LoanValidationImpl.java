@@ -34,9 +34,7 @@ public class LoanValidationImpl implements LoanValidation {
 		}
 		
 		if (sortBy != null && !sortBy.isBlank() 
-				&& !sortBy.equalsIgnoreCase(FinanceManagerConstants.LOAN_SORT_BY_AGE)
-				&& !sortBy.equalsIgnoreCase(FinanceManagerConstants.LOAN_SORT_BY_BALANCE)
-				&& !sortBy.equalsIgnoreCase(FinanceManagerConstants.LOAN_SORT_BY_NAME)) {
+				&& !FinanceManagerConstants.LOAN_VALID_SORT_TYPES.contains(sortBy)) {
 			log.debug("invalid sortBy of {} for loan request", sortBy);
 			throw new FinanceManagerException(myConfig.getInvalidLoanSortingOptionsErrorMsg(), HttpStatus.BAD_REQUEST);
 		}

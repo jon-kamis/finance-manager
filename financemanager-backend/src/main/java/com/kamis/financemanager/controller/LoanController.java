@@ -85,7 +85,7 @@ public class LoanController {
 	public ResponseEntity<?> getLoans(
 			@Parameter(description = "id of the user to fetch loan for") @PathVariable Integer userId,
 			@Parameter(description = "Search by loan name", allowEmptyValue = true) @RequestParam(required = false) String name,
-			@Parameter(description = "Sort by field. Allowable values are 'balance', 'name', 'age'") @RequestParam(required = false) String sortBy,
+			@Parameter(description = "Sort by field. Allowable values are 'balance', 'name', 'firstPaymentDate'") @RequestParam(required = false) String sortBy,
 			@Parameter(description = "Sort direction. Allowable values are 'desc', 'asc'") @RequestParam(required = false) String sortType,
 			@Parameter(description = "Page of results") @RequestParam(required = false) Integer page,
 			@Parameter(description = "Size of result pages to return") @RequestParam(required = false) Integer pageSize) {

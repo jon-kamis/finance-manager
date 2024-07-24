@@ -214,6 +214,7 @@ public class LoanBusinessImpl implements LoanBusiness {
 		
 		
 		if (sortBy != null && !sortBy.isBlank()) {
+			
 			sort = sortAsc ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
 		}
 		
@@ -221,11 +222,12 @@ public class LoanBusinessImpl implements LoanBusiness {
 			page = 1;
 		}
 		
-		//Pageable Info
+		//Build pageable. Note users will enter pages starting at 1 but it is 0 indexed, so we subtract 1 when building
+		//pageable objects
 		if (pageSize != null && pageSize >= 1 && sort != null) {
-			pageable = PageRequest.of(page, pageSize, sort);
+			pageable = PageRequest.of(page-1, pageSize, sort);
 		} else if (pageSize != null && pageSize >= 1){
-			pageable = PageRequest.of(page, pageSize);
+			pageable = PageRequest.of(page-1, pageSize);
 		} else if (sort != null) {
 			pageable = Pageable.unpaged(sort);
 			doCountQuery = false;
@@ -236,7 +238,7 @@ public class LoanBusinessImpl implements LoanBusiness {
 		
 		//Fetch loans
 		if (name != null && !name.isBlank()) {
-			loans = loanRepository.findByUserIdAndName(userId, name, pageable);
+			loans = loanRepository.getLoansByUserIdAndName(userId, name, pageable);
 			count = doCountQuery ? loanRepository.countByUserIdAndName(userId, name) : loans.size();
 		} else {
 			loans = loanRepository.findByUserId(userId, pageable);

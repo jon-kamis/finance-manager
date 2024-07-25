@@ -1,5 +1,6 @@
 package com.kamis.financemanager.database.domain;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -42,6 +43,9 @@ public class Transaction {
 	@JoinColumn(name = "user_id", insertable = false, updatable = false)
 	private User user;
 	
+	@Column(name = "transaction_name")
+	private String name;
+	
 	@Enumerated(EnumType.STRING)
     @Column(name="frequency")
 	private PaymentFrequencyEnum frequency;
@@ -55,7 +59,7 @@ public class Transaction {
 	private TransactionCategoryEnum category;
 	
 	@Column(name="amount")
-	private Boolean amount;
+	private Float amount;
 	
 	@OneToMany(mappedBy = "transaction", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
 	private List<TransactionDay> transactionDays;
@@ -68,4 +72,16 @@ public class Transaction {
 	
 	@Embedded
 	private AuditInfo auditInfo;
+	
+	
+	public void addTransactionDay(TransactionDay transactionDay){
+	
+		//Check if array needs initialized
+		if (transactionDays == null) {
+			transactionDays = new ArrayList<>();
+		}
+	
+		transactionDay.setTransaction(this);
+		transactionDays.add(transactionDay);
+	}
 }

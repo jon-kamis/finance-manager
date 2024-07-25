@@ -1,14 +1,10 @@
 package com.kamis.financemanager.factory;
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 import com.kamis.financemanager.constants.LoggingConstants;
 import com.kamis.financemanager.database.domain.AuditInfo;
-import com.kamis.financemanager.database.domain.Role;
 import com.kamis.financemanager.database.domain.User;
-import com.kamis.financemanager.database.domain.UserRole;
 import com.kamis.financemanager.exception.FinanceManagerException;
 import com.kamis.financemanager.rest.domain.auth.RegistrationRequest;
 import com.kamis.financemanager.rest.domain.users.UserResponse;

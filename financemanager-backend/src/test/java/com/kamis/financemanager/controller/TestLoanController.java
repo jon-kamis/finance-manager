@@ -71,7 +71,7 @@ public class TestLoanController {
 	@BeforeEach
 	@Transactional
 	private void setup() {
-		RestAssured.baseURI = "http://localhost:" + port;
+		RestAssured.baseURI = "http://localhost:" + port + "/api";
 
 		cleanData();
 		insertData();
@@ -161,13 +161,13 @@ public class TestLoanController {
 		// Admins can retrieve loans for themselves
 		given().contentType(ContentType.JSON)
 				.headers(JwtTestUtils.getMockAuthHeader(jwtService.generateToken(adminUsername))).when()
-				.get("/api/users/" + admin.get().getId() + "/loans/" + adminLoan.getId()).then().statusCode(200)
+				.get("/users/" + admin.get().getId() + "/loans/" + adminLoan.getId()).then().statusCode(200)
 				.body("userId", equalTo(admin.get().getId())).body("id", equalTo(adminLoan.getId()));
 
 		// Admins can retrieve loans for other users
 		given().contentType(ContentType.JSON)
 				.headers(JwtTestUtils.getMockAuthHeader(jwtService.generateToken(adminUsername))).when()
-				.get("/api/users/" + user.get().getId() + "/loans/" + userLoan.getId()).then().statusCode(200)
+				.get("/users/" + user.get().getId() + "/loans/" + userLoan.getId()).then().statusCode(200)
 				.body("userId", equalTo(user.get().getId())).body("id", equalTo(userLoan.getId()));
 	}
 
@@ -202,13 +202,13 @@ public class TestLoanController {
 		//Users can retrieve loans for themselves
 		given().contentType(ContentType.JSON)
 				.headers(JwtTestUtils.getMockAuthHeader(jwtService.generateToken(userUsername))).when()
-				.get("/api/users/" + user.get().getId() + "/loans/" + userLoan.getId()).then().statusCode(200)
+				.get("/users/" + user.get().getId() + "/loans/" + userLoan.getId()).then().statusCode(200)
 				.body("userId", equalTo(user.get().getId())).body("id", equalTo(userLoan.getId()));
 
 		//Users cannot retrieve loans for other users
 		given().contentType(ContentType.JSON)
 				.headers(JwtTestUtils.getMockAuthHeader(jwtService.generateToken(userUsername))).when()
-				.get("/api/users/" + admin.get().getId() + "/loans/" + adminLoan.getId()).then().statusCode(403);
+				.get("/users/" + admin.get().getId() + "/loans/" + adminLoan.getId()).then().statusCode(403);
 	}
 
 }

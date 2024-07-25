@@ -84,6 +84,7 @@ CREATE SEQUENCE IF NOT EXISTS FMDB.transactions_id_seq;
 CREATE TABLE IF NOT EXISTS FMDB.transactions (
     id integer unique NOT NULL default nextval('FMDB.transactions_id_seq'),
     user_id integer NOT NULL references FMDB.users(id),
+    transaction_name character varying(255) NOT NULL,
     transaction_type character varying(255) NOT NULL,
     category character varying(255) NOT NULL,
     frequency character varying(255) NOT NULL,

@@ -3,8 +3,11 @@ package com.kamis.financemanager.enums;
 public enum PaymentFrequencyEnum {
 
 	MONTHLY("monthly"),
+	SEMI_MONTHLY("semi-monthly"),
 	BIWEEKLY("bi-weekly"),
-	WEEKLY("weekly");
+	WEEKLY("weekly"),
+	QUARTERLY("quarterly"),
+	ANNUAL("annual");
 
 	private String frequency;
 	

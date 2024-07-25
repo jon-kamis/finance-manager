@@ -22,10 +22,20 @@ public class YAMLConfig {
 	private String requiredFieldsBlankError;
 	private String userIdRequiredError;
     private String genericSuccessMessage;
+    private String effectiveDateRequiredErrorMsg;
+    private String invalidFrequencyErrorMsg;
 	
     //Loan messages
     private String invalidLoanPaymentFrequencyError;
     private String invalidLoanSortingOptionsErrorMsg;
+    
+    //Transaction Messages
+    private String invalidDayOfMonthErrorMsg;
+    private String invalidAmountErrorMsg;
+    private String atLeastOneDateRequiredErrorMsg;
+    private String invalidCategoryErrorMsg;
+    private String invalidTransactionTypeErrorMsg;
+    private String transactionCreatedMsg;
     
 	//Registration Messages
 	private String usernameExistsError;

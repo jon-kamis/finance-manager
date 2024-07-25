@@ -2,6 +2,7 @@ package com.kamis.financemanager.enums;
 
 public enum TransactionCategoryEnum {
 	BILL("bill"),
+	BENEFIT("benefit"),
 	PAYCHECK("paycheck"),
 	LOAN_PAYMENT("loan-payment");
 

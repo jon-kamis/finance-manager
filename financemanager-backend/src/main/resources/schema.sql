@@ -88,6 +88,8 @@ CREATE TABLE IF NOT EXISTS FMDB.transactions (
     category character varying(255) NOT NULL,
     frequency character varying(255) NOT NULL,
     amount NUMERIC(10,2) NOT NULL,
+    effective_dt timestamp without time zone,
+    expiration_dt timestamp without time zone,
     create_dt timestamp without time zone,
     last_update_dt timestamp without time zone,
     last_update_by character varying(255)

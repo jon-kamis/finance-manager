@@ -93,7 +93,7 @@ public class LoanBusinessImpl implements LoanBusiness {
 		n = n * (loan.getTerm() / 12);
 		payment = (float) (p / ((Math.pow((i+1), n) - 1) / (i * Math.pow((i+1), n))));
 
-		loan.setPayment(payment);
+		loan.setPayment(((float)Math.round(payment * 100)) / 100);
 		return loan;
 	}
 
@@ -136,13 +136,13 @@ public class LoanBusinessImpl implements LoanBusiness {
 		
 		while (total > 0) {
 			amount = loan.getPayment();
-			interest = (total * loan.getRate()) / paysPerYear;
+			interest = ((float)Math.round(((total * loan.getRate()) / paysPerYear) * 100)) / 100;
 			principal = loan.getPayment() - interest;
 						
 			if (total - principal > 0) {
 				total -= principal;
 			} else {
-				principal = total - interest;
+				principal = total;
 				amount = total + interest;
 				total = 0;
 			}
@@ -214,6 +214,7 @@ public class LoanBusinessImpl implements LoanBusiness {
 		
 		
 		if (sortBy != null && !sortBy.isBlank()) {
+			
 			sort = sortAsc ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
 		}
 		
@@ -221,11 +222,12 @@ public class LoanBusinessImpl implements LoanBusiness {
 			page = 1;
 		}
 		
-		//Pageable Info
+		//Build pageable. Note users will enter pages starting at 1 but it is 0 indexed, so we subtract 1 when building
+		//pageable objects
 		if (pageSize != null && pageSize >= 1 && sort != null) {
-			pageable = PageRequest.of(page, pageSize, sort);
+			pageable = PageRequest.of(page-1, pageSize, sort);
 		} else if (pageSize != null && pageSize >= 1){
-			pageable = PageRequest.of(page, pageSize);
+			pageable = PageRequest.of(page-1, pageSize);
 		} else if (sort != null) {
 			pageable = Pageable.unpaged(sort);
 			doCountQuery = false;
@@ -236,7 +238,7 @@ public class LoanBusinessImpl implements LoanBusiness {
 		
 		//Fetch loans
 		if (name != null && !name.isBlank()) {
-			loans = loanRepository.findByUserIdAndName(userId, name, pageable);
+			loans = loanRepository.getLoansByUserIdAndName(userId, name, pageable);
 			count = doCountQuery ? loanRepository.countByUserIdAndName(userId, name) : loans.size();
 		} else {
 			loans = loanRepository.findByUserId(userId, pageable);

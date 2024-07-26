@@ -12,4 +12,18 @@ public interface TransactionValidation {
 	 * @throws FinanceManagerException
 	 */
 	public void validateTransactionPostRequest(Integer userId, TransactionPostRequest request) throws FinanceManagerException;
+
+	/**
+	 * Validates a request to get all Transactions for a given user
+	 * @param userId The user to fetch transactions for
+	 * @param category Filter by category
+	 * @param type Filter by type
+	 * @param sortBy Sort results
+	 * @param sortType direction to sort results
+	 * @param page page of results to return
+	 * @param pageSize pageSize of results to return
+	 * @throws FinanceManagerException
+	 */
+	public void validateGetAllTransactionParameters(Integer userId, String category, String type,
+			String sortBy, String sortType, Integer page, Integer pageSize) throws FinanceManagerException;
 }

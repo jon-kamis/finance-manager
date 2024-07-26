@@ -12,6 +12,9 @@ import lombok.Data;
 @Data
 public class YAMLConfig {
 
+	//Configurations
+	private boolean showGenericSpecificationBuilder;
+	
 	//Generic Messages
 	private String genericAccessDeniedErrorMsg;
 	private String genericInternalServerErrorMessage;
@@ -27,7 +30,6 @@ public class YAMLConfig {
 	
     //Loan messages
     private String invalidLoanPaymentFrequencyError;
-    private String invalidLoanSortingOptionsErrorMsg;
     
     //Transaction Messages
     private String invalidDayOfMonthErrorMsg;
@@ -36,6 +38,9 @@ public class YAMLConfig {
     private String invalidCategoryErrorMsg;
     private String invalidTransactionTypeErrorMsg;
     private String transactionCreatedMsg;
+    private String invalidTransactionSearchCategory;
+    private String invalidTransactionSearchFrequency;
+    private String invalidTransactionSearchType;
     
 	//Registration Messages
 	private String usernameExistsError;
@@ -52,6 +57,10 @@ public class YAMLConfig {
 	//App info
 	private String applicationUsername;
 	
+	//Pagination constants
+	private String invalidPagingParameterErrorMsg;
+	
 	//Sorting constants
 	private String invalidSortTypeErrorMsg;
+	private String invalidSortByErrorMsg;
 }

@@ -6,8 +6,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.kamis.financemanager.database.domain.AuditInfo;
 import com.kamis.financemanager.database.domain.Loan;
 import com.kamis.financemanager.database.domain.LoanPayment;
+import com.kamis.financemanager.database.domain.Transaction;
+import com.kamis.financemanager.database.domain.TransactionDay;
+import com.kamis.financemanager.enums.PaymentFrequencyEnum;
+import com.kamis.financemanager.enums.TransactionCategoryEnum;
+import com.kamis.financemanager.enums.TransactionTypeEnum;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -66,7 +72,76 @@ public class BusinessTestUtils {
 		}
 
 		loan.setPayments(payments);
-		
+
 		return loan;
+	}
+
+	public static Transaction mockBillTransaction(int userId, String name) {
+
+		AuditInfo auditInfo = new AuditInfo();
+		auditInfo.setCreateDt(new Date());
+		auditInfo.setLastUpdateBy("test");
+		auditInfo.setLastUpdateDt(new Date());
+
+		Transaction transaction = new Transaction(null, userId, null, name, PaymentFrequencyEnum.MONTHLY,
+				TransactionTypeEnum.EXPENSE, TransactionCategoryEnum.BILL, (float) 50, null, new Date(), null,
+				auditInfo);
+
+		TransactionDay day = new TransactionDay(null, null, null, 15, auditInfo);
+		transaction.addTransactionDay(day);
+
+		return transaction;
+	}
+
+	public static Transaction mockIncomeTransaction(int userId, String name) {
+
+		AuditInfo auditInfo = new AuditInfo();
+		auditInfo.setCreateDt(new Date());
+		auditInfo.setLastUpdateBy("test");
+		auditInfo.setLastUpdateDt(new Date());
+
+		Transaction transaction = new Transaction(null, userId, null, name, PaymentFrequencyEnum.MONTHLY,
+				TransactionTypeEnum.INCOME, TransactionCategoryEnum.PAYCHECK, (float)5000, null, new Date(), null,
+				auditInfo);
+
+		TransactionDay day = new TransactionDay(null, null, null, 15, auditInfo);
+		transaction.addTransactionDay(day);
+
+		return transaction;
+	}
+	
+	public static Transaction mockBenefitTransaction(int userId, String name) {
+
+		AuditInfo auditInfo = new AuditInfo();
+		auditInfo.setCreateDt(new Date());
+		auditInfo.setLastUpdateBy("test");
+		auditInfo.setLastUpdateDt(new Date());
+
+		Transaction transaction = new Transaction(null, userId, null, name, PaymentFrequencyEnum.MONTHLY,
+				TransactionTypeEnum.EXPENSE, TransactionCategoryEnum.BENEFIT, (float)100, null, new Date(), null,
+				auditInfo);
+
+		TransactionDay day = new TransactionDay(null, null, null, 15, auditInfo);
+		transaction.addTransactionDay(day);
+
+		return transaction;
+	}
+
+	public static Transaction mockBenefitTransaction(Integer userId, String name, TransactionCategoryEnum cat,
+			TransactionTypeEnum type, float amount) {
+		
+		AuditInfo auditInfo = new AuditInfo();
+		auditInfo.setCreateDt(new Date());
+		auditInfo.setLastUpdateBy("test");
+		auditInfo.setLastUpdateDt(new Date());
+
+		Transaction transaction = new Transaction(null, userId, null, name, PaymentFrequencyEnum.MONTHLY,
+				type, cat, amount, null, new Date(), null,
+				auditInfo);
+
+		TransactionDay day = new TransactionDay(null, null, null, 15, auditInfo);
+		transaction.addTransactionDay(day);
+
+		return transaction;
 	}
 }

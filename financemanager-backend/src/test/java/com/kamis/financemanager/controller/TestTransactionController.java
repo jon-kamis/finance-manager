@@ -24,6 +24,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 import com.kamis.financemanager.AppTestUtils;
+import com.kamis.financemanager.business.impl.BusinessTestUtils;
 import com.kamis.financemanager.database.domain.Role;
 import com.kamis.financemanager.database.domain.Transaction;
 import com.kamis.financemanager.database.domain.User;
@@ -34,6 +35,7 @@ import com.kamis.financemanager.enums.PaymentFrequencyEnum;
 import com.kamis.financemanager.enums.TransactionCategoryEnum;
 import com.kamis.financemanager.enums.TransactionTypeEnum;
 import com.kamis.financemanager.exception.FinanceManagerException;
+import com.kamis.financemanager.rest.domain.transactions.PagedTransactionResponse;
 import com.kamis.financemanager.rest.domain.transactions.TransactionPostRequest;
 import com.kamis.financemanager.security.jwt.JwtService;
 import com.kamis.financemanager.security.jwt.JwtTestUtils;
@@ -74,6 +76,10 @@ public class TestTransactionController {
 	@BeforeEach
 	@Transactional
 	private void setup() {
+		
+		transactionRepository.deleteAll();
+		userRepository.deleteAll();
+		
 		RestAssured.baseURI = "http://localhost:" + port + "/api";
 
 		Optional<Role> adminRole = roleRepository.findByName("admin");
@@ -111,7 +117,7 @@ public class TestTransactionController {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = { "admin", "user" })
-	public void TestCreateLoan() {
+	public void TestCreateTransaction() {
 
 		String adminUsername = "admin";
 		String userUsername = "user";
@@ -157,6 +163,42 @@ public class TestTransactionController {
 		assertEquals(TransactionTypeEnum.valueOfLabel(request.getType()), t.getType());
 		assertEquals(PaymentFrequencyEnum.valueOfLabel(request.getFrequency()), t.getFrequency());
 
+
+	}
+	
+	@Test
+	@WithMockUser(username = "admin", authorities = { "admin", "user" })
+	public void TestGetAllUserTransactions() {
+
+		String adminUsername = "admin";
+		String userUsername = "user";
+
+		Optional<User> admin = userRepository.findByUsername(adminUsername);
+		Optional<User> user = userRepository.findByUsername(userUsername);
+
+		if (admin.isEmpty() || user.isEmpty()) {
+			throw new FinanceManagerException("expected test user does not exist during pre-test setup");
+		}
+
+		transactionRepository.save(BusinessTestUtils.mockBillTransaction(admin.get().getId(), "testBill"));
+		transactionRepository.save(BusinessTestUtils.mockIncomeTransaction(admin.get().getId(), "testPaycheck"));
+		transactionRepository.save(BusinessTestUtils.mockBenefitTransaction(admin.get().getId(), "testBenefit"));
+		
+		RequestSpecification requestSpec = RestAssured.given();
+		
+		requestSpec.header("Content-Type", "application/json");
+		requestSpec.headers(JwtTestUtils.getMockAuthHeader(jwtService.generateToken(adminUsername)));
+		requestSpec.queryParam("page", 1);
+		requestSpec.queryParam("pageSize", 2);
+		
+		Response response = requestSpec.get("/users/" + admin.get().getId() + "/transactions"); 
+		assertEquals(200, response.statusCode());
+		
+		PagedTransactionResponse respBody = response.getBody().as(PagedTransactionResponse.class);
+		assertEquals(3, respBody.getCount());
+		assertEquals(2, respBody.getPageSize());
+		assertEquals(1, respBody.getPage());
+		
 
 	}
 

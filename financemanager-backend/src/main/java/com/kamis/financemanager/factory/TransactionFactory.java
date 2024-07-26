@@ -1,11 +1,17 @@
 package com.kamis.financemanager.factory;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.kamis.financemanager.database.domain.Transaction;
 import com.kamis.financemanager.database.domain.TransactionDay;
 import com.kamis.financemanager.enums.PaymentFrequencyEnum;
 import com.kamis.financemanager.enums.TransactionCategoryEnum;
 import com.kamis.financemanager.enums.TransactionTypeEnum;
+import com.kamis.financemanager.rest.domain.transactions.PagedTransactionResponse;
 import com.kamis.financemanager.rest.domain.transactions.TransactionPostRequest;
+import com.kamis.financemanager.rest.domain.transactions.TransactionResponse;
 import com.kamis.financemanager.util.FinanceManagerUtil;
 
 public class TransactionFactory {
@@ -51,5 +57,49 @@ public class TransactionFactory {
 		transactionDay.setDay(day);
 		transactionDay.setAuditInfo(FinanceManagerUtil.getAuditInfo());
 		return transactionDay;
+	}
+
+	/**
+	 * Builds a PagedTransactionResponse based on a list of transactions and pagination details
+	 * @param transactions The transactions to build responses for
+	 * @param page The requested page
+	 * @param pageSize The requested pageSize
+	 * @param count The total number of results
+	 * @return A PagedTransactionResponse
+	 */
+	public static PagedTransactionResponse buildPagedTransactionResponse(List<Transaction> transactions, int page, int pageSize, int count) {
+		PagedTransactionResponse response = new PagedTransactionResponse();
+		
+		List<TransactionResponse> items = new ArrayList<>();
+		
+		items.addAll(transactions.stream().map(t -> buildTransactionResponse(t)).collect(Collectors.toList()));
+		response.setCount(count);
+		response.setPage(page);
+		response.setPageSize(pageSize);
+		response.setItems(items);
+		
+		return response;
+	}
+	
+	/**
+	 * Builds a TransactionResponse based on a transaction
+	 * @param transaction The transaction to build a response for
+	 * @return A TransactionResponse
+	 */
+	public static TransactionResponse buildTransactionResponse(Transaction transaction) {
+		TransactionResponse response = new TransactionResponse();
+		response.setId(transaction.getId());
+		response.setName(transaction.getName());
+		response.setAmount(transaction.getAmount());
+		response.setCategory(transaction.getCategory().getCategory());
+		response.setFrequency(transaction.getFrequency().getFrequency());
+		response.setType(transaction.getType().getType());
+		
+		response.setEffectiveDate(transaction.getEffectiveDate());
+		response.setExpirationDate(transaction.getExpirationDate());
+		
+		response.setDays(transaction.getTransactionDays().stream().map(td -> td.getDay()).collect(Collectors.toList()));
+		
+		return response;
 	}
 }

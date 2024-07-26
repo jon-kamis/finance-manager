@@ -11,21 +11,25 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name="transaction_days")
 public class TransactionDay {
 
 	@Id
-	@SequenceGenerator(name="transaction_days_id_seq", sequenceName="transactions_id_seq", allocationSize = 1)
+	@SequenceGenerator(name="transaction_days_id_seq", sequenceName="transaction_days_id_seq", allocationSize = 1)
 	@GeneratedValue(generator="transaction_days_id_seq", strategy = GenerationType.SEQUENCE)
 	@Column(name = "id", updatable = false)
 	private Integer id;
 	
-	@Column(name="user_id", insertable = false, updatable = false)
-	private Integer userId;
+	@Column(name="transaction_id", insertable = false, updatable = false)
+	private Integer transactionId;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "transaction_id")

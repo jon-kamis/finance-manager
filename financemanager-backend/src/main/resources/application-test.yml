@@ -4,3 +4,5 @@ spring:
       mode: always
   jpa:
     show-sql: true
+
+showGenericSpecificationBuilder: true

@@ -36,7 +36,6 @@ userRegisteredMessage: "user registered successfully"
 
 # Loan Messages
 invalidLoanPaymentFrequencyError: Valid frequencies for loan payments are monthly, bi-weekly, and weekly
-invalidLoanSortingOptionsErrorMsg: invalid sorting option. valid options are 'age', 'balance', and 'name'
 
 # Transaction Messages
 invalidDayOfMonthErrorMsg: invalid transaction dates
@@ -45,6 +44,9 @@ atLeastOneDateRequiredErrorMsg: at least one day of the month must be specified 
 invalidCategoryErrorMsg: category is missing or invalid
 invalidTransactionTypeErrorMsg: type is missing or invalid
 transactionCreatedMsg: transaction crated successfully
+invalidTransactionSearchCategory: category is invalid
+invalidTransactionSearchFrequency: frequency is invalid
+invalidTransactionSearchType: type is invalid
 
 # Auth messages
 invalidCredentialsErrorMsg: "invalid credentials"
@@ -57,3 +59,7 @@ applicationUsername: financemanager_user1
 
 # Sorting constants
 invalidSortTypeErrorMsg: "invalid sortType parameter. valid options are 'asc', and 'desc'"
+invalidSortByErrorMsg: invalid sorting option
+
+# Paging constants
+invalidPagingParameterErrorMsg: "invalid paging parameters"

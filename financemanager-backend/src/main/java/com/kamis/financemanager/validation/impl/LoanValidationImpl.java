@@ -34,7 +34,7 @@ public class LoanValidationImpl implements LoanValidation {
 		if (sortBy != null && !sortBy.isBlank() 
 				&& !FinanceManagerConstants.LOAN_VALID_SORT_TYPES.contains(sortBy)) {
 			log.debug("invalid sortBy of {} for loan request", sortBy);
-			throw new FinanceManagerException(myConfig.getInvalidLoanSortingOptionsErrorMsg(), HttpStatus.BAD_REQUEST);
+			throw new FinanceManagerException(myConfig.getInvalidSortByErrorMsg(), HttpStatus.BAD_REQUEST);
 		}
 		
 		financeManagerValidation.validateSortType(sortType);

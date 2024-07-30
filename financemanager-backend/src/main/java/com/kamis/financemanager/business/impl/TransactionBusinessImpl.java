@@ -49,18 +49,18 @@ public class TransactionBusinessImpl implements TransactionBusiness {
 				pageSize);
 
 		GenericSpecification<Transaction> spec = new GenericSpecification<Transaction>().where("userId", userId,
-				QueryOperation.EQUAL);
+				QueryOperation.EQUALS);
 
 		if (name != null && !name.isBlank()) {
 			spec.and("name", name, QueryOperation.CONTAINS);
 		}
 
 		if (category != null && !category.isBlank()) {
-			spec.and("category", TransactionCategoryEnum.valueOfLabel(category), QueryOperation.EQUAL);
+			spec.and("category", TransactionCategoryEnum.valueOfLabel(category), QueryOperation.EQUALS_OBJECT);
 		}
 
 		if (type != null && !type.isBlank()) {
-			spec.and("type", TransactionTypeEnum.valueOfLabel(type), QueryOperation.EQUAL);
+			spec.and("type", TransactionTypeEnum.valueOfLabel(type), QueryOperation.EQUALS_OBJECT);
 		}
 
 		if (page == null || page < 1) {

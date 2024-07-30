@@ -15,6 +15,7 @@ import com.kamis.financemanager.constants.LoggingConstants;
 import com.kamis.financemanager.exception.FinanceManagerException;
 import com.kamis.financemanager.rest.domain.error.ErrorResponse;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -50,6 +51,15 @@ public class ControllerAdvice extends LoggingConstants {
 	public ErrorResponse handleAuthorizationDeniedException(AuthorizationDeniedException e) {
 
 		ErrorResponse resp = new ErrorResponse(myConfig.getGenericAccessDeniedErrorMsg());
+		log.info("{}", e);
+		return resp;
+	}
+	
+	@ExceptionHandler(ExpiredJwtException.class)
+	@ResponseBody
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
+	public ErrorResponse handleExpiredJwtException(ExpiredJwtException e) {
+		ErrorResponse resp = new ErrorResponse(myConfig.getJwtExpiredErrorMsg());
 		log.info("{}", e);
 		return resp;
 	}

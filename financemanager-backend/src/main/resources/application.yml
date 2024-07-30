@@ -27,6 +27,7 @@ userIdRequiredError: "userId is required"
 genericSuccessMessage: "operation successful"
 effectiveDateRequiredErrorMsg: effective date is required
 invalidFrequencyErrorMsg: frequency is missing or invalid
+jwtExpiredErrorMsg: Token is expired. Please log in again
 
 #Registration Messages
 usernameExistsError: "username already exists"
@@ -36,6 +37,10 @@ userRegisteredMessage: "user registered successfully"
 
 # Loan Messages
 invalidLoanPaymentFrequencyError: Valid frequencies for loan payments are monthly, bi-weekly, and weekly
+filingTypeRequiredForTaxesError: Filing type is required to calculate taxes on an income
+
+# Income messages
+unableToBuildTransactionDaysErrorMsg: Unable to generate transaction days. For bi-weekly frequencies, 'startDate' must be valid. For Monthly or Semi-Monthly frequencies, daysOfMonth must be valid. For Weekly frequencies, 'dayOfWeek'' must be valid. 
 
 # Transaction Messages
 invalidDayOfMonthErrorMsg: invalid transaction dates

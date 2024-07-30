@@ -12,10 +12,10 @@ import lombok.Data;
 @Data
 public class YAMLConfig {
 
-	//Configurations
+	// Configurations
 	private boolean showGenericSpecificationBuilder;
-	
-	//Generic Messages
+
+	// Generic Messages
 	private String genericAccessDeniedErrorMsg;
 	private String genericInternalServerErrorMessage;
 	private String genericNotFoundMessage;
@@ -24,43 +24,48 @@ public class YAMLConfig {
 	private String genericNotFoundErrorMsg;
 	private String requiredFieldsBlankError;
 	private String userIdRequiredError;
-    private String genericSuccessMessage;
-    private String effectiveDateRequiredErrorMsg;
-    private String invalidFrequencyErrorMsg;
+	private String genericSuccessMessage;
+	private String effectiveDateRequiredErrorMsg;
+	private String invalidFrequencyErrorMsg;
+	private String jwtExpiredErrorMsg;
+
+	// Loan messages
+	private String invalidLoanPaymentFrequencyError;
+
+	// Income Messages
+	private String unableToBuildTransactionDaysErrorMsg;
+	private String filingTypeRequiredForTaxesError;
 	
-    //Loan messages
-    private String invalidLoanPaymentFrequencyError;
-    
-    //Transaction Messages
-    private String invalidDayOfMonthErrorMsg;
-    private String invalidAmountErrorMsg;
-    private String atLeastOneDateRequiredErrorMsg;
-    private String invalidCategoryErrorMsg;
-    private String invalidTransactionTypeErrorMsg;
-    private String transactionCreatedMsg;
-    private String invalidTransactionSearchCategory;
-    private String invalidTransactionSearchFrequency;
-    private String invalidTransactionSearchType;
-    
-	//Registration Messages
+	// Transaction Messages
+	private String invalidDayOfMonthErrorMsg;
+	private String invalidAmountErrorMsg;
+	private String atLeastOneDateRequiredErrorMsg;
+	private String invalidCategoryErrorMsg;
+	private String invalidTransactionTypeErrorMsg;
+	private String transactionCreatedMsg;
+	private String invalidTransactionSearchCategory;
+	private String invalidTransactionSearchFrequency;
+	private String invalidTransactionSearchType;
+
+	// Registration Messages
 	private String usernameExistsError;
 	private String emailExistsError;
 	private String invalidPasswordError;
 	private String userRegisteredMessage;
-	
-	//Auth messages
+
+	// Auth messages
 	private String invalidCredentialsErrorMsg;
-	
-	//Role Constants
+
+	// Role Constants
 	private String defaultUserRole;
-	
-	//App info
+
+	// App info
 	private String applicationUsername;
-	
-	//Pagination constants
+
+	// Pagination constants
 	private String invalidPagingParameterErrorMsg;
-	
-	//Sorting constants
+
+	// Sorting constants
 	private String invalidSortTypeErrorMsg;
 	private String invalidSortByErrorMsg;
 }

@@ -49,6 +49,9 @@ public class User {
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
 	private List<Loan> loans;
 	
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+	private List<Income> incomes;
+	
 	@Embedded
 	private AuditInfo auditInfo;
 	

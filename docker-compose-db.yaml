@@ -21,3 +21,4 @@ services:
       - ./postgres-data:/var/lib/postgresql/data
       - ./financemanager-backend/src/main/resources/schema.sql:/docker-entrypoint-initdb.d/1_schema.sql
       - ./financemanager-backend/src/main/resources/populate_data.sql:/docker-entrypoint-initdb.d/2_populate_data.sql
+      - ./financemanager-backend/src/main/resources/standard_deductions_24.csv:/docker-entrypoint-initdb.d/standard_deductions.csv

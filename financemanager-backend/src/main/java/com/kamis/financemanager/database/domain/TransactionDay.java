@@ -1,5 +1,9 @@
 package com.kamis.financemanager.database.domain;
 
+import java.util.Date;
+
+import com.kamis.financemanager.enums.WeekdayEnum;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -34,6 +38,12 @@ public class TransactionDay {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "transaction_id")
 	private Transaction transaction;
+	
+	@Column(name="weekday")
+	private WeekdayEnum weekday;
+	
+	@Column(name="startDate")
+	private Date startDate;
 	
 	@Column(name="day")
 	private Integer day;

@@ -15,3 +15,10 @@ COPY FMDB.user_roles (id, user_id, role_id, create_dt, last_update_dt, last_upda
 SELECT pg_catalog.setval('FMDB.users_id_seq', 2, true);
 SELECT pg_catalog.setval('FMDB.roles_id_seq', 3, true);
 SELECT pg_catalog.setval('FMDB.user_roles_id_seq', 3, true);
+
+COPY FMDB.standard_withholdings(id, filing_type, min, max, amount, percentage)
+FROM '/docker-entrypoint-initdb.d/standard_deductions.csv'
+DELIMITER ','
+CSV HEADER;
+
+SELECT pg_catalog.setval('FMDB.standard_withholdings_id_seq', 33, true);

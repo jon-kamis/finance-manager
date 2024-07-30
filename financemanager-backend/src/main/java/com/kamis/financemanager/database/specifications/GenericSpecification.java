@@ -4,10 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
-
-import com.kamis.financemanager.config.YAMLConfig;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -127,9 +124,12 @@ public class GenericSpecification<T> {
 
 	private Predicate buildCriteria(SearchCriteria criteria, Root<T> root, CriteriaBuilder builder) {
 		switch (criteria.getOperation()) {
-		case EQUAL:
+		case EQUALS:
 
 			return builder.equal(root.<String>get(criteria.getKey()), criteria.getValue().toString());
+		case EQUALS_OBJECT:
+
+			return builder.equal(root.<String>get(criteria.getKey()), criteria.getValue());
 		case CONTAINS:
 
 			return builder.like(root.<String>get(criteria.getKey()),
@@ -154,9 +154,12 @@ public class GenericSpecification<T> {
 		case LESS_THAN_EQUAL_TO:
 
 			return builder.lessThanOrEqualTo(root.<String>get(criteria.getKey()), criteria.getValue().toString());
-		case NOT_EQUAL:
+		case NOT_EQUALS:
 
 			return builder.notEqual(root.<String>get(criteria.getKey()), criteria.getValue().toString());
+		case NOT_EQUALS_OBJECT:
+
+			return builder.notEqual(root.<String>get(criteria.getKey()), criteria.getValue());
 		case STARTS_WITH:
 
 			return builder.like(root.<String>get(criteria.getKey()),

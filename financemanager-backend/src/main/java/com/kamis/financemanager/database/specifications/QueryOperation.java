@@ -1,8 +1,10 @@
 package com.kamis.financemanager.database.specifications;
 
 public enum QueryOperation {
-	EQUAL,
-	NOT_EQUAL,
+	EQUALS,
+	EQUALS_OBJECT,
+	NOT_EQUALS,
+	NOT_EQUALS_OBJECT,
 	STARTS_WITH,
 	ENDS_WITH,
 	CONTAINS,

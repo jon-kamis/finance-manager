@@ -20,6 +20,14 @@ public class FinanceManagerConstants {
 	public static final List<String> TRANSACTION_VALID_SORT_OPTIONS = Arrays.asList(new String[] {TRANSACTION_SORT_BY_AMOUNT, TRANSACTION_SORT_BY_CATEGORY, 
 			TRANSACTION_SORT_BY_NAME, TRANSACTION_SORT_BY_TYPE});
 	
+	//Income constants
+	public static final String TAX_NAME_FEDERAL = "Federal tax";
+	public static final String TAX_NAME_SOC_SEC = "Social Security";
+	public static final String TAX_NAME_MEDICARE = "Medicare";
+	public static final String TAX_NAME_PA_STATE = "Pennsylvania Income tax";
+	public static final String TAX_NAME_PA_UNEMP = "Pennsylvania Unemployment Insurance";
+	public static final String TAX_NAME_LOCAL = "Local Income tax";
+	
 	//Sorting constants
 	public static final String SORT_TYPE_ASC = "asc";
 	public static final String SORT_TYPE_DESC = "desc";

@@ -13,6 +13,8 @@ CREATE TABLE IF NOT EXISTS FMDB.users (
     last_name character varying(255),
     email character varying(255),
     password character varying(255),
+    state character varying(255) NOT NULL,
+    local_tax_rate NUMERIC(10,4) NOT NULL default 0,
     create_dt timestamp without time zone,
     last_update_dt timestamp without time zone,
     last_update_by character varying(255)

@@ -9,6 +9,7 @@ import com.kamis.financemanager.database.domain.Loan;
 import com.kamis.financemanager.database.domain.Role;
 import com.kamis.financemanager.database.domain.User;
 import com.kamis.financemanager.enums.PaymentFrequencyEnum;
+import com.kamis.financemanager.enums.StateEnum;
 
 public class AppTestUtils {
 	
@@ -39,6 +40,8 @@ public class AppTestUtils {
 		user.setFirstName(name);
 		user.setLastName(name);
 		user.setUsername(name);
+		user.setState(StateEnum.PENNSYLVANIA);
+		user.setLocalTaxRate((float)0.0005);
 		user.setEmail(name + "@fm.com");
 		user.setPassword(name + "password");
 		user.setAuditInfo(getTestAuditInfo());

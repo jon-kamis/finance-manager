@@ -23,6 +23,10 @@ public class PaymentFrequencyConverter implements AttributeConverter<PaymentFreq
 	@Override
 	public PaymentFrequencyEnum convertToEntityAttribute(String dbData) {
 		
+		if (dbData == null || dbData.isBlank()) {
+			return null;
+		}
+		
 		return Stream.of(PaymentFrequencyEnum.values())
 				.filter(p -> p.getFrequency().equals(dbData))
 				.findFirst()

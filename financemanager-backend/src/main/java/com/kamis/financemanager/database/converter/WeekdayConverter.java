@@ -23,6 +23,10 @@ public class WeekdayConverter implements AttributeConverter<WeekdayEnum, String>
 	@Override
 	public WeekdayEnum convertToEntityAttribute(String dbData) {
 		
+		if (dbData == null || dbData.isBlank()) {
+			return null;
+		}
+		
 		return Stream.of(WeekdayEnum.values())
 				.filter(w -> w.getWeekday().equals(dbData))
 				.findFirst()

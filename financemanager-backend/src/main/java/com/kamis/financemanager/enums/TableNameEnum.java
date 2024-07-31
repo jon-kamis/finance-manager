@@ -12,6 +12,15 @@ public enum TableNameEnum {
 		this.name = name;
 	}
 
+	public static TableNameEnum valueOfLabel(String tableName) {
+	    for (TableNameEnum t : values()) {
+	        if (t.getName().equals(tableName)) {
+	            return t;
+	        }
+	    }
+	    return null;
+	}
+	
 	public String getName() {
 		return name;
 	}

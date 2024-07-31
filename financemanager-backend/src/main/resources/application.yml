@@ -41,6 +41,8 @@ filingTypeRequiredForTaxesError: Filing type is required to calculate taxes on a
 
 # Income messages
 unableToBuildTransactionDaysErrorMsg: Unable to generate transaction days. For bi-weekly frequencies, 'startDate' must be valid. For Monthly or Semi-Monthly frequencies, daysOfMonth must be valid. For Weekly frequencies, 'dayOfWeek'' must be valid. 
+unableToFindStandardWithholdingErrorMsg: Unable to locate standard tax withholding information for income
+stateTaxCalcMissingErrorMsg: Tax is enabled for user's state but no calculation exists for it
 
 # Transaction Messages
 invalidDayOfMonthErrorMsg: invalid transaction dates
@@ -68,3 +70,7 @@ invalidSortByErrorMsg: invalid sorting option
 
 # Paging constants
 invalidPagingParameterErrorMsg: "invalid paging parameters"
+
+# Taxes
+paIncomeTaxRate: 0.0307
+paUnemploymentTaxRate: 0.0006

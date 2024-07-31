@@ -4,7 +4,8 @@ public enum TransactionCategoryEnum {
 	BILL("bill"),
 	BENEFIT("benefit"),
 	PAYCHECK("paycheck"),
-	LOAN("loan-payment");
+	LOAN("loan-payment"),
+	TAXES("taxes");
 
 	private String category;
 	

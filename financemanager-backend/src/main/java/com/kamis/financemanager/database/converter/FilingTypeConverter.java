@@ -23,6 +23,10 @@ public class FilingTypeConverter implements AttributeConverter<FilingTypeEnum, S
 	@Override
 	public FilingTypeEnum convertToEntityAttribute(String dbData) {
 		
+		if (dbData == null || dbData.isBlank()) {
+			return null;
+		}
+		
 		return Stream.of(FilingTypeEnum.values())
 				.filter(w -> w.getFilingType().equals(dbData))
 				.findFirst()

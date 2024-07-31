@@ -35,6 +35,12 @@ public class YAMLConfig {
 	// Income Messages
 	private String unableToBuildTransactionDaysErrorMsg;
 	private String filingTypeRequiredForTaxesError;
+	private String unableToFindStandardWithholdingErrorMsg;
+	private String stateTaxCalcMissingErrorMsg;
+	
+	//Tax Rates
+	private Float paIncomeTaxRate;
+	private Float paUnemploymentTaxRate;
 	
 	// Transaction Messages
 	private String invalidDayOfMonthErrorMsg;

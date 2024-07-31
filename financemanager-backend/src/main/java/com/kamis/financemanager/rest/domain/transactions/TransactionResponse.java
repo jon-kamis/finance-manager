@@ -14,7 +14,7 @@ public class TransactionResponse {
 	private String type;
 	private String category;
 	private float amount;
-	private List<Integer> days;
+	private List<TransactionDayResponse> transactionDays;
 	private Date effectiveDate;
 	private Date expirationDate;
 	

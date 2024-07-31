@@ -23,6 +23,10 @@ public class TransactionTypeConverter implements AttributeConverter<TransactionT
 	@Override
 	public TransactionTypeEnum convertToEntityAttribute(String dbData) {
 		
+		if (dbData == null || dbData.isBlank()) {
+			return null;
+		}
+		
 		return Stream.of(TransactionTypeEnum.values())
 				.filter(t -> t.getType().equals(dbData))
 				.findFirst()

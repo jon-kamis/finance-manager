@@ -30,6 +30,9 @@ private String name;
 	@Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "gross pay for the month")
 	private Float amount;
 	
+	@Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "tax filing type")
+	private String filingType;
+	
 	@Schema(description = "Day of week for payday. Only applicable for 'weekly' pay frequencies")
 	private String weekday;
 	

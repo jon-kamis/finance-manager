@@ -9,6 +9,15 @@ public enum FilingTypeEnum {
 	
 	private String filingType;
 	
+	public static FilingTypeEnum valueOfLabel(String filingType) {
+	    for (FilingTypeEnum f : values()) {
+	        if (f.filingType.equals(filingType)) {
+	            return f;
+	        }
+	    }
+	    return null;
+	}
+	
 	FilingTypeEnum(String filingType) {
 		this.filingType = filingType;
 	}

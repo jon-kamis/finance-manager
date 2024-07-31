@@ -5,6 +5,9 @@ import java.util.List;
 
 import com.kamis.financemanager.database.domain.Income;
 import com.kamis.financemanager.database.domain.Transaction;
+import com.kamis.financemanager.database.domain.User;
+import com.kamis.financemanager.enums.FilingTypeEnum;
+import com.kamis.financemanager.enums.PaymentFrequencyEnum;
 import com.kamis.financemanager.enums.TransactionCategoryEnum;
 import com.kamis.financemanager.rest.domain.incomes.IncomePostRequest;
 import com.kamis.financemanager.rest.domain.incomes.IncomeResponse;
@@ -16,16 +19,19 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class IncomeFactory {
 
-	public static Income createIncome(Integer userId, IncomePostRequest request) {
+	public static Income createIncome(User user, IncomePostRequest request) {
 		Income income = new Income();
 		income.setName(request.getName());
 		income.setTaxCredits(request.getTaxCredits());
 		income.setWithheldTax(request.getTaxWithheld());
-		income.setUserId(userId);
+		income.setUser(user);
+		income.setUserId(user.getId());
 		income.setAmount(request.getAmount());
 		income.setCategory(TransactionCategoryEnum.valueOfLabel(request.getCategory()));
 		income.setTaxable(request.getTaxable());
 		income.setAuditInfo(FinanceManagerUtil.getAuditInfo());
+		income.setFrequency(PaymentFrequencyEnum.valueOfLabel(request.getFrequency()));
+		income.setFilingType(FilingTypeEnum.valueOfLabel(request.getFilingType()));
 
 		return income;
 	}

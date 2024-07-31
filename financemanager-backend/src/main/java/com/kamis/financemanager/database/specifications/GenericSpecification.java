@@ -164,6 +164,12 @@ public class GenericSpecification<T> {
 
 			return builder.like(root.<String>get(criteria.getKey()),
 					criteria.getValue().toString() + SpecConstants.LIKE_STR);
+		case IS_NULL:
+
+			return builder.isNull(root.<String>get(criteria.getKey()));
+		case IS_NOT_NULL:
+
+			return builder.isNotNull(root.<String>get(criteria.getKey()));
 		default:
 			return null;
 		}

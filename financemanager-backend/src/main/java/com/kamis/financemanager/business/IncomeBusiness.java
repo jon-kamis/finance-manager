@@ -26,11 +26,27 @@ public interface IncomeBusiness {
 	public IncomeResponse findByUserIdAndId(Integer userId, Integer id) throws FinanceManagerException;
 
 	/**
-	 * Attempts to calculate simple taxes for an employee's income
+	 * Attempts to calculate simple taxes for an income
 	 * @param income The income to calculate
-	 * @return The tax amount on this income
+	 * @return The federal tax amount on this income
 	 * @throws FinanceManagerException
 	 */
-	public float calculateSimpleTaxes(Income income) throws FinanceManagerException;
+	public float calculateStandardFederalTaxes(Income income) throws FinanceManagerException;
+
+	/**
+	 * Attempts to calculate Social Security Tax for an income
+	 * @param income The income to calculate social security for
+	 * @return The social security tax amount on this income
+	 * @throws FinanceManagerException
+	 */
+	public float calculateSocialSecurityTax(Income income);
+	
+	/**
+	 * Attempts to calculate Medicare Tax for an income
+	 * @param income The income to calculate medicare for
+	 * @return The medicare tax amount on this income
+	 * @throws FinanceManagerException
+	 */
+	public float calculateMedicareTax(Income income);
 
 }

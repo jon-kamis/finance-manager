@@ -23,6 +23,10 @@ public class TransactionCategoryConverter implements AttributeConverter<Transact
 	@Override
 	public TransactionCategoryEnum convertToEntityAttribute(String dbData) {
 		
+		if (dbData == null || dbData.isBlank()) {
+			return null;
+		}
+		
 		return Stream.of(TransactionCategoryEnum.values())
 				.filter(c -> c.getCategory().equals(dbData))
 				.findFirst()

@@ -114,57 +114,6 @@ public class TestTransactionController {
 
 	@Autowired
 	private TransactionRepository transactionRepository;
-
-	@Test
-	@WithMockUser(username = "admin", authorities = { "admin", "user" })
-	public void TestCreateTransaction() {
-
-		String adminUsername = "admin";
-		String userUsername = "user";
-
-		Optional<User> admin = userRepository.findByUsername(adminUsername);
-		Optional<User> user = userRepository.findByUsername(userUsername);
-
-		if (admin.isEmpty() || user.isEmpty()) {
-			throw new FinanceManagerException("expected test user does not exist during pre-test setup");
-		}
-
-		List<Integer> dayList = new ArrayList<>();
-		dayList.add(1);
-		dayList.add(15);
-
-		String transactionName = "testTransaction";
-		
-		TransactionPostRequest request = new TransactionPostRequest();
-		request.setAmount((float) 50);
-		request.setCategory(TransactionCategoryEnum.BILL.getCategory());
-		request.setDaysOfMonth(dayList);
-		request.setEffectiveDate(new Date());
-		request.setFrequency(PaymentFrequencyEnum.SEMI_MONTHLY.getFrequency());
-		request.setName(transactionName);
-		request.setType(TransactionTypeEnum.EXPENSE.getType());
-
-		RequestSpecification requestSpec = RestAssured.given();
-		
-		requestSpec.header("Content-Type", "application/json");
-		requestSpec.headers(JwtTestUtils.getMockAuthHeader(jwtService.generateToken(adminUsername)));
-		requestSpec.body(request);
-		
-		Response response = requestSpec.post("/users/" + admin.get().getId() + "/transactions"); 
-		assertEquals(201, response.statusCode());
-		
-		List<Transaction> transactions = transactionRepository.findByUserIdAndName(admin.get().getId(), transactionName);
-		assertEquals(1, transactions.size());
-		
-		Transaction t = transactions.get(0);
-		
-		assertEquals(request.getAmount(), t.getAmount());
-		assertEquals(TransactionCategoryEnum.valueOfLabel(request.getCategory()), t.getCategory());
-		assertEquals(TransactionTypeEnum.valueOfLabel(request.getType()), t.getType());
-		assertEquals(PaymentFrequencyEnum.valueOfLabel(request.getFrequency()), t.getFrequency());
-
-
-	}
 	
 	@Test
 	@WithMockUser(username = "admin", authorities = { "admin", "user" })

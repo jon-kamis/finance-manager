@@ -15,6 +15,7 @@ import com.kamis.financemanager.enums.TransactionTypeEnum;
 import com.kamis.financemanager.enums.WeekdayEnum;
 import com.kamis.financemanager.rest.domain.incomes.IncomePostRequest;
 import com.kamis.financemanager.rest.domain.transactions.PagedTransactionResponse;
+import com.kamis.financemanager.rest.domain.transactions.TransactionDayResponse;
 import com.kamis.financemanager.rest.domain.transactions.TransactionPostRequest;
 import com.kamis.financemanager.rest.domain.transactions.TransactionResponse;
 import com.kamis.financemanager.util.FinanceManagerUtil;
@@ -107,9 +108,19 @@ public class TransactionFactory {
 		response.setEffectiveDate(transaction.getEffectiveDate());
 		response.setExpirationDate(transaction.getExpirationDate());
 
-		response.setDays(transaction.getTransactionDays().stream().map(td -> td.getDay()).collect(Collectors.toList()));
+		response.setTransactionDays(transaction.getTransactionDays().stream().map(td -> buildTransactionDayResponse(td)).collect(Collectors.toList()));
 
 		return response;
+	}
+
+	public static TransactionDayResponse buildTransactionDayResponse(TransactionDay td) {
+		TransactionDayResponse resp = new TransactionDayResponse();
+		
+		resp.setWeekday(td.getWeekday() != null ? td.getWeekday().getWeekday() : null);
+		resp.setStartDate(td.getStartDate() != null ? td.getStartDate() : null);
+		resp.setDay(td.getDay());
+		
+		return resp;
 	}
 
 	/**

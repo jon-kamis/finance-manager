@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.kamis.financemanager.enums.StateEnum;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -43,11 +45,20 @@ public class User {
 	@Column(name="email")
 	private String email;
 	
+	@Column(name="state")
+	private StateEnum state;
+	
+	@Column(name="local_tax_rate")
+	private Float localTaxRate;
+	
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
 	private List<UserRole> userRoles;
 	
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
 	private List<Loan> loans;
+	
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+	private List<Income> incomes;
 	
 	@Embedded
 	private AuditInfo auditInfo;

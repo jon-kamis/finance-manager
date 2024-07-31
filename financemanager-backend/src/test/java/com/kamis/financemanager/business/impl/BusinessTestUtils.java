@@ -84,10 +84,10 @@ public class BusinessTestUtils {
 		auditInfo.setLastUpdateDt(new Date());
 
 		Transaction transaction = new Transaction(null, userId, null, name, PaymentFrequencyEnum.MONTHLY,
-				TransactionTypeEnum.EXPENSE, TransactionCategoryEnum.BILL, (float) 50, null, new Date(), null,
+				TransactionTypeEnum.EXPENSE, TransactionCategoryEnum.BILL, (float) 50, null, null, null, new Date(), null,
 				auditInfo);
 
-		TransactionDay day = new TransactionDay(null, null, null, 15, auditInfo);
+		TransactionDay day = new TransactionDay(null, null, null, null, null, 15, auditInfo);
 		transaction.addTransactionDay(day);
 
 		return transaction;
@@ -101,10 +101,10 @@ public class BusinessTestUtils {
 		auditInfo.setLastUpdateDt(new Date());
 
 		Transaction transaction = new Transaction(null, userId, null, name, PaymentFrequencyEnum.MONTHLY,
-				TransactionTypeEnum.INCOME, TransactionCategoryEnum.PAYCHECK, (float)5000, null, new Date(), null,
+				TransactionTypeEnum.INCOME, TransactionCategoryEnum.PAYCHECK, (float)5000, null, null, null, new Date(), null,
 				auditInfo);
 
-		TransactionDay day = new TransactionDay(null, null, null, 15, auditInfo);
+		TransactionDay day = new TransactionDay(null, null, null, null, null, 15, auditInfo);
 		transaction.addTransactionDay(day);
 
 		return transaction;
@@ -118,10 +118,10 @@ public class BusinessTestUtils {
 		auditInfo.setLastUpdateDt(new Date());
 
 		Transaction transaction = new Transaction(null, userId, null, name, PaymentFrequencyEnum.MONTHLY,
-				TransactionTypeEnum.EXPENSE, TransactionCategoryEnum.BENEFIT, (float)100, null, new Date(), null,
+				TransactionTypeEnum.EXPENSE, TransactionCategoryEnum.BENEFIT, (float)100, null, null, null, new Date(), null,
 				auditInfo);
 
-		TransactionDay day = new TransactionDay(null, null, null, 15, auditInfo);
+		TransactionDay day = new TransactionDay(null, null, null, null, null, 15, auditInfo);
 		transaction.addTransactionDay(day);
 
 		return transaction;
@@ -136,10 +136,10 @@ public class BusinessTestUtils {
 		auditInfo.setLastUpdateDt(new Date());
 
 		Transaction transaction = new Transaction(null, userId, null, name, PaymentFrequencyEnum.MONTHLY,
-				type, cat, amount, null, new Date(), null,
+				type, cat, amount, null, null, null, new Date(), null,
 				auditInfo);
 
-		TransactionDay day = new TransactionDay(null, null, null, 15, auditInfo);
+		TransactionDay day = new TransactionDay(null, null, null, null, null, 15, auditInfo);
 		transaction.addTransactionDay(day);
 
 		return transaction;

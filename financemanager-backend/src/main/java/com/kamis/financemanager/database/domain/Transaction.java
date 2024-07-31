@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.kamis.financemanager.enums.PaymentFrequencyEnum;
+import com.kamis.financemanager.enums.TableNameEnum;
 import com.kamis.financemanager.enums.TransactionCategoryEnum;
 import com.kamis.financemanager.enums.TransactionTypeEnum;
 
@@ -12,8 +13,6 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -50,15 +49,12 @@ public class Transaction {
 	@Column(name = "transaction_name")
 	private String name;
 	
-	@Enumerated(EnumType.STRING)
     @Column(name="frequency")
 	private PaymentFrequencyEnum frequency;
 	
-	@Enumerated(EnumType.STRING)
     @Column(name="transaction_type")
 	private TransactionTypeEnum type;
 	
-	@Enumerated(EnumType.STRING)
     @Column(name="category")
 	private TransactionCategoryEnum category;
 	
@@ -67,6 +63,12 @@ public class Transaction {
 	
 	@OneToMany(mappedBy = "transaction", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
 	private List<TransactionDay> transactionDays;
+	
+	@Column(name="parent_table_name")
+	private TableNameEnum parentTableName;
+	
+	@Column(name="parent_id")
+	private Integer parentId;
 	
 	@Column(name="effective_dt")
 	private Date effectiveDate;

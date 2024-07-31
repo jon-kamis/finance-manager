@@ -5,6 +5,7 @@ import java.util.Date;
 import com.kamis.financemanager.constants.LoggingConstants;
 import com.kamis.financemanager.database.domain.AuditInfo;
 import com.kamis.financemanager.database.domain.User;
+import com.kamis.financemanager.enums.StateEnum;
 import com.kamis.financemanager.exception.FinanceManagerException;
 import com.kamis.financemanager.rest.domain.auth.RegistrationRequest;
 import com.kamis.financemanager.rest.domain.users.UserResponse;
@@ -31,6 +32,9 @@ public class UserFactory {
 		resp.setUsername(u.getUsername());
 		resp.setEmail(u.getEmail());
 		resp.setId(u.getId());
+		resp.setState(u.getState().getState());
+		resp.setLocalTaxRate(u.getLocalTaxRate());
+		
 		
 		log.debug(LoggingConstants.EXIT_LOG, method);
 		return resp;
@@ -51,6 +55,8 @@ public class UserFactory {
 		u.setEmail(request.getEmail());
 		u.setUsername(request.getUsername());
 		u.setPassword(request.getPassword());
+		u.setState(StateEnum.valueOfLabel(request.getState()));
+		u.setLocalTaxRate(request.getLocalTaxRate());
 		
 		AuditInfo auditInfo = new AuditInfo();
 		auditInfo.setCreateDt(new Date(System.currentTimeMillis()));

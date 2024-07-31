@@ -11,5 +11,7 @@ public class UserPostRequest {
 	private String lastName;
 	private String password;
 	private String email;
+	private String state;
+	private Float localTaxRate;
 	
 }

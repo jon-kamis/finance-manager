@@ -13,6 +13,8 @@ CREATE TABLE IF NOT EXISTS FMDB.users (
     last_name character varying(255),
     email character varying(255),
     password character varying(255),
+    state character varying(255) NOT NULL,
+    local_tax_rate NUMERIC(10,4) NOT NULL default 0,
     create_dt timestamp without time zone,
     last_update_dt timestamp without time zone,
     last_update_by character varying(255)
@@ -91,6 +93,8 @@ CREATE TABLE IF NOT EXISTS FMDB.transactions (
     amount NUMERIC(10,2) NOT NULL,
     effective_dt timestamp without time zone,
     expiration_dt timestamp without time zone,
+    parent_table_name character varying(255),
+    parent_id integer,
     create_dt timestamp without time zone,
     last_update_dt timestamp without time zone,
     last_update_by character varying(255)
@@ -100,8 +104,37 @@ CREATE SEQUENCE IF NOT EXISTS FMDB.transaction_days_id_seq;
 CREATE TABLE IF NOT EXISTS FMDB.transaction_days (
     id integer unique NOT NULL default nextval('FMDB.transaction_days_id_seq'),
     transaction_id integer NOT NULL references FMDB.transactions(id),
-    day integer NOT NULL,
+    day integer,
+    weekday character varying(255),
+    start_date timestamp without time zone,
     create_dt timestamp without time zone,
     last_update_dt timestamp without time zone,
     last_update_by character varying(255)
+);
+
+CREATE SEQUENCE IF NOT EXISTS FMDB.incomes_id_seq;
+CREATE TABLE IF NOT EXISTS FMDB.incomes (
+    id integer unique NOT NULL default nextval('FMDB.incomes_id_seq'),
+    user_id integer NOT NULL references FMDB.users(id),
+    income_name character varying(255) NOT NULL,
+    withheld_tax NUMERIC(10,2) NOT NULL default 0,
+    tax_credits integer NOT NULL default 0,
+    frequency character varying(255) NOT NULL,
+    category character varying(255) NOT NULL,
+    filing_type character varying(255) NOT NULL,
+    amount NUMERIC(10,2) NOT NULL,
+    taxable boolean NOT NULL default 'true',
+    create_dt timestamp without time zone,
+    last_update_dt timestamp without time zone,
+    last_update_by character varying(255)
+);
+
+CREATE SEQUENCE IF NOT EXISTS FMDB.standard_withholdings_id_seq;
+CREATE TABLE IF NOT EXISTS FMDB.standard_withholdings (
+    id integer unique NOT NULL default nextval('FMDB.standard_withholdings_id_seq'),
+    filing_type character varying(255) NOT NULL,
+    min NUMERIC(10,2) NOT NULL,
+    max NUMERIC(10,2),
+    amount NUMERIC(10,2) NOT NULL,
+    percentage NUMERIC(10,2) NOT NULL
 );

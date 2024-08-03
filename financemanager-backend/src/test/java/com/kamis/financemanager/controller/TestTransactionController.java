@@ -2,9 +2,6 @@ package com.kamis.financemanager.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.AfterAll;
@@ -26,17 +23,12 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import com.kamis.financemanager.AppTestUtils;
 import com.kamis.financemanager.business.impl.BusinessTestUtils;
 import com.kamis.financemanager.database.domain.Role;
-import com.kamis.financemanager.database.domain.Transaction;
 import com.kamis.financemanager.database.domain.User;
 import com.kamis.financemanager.database.repository.RoleRepository;
 import com.kamis.financemanager.database.repository.TransactionRepository;
 import com.kamis.financemanager.database.repository.UserRepository;
-import com.kamis.financemanager.enums.PaymentFrequencyEnum;
-import com.kamis.financemanager.enums.TransactionCategoryEnum;
-import com.kamis.financemanager.enums.TransactionTypeEnum;
 import com.kamis.financemanager.exception.FinanceManagerException;
 import com.kamis.financemanager.rest.domain.transactions.PagedTransactionResponse;
-import com.kamis.financemanager.rest.domain.transactions.TransactionPostRequest;
 import com.kamis.financemanager.security.jwt.JwtService;
 import com.kamis.financemanager.security.jwt.JwtTestUtils;
 
@@ -76,10 +68,10 @@ public class TestTransactionController {
 	@BeforeEach
 	@Transactional
 	private void setup() {
-		
+
 		transactionRepository.deleteAll();
 		userRepository.deleteAll();
-		
+
 		RestAssured.baseURI = "http://localhost:" + port + "/api";
 
 		Optional<Role> adminRole = roleRepository.findByName("admin");
@@ -114,7 +106,7 @@ public class TestTransactionController {
 
 	@Autowired
 	private TransactionRepository transactionRepository;
-	
+
 	@Test
 	@WithMockUser(username = "admin", authorities = { "admin", "user" })
 	public void TestGetAllUserTransactions() {
@@ -132,22 +124,21 @@ public class TestTransactionController {
 		transactionRepository.save(BusinessTestUtils.mockBillTransaction(admin.get().getId(), "testBill"));
 		transactionRepository.save(BusinessTestUtils.mockIncomeTransaction(admin.get().getId(), "testPaycheck"));
 		transactionRepository.save(BusinessTestUtils.mockBenefitTransaction(admin.get().getId(), "testBenefit"));
-		
+
 		RequestSpecification requestSpec = RestAssured.given();
-		
+
 		requestSpec.header("Content-Type", "application/json");
 		requestSpec.headers(JwtTestUtils.getMockAuthHeader(jwtService.generateToken(adminUsername)));
 		requestSpec.queryParam("page", 1);
 		requestSpec.queryParam("pageSize", 2);
-		
-		Response response = requestSpec.get("/users/" + admin.get().getId() + "/transactions"); 
+
+		Response response = requestSpec.get("/users/" + admin.get().getId() + "/transactions");
 		assertEquals(200, response.statusCode());
-		
+
 		PagedTransactionResponse respBody = response.getBody().as(PagedTransactionResponse.class);
 		assertEquals(3, respBody.getCount());
 		assertEquals(2, respBody.getPageSize());
 		assertEquals(1, respBody.getPage());
-		
 
 	}
 

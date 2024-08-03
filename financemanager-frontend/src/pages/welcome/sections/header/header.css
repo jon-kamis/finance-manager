@@ -1,0 +1,43 @@
+header {
+    margin-top: 5rem;
+    height: cal(100vh -5rem);
+    display: grid;
+    place-items: center;
+    background: var(--color-white);
+    transition: var(--transition);
+}
+
+.header__icon-background {
+    background: var(--color-light);
+    padding: 3rem;
+    border-radius: 50%;
+}
+
+.header__icon-background-wrapper {
+    background: var(--color-primary);
+    padding: 0.2rem;
+    border-radius: 50%;
+}
+
+.header__icon {
+    width: 18rem;
+    height: 22rem;
+    border-radius: var(--border-radius-1);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+}
+
+.header__container p {
+    width: 35rem;
+    text-align: center;
+    margin: 0.6rem 0 2rem;
+}
+
+.header__container {
+    display: flex;
+    margin-top: 5rem;
+    margin-bottom: 5rem;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}

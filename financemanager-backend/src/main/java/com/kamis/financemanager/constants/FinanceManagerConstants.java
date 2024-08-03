@@ -35,4 +35,10 @@ public class FinanceManagerConstants {
 	
 	//Role constants
 	public static final String ADMIN_ROLE = "admin";
+	
+	//JWT Constants
+	public static final String JWT_CLAIM_USER_ID = "userId";
+	public static final String JWT_CLAIM_USER_DISPLAY_NAME = "displayName";
+	public static final String JWT_CLAIM_USER_ROLES = "userRoles";
+
 }

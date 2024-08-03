@@ -1,0 +1,90 @@
+nav {
+    width: 100vw;
+    height: 5rem;
+    display: grid;
+    place-items: center;
+    background: var(--color-primary);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9;
+    box-shadow: 0 1rem 1.5rem hsla(var(--primary-hue), 68%, 42%, 20%);
+    transition: var(--transition);
+}
+
+.nav__container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav__logo {
+    width: 5rem;
+    background: var(--color-light);
+    color: var(--color-black);
+    border-radius: var(--border-radius-3);
+    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    transition: var(--transition);
+    overflow: hidden;
+}
+
+.nav__menu {
+    display: flex;
+    gap: 3.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.nav__menu span {
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.nav__buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+.nav__profile {
+    position: absolute;
+    right: 3%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.nav__profile span {
+    color: white;
+}
+
+#profile__icon {
+    background: transparent;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+    margin: auto;
+}
+
+#theme__icon {
+    background: transparent;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+}
+
+#auth__icon {
+    background: transparent;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+}
+
+/* HIDE NAV MENU ON TABLES AND PHONES */
+@media screen and (max-width: 1024px) {
+    .nav__menu {
+        display: none;
+    }
+}

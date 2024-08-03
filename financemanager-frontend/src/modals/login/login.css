@@ -1,0 +1,84 @@
+.card.login__modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 200;
+    transform: translate(-50%, -50%);
+    background: #dedede;
+    text-align: center;
+    box-shadow: 0 3rem 3rem rgba(0, 0, 0, 0.2);
+    padding: 3rem;
+    width: 30%;
+    opacity: 0;
+    animation: animateModal 500ms ease-in forwards;
+}
+
+.login__wrapper {
+    justify-content: center;
+}
+
+.login__register span {
+    color: var(--color-primary);
+}
+
+.login__register span:hover {
+    cursor: pointer;
+}
+
+input {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+input.btn {
+    margin: auto;
+}
+
+input[type=text] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    border-radius: var(--border-radius-3);
+    box-sizing: border-box;
+    text-align: center;
+}
+
+input[type=password] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    border-radius: var(--border-radius-3);
+    box-sizing: border-box;
+    text-align: center;
+}
+
+@keyframes animateModal {
+    to {
+        opacity: 1;
+    }
+}
+
+.card.login__modal:hover {
+    background: #dedede;
+}
+
+.card.login__modal small {
+    margin-top: 0.6rem;
+    display: block;
+    width: 80%;
+    margin-inline: auto;
+}
+
+.login__wrapper {
+    margin: 3rem 0;
+}
+
+/* MEDIA QUERIES (phones) */
+@media screen and (max-width: 600px) {
+    .card.login__modal {
+        width: var(--container-width-md);
+        padding: 3rem 1.5rem;
+    }
+}

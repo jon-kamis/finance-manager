@@ -1,0 +1,31 @@
+footer {
+    background: var(--color-primary);
+    padding-top: 3rem;
+    bottom: 0;
+    box-shadow: 0 -1rem 1.5rem hsla(var(--primary-hue), 68%, 42%, 20%);
+    transition: var(--transition);
+}
+
+footer .nav__menu {
+    justify-content: center;
+    margin: 0 auto 4rem;
+}
+
+.footer_disclaimer {
+    color: white;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.footer_disclaimer small{
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.footer__copyright {
+    color: white;
+    text-align: center;
+    border-top: 2px solid rgba(0, 0, 0, 0.2);
+    padding: 1.5rem 0;
+}

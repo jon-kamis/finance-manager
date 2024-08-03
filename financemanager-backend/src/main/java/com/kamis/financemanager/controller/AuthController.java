@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.kamis.financemanager.business.UserBusiness;
 import com.kamis.financemanager.config.YAMLConfig;
 import com.kamis.financemanager.constants.LoggingConstants;
+import com.kamis.financemanager.database.domain.User;
+import com.kamis.financemanager.database.repository.UserRepository;
 import com.kamis.financemanager.exception.FinanceManagerException;
 import com.kamis.financemanager.rest.domain.auth.AuthRequest;
 import com.kamis.financemanager.rest.domain.auth.JwtResponse;

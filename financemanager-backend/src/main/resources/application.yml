@@ -54,6 +54,7 @@ transactionCreatedMsg: transaction crated successfully
 invalidTransactionSearchCategory: category is invalid
 invalidTransactionSearchFrequency: frequency is invalid
 invalidTransactionSearchType: type is invalid
+invalidTransactionSearchParentName: parentName is invalid
 
 # Auth messages
 invalidCredentialsErrorMsg: "invalid credentials"

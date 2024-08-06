@@ -21,5 +21,6 @@ public class IncomeResponse {
 	private String category;
 	private String frequency;
 	private Float amount;
+	private Float taxes;
 	private List<TransactionResponse> transactions;
 }

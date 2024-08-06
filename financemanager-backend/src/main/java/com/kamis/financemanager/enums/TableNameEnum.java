@@ -14,7 +14,7 @@ public enum TableNameEnum {
 
 	public static TableNameEnum valueOfLabel(String tableName) {
 	    for (TableNameEnum t : values()) {
-	        if (t.getName().equals(tableName)) {
+	        if (t.getName().equalsIgnoreCase(tableName)) {
 	            return t;
 	        }
 	    }

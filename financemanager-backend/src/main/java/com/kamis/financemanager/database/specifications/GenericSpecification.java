@@ -122,6 +122,7 @@ public class GenericSpecification<T> {
 		return spec;
 	}
 
+	@SuppressWarnings("unchecked")
 	private Predicate buildCriteria(SearchCriteria criteria, Root<T> root, CriteriaBuilder builder) {
 		switch (criteria.getOperation()) {
 		case EQUALS:
@@ -170,6 +171,11 @@ public class GenericSpecification<T> {
 		case IS_NOT_NULL:
 
 			return builder.isNotNull(root.<String>get(criteria.getKey()));
+		case IN:
+			return root.get(criteria.getKey()).in((List<Object>)criteria.getValue());
+		case NOT_IN:
+
+			return builder.not(root.get(criteria.getKey()).in((List<Object>)criteria.getValue()));
 		default:
 			return null;
 		}

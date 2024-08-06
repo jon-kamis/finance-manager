@@ -1,6 +1,7 @@
 package com.kamis.financemanager.validation.impl;
 
 import java.util.Arrays;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
 import com.kamis.financemanager.config.YAMLConfig;
 import com.kamis.financemanager.constants.FinanceManagerConstants;
 import com.kamis.financemanager.enums.PaymentFrequencyEnum;
+import com.kamis.financemanager.enums.TableNameEnum;
 import com.kamis.financemanager.enums.TransactionCategoryEnum;
 import com.kamis.financemanager.enums.TransactionTypeEnum;
 import com.kamis.financemanager.exception.FinanceManagerException;
@@ -76,11 +78,16 @@ public class TransactionValidationImpl implements TransactionValidation {
 	}
 
 	@Override
-	public void validateGetAllTransactionParameters(Integer userId, String category, String type,
+	public void validateGetAllTransactionParameters(Integer userId, String parentName, String category, String type,
 			String sortBy, String sortType, Integer page, Integer pageSize) throws FinanceManagerException {
 		
 		if (userId == null || userId < 1) {
 			throw new FinanceManagerException(myConfig.getUserIdRequiredError(), HttpStatus.BAD_REQUEST);
+		}
+		
+		if (parentName != null && !parentName.isBlank()
+				&& Stream.of(TableNameEnum.values()).noneMatch(c -> c.getName().equalsIgnoreCase(parentName))) {
+			throw new FinanceManagerException(myConfig.getInvalidTransactionSearchParentName(), HttpStatus.BAD_REQUEST);
 		}
 		
 		if (category != null && !category.isBlank()

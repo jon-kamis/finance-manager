@@ -14,7 +14,6 @@ export const UserProvider = ({children}) => {
     const [user, setUser] = useState(emptyUser);
 
     const setUserHandler = (user) => {
-        console.log(user)
         setUser(user);
     }
 

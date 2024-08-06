@@ -52,6 +52,7 @@ public class YAMLConfig {
 	private String invalidTransactionSearchCategory;
 	private String invalidTransactionSearchFrequency;
 	private String invalidTransactionSearchType;
+	private String invalidTransactionSearchParentName;
 
 	// Registration Messages
 	private String usernameExistsError;

@@ -1,0 +1,47 @@
+.table__container tr:last-child td:first-child {
+    border-bottom-left-radius: 0;
+}
+
+.table__container tr:last-child td:last-child {
+    border-bottom-right-radius: 0;
+}
+.search-criteria__container {
+    background: var(--color-primary);
+    color: var(--color-black);
+    border: 1px solid var(--color-black);
+    border-top: none;
+    border-bottom-left-radius: var(--border-radius-2);
+    border-bottom-right-radius: var(--border-radius-3);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.count__container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.paging__container {
+    font-size: 1.3rem;
+    color: var(--color-black);
+    border-radius: var(--border-radius-3);
+    padding: 0.6rem;
+    display: flex;
+    align-items: center;
+    transition: var(--transition)
+}
+
+.form__input {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.form__input-label {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    margin-right: 0.5rem;
+}

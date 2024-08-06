@@ -2,18 +2,20 @@ package com.kamis.financemanager.enums;
 
 public enum WeekdayEnum {
 
-	SUNDAY("sunday"),
-	MONDAY("monday"),
-	TUESDAY("tuesday"),
-	WEDNESDAY("wednesday"),
-	THURSDAY("thursday"),
-	FRIDAY("friday"),
-	SATURDAY("satruday");
+	MONDAY("monday", 1),
+	TUESDAY("tuesday", 2),
+	WEDNESDAY("wednesday", 3),
+	THURSDAY("thursday", 4),
+	FRIDAY("friday", 5),
+	SATURDAY("satruday", 6),
+	SUNDAY("sunday", 7);
 	
 	private String weekday;
+	private int dayIndex;
 	
-	WeekdayEnum(String weekday) {
+	WeekdayEnum(String weekday, int dayIndex) {
 		this.weekday = weekday;
+		this.dayIndex = dayIndex;
 	}
 
 	public static WeekdayEnum valueOfLabel(String weekday) {
@@ -23,6 +25,10 @@ public enum WeekdayEnum {
 	        }
 	    }
 	    return null;
+	}
+	
+	public int getDayIndex() {
+		return dayIndex;
 	}
 	
 	public String getWeekday() {

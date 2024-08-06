@@ -6,7 +6,7 @@ const WelcomeHeader = () => {
   return (
     <header id="header">
       <div className="container header__container">
-        <h1>Welcome to Finance Manager</h1>
+        <h2>Welcome to Finance Manager</h2>
         <p>An application built to help you manage your personal finances</p>
         <div className="header__icon">
           <div className="header__icon-background-wrapper">

@@ -2,6 +2,7 @@ package com.kamis.financemanager.factory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.kamis.financemanager.database.domain.Income;
 import com.kamis.financemanager.database.domain.Transaction;
@@ -11,6 +12,8 @@ import com.kamis.financemanager.enums.PaymentFrequencyEnum;
 import com.kamis.financemanager.enums.TransactionCategoryEnum;
 import com.kamis.financemanager.rest.domain.incomes.IncomePostRequest;
 import com.kamis.financemanager.rest.domain.incomes.IncomeResponse;
+import com.kamis.financemanager.rest.domain.incomes.IncomeSummaryItem;
+import com.kamis.financemanager.rest.domain.incomes.PagedIncomeResponse;
 import com.kamis.financemanager.rest.domain.transactions.TransactionResponse;
 import com.kamis.financemanager.util.FinanceManagerUtil;
 
@@ -63,18 +66,66 @@ public class IncomeFactory {
 			log.warn("expected audit info was not present for income with id: {}", income.getId());
 		}
 		
+		float tax = 0;
+		
 		//Add transactions
 		if (transactions != null && !transactions.isEmpty()) {
 			List<TransactionResponse> trs = new ArrayList<>();
 			
 			for (Transaction t : transactions) {
 				trs.add(TransactionFactory.buildTransactionResponse(t));
+				
+				if(t.getCategory() == TransactionCategoryEnum.TAXES) {
+					tax += t.getAmount() != null ? t.getAmount() : 0;
+				}
 			}
 			
 			response.setTransactions(trs);
 		}
-
+		
+		if (income.getFrequency() != null) {
+			response.setTaxes(tax );
+		} else {
+			response.setTaxes(tax);
+		}
+		
 		return response;
+	}
+
+	/**
+	 * Builds a paged income response
+	 * @param incomes The incomes to add to the response
+	 * @param page The page of incomes
+	 * @param pageSize The pageSize of incomes
+	 * @param count The total count of incomes matching the query
+	 * @return A PagedIncomeResponse built from the given parameters
+	 */
+	public static PagedIncomeResponse buildPagedIncomeResponse(List<Income> incomes, Map<Integer, List<Transaction>> transactionsMap, Integer page, Integer pageSize,
+			int count) {
+		PagedIncomeResponse response  = new PagedIncomeResponse();
+		List<IncomeResponse> items = new ArrayList<>();
+		
+		for(Income i : incomes) {
+			items.add(buildIncomeResponse(i, transactionsMap.get(i.getId())));
+		}
+		
+		response.setItems(items);
+		
+		response.setPage(page == null || page < 1 ? 1 : page);
+		response.setPageSize(pageSize == null || pageSize < 1 ? incomes.size() : pageSize);
+		response.setCount(count);
+		
+		return response;
+	}
+
+	public static IncomeSummaryItem buildIncomeSummaryItem(Transaction t, int occurrences) {
+		IncomeSummaryItem item = new IncomeSummaryItem();
+		item.setAmount(t.getAmount() * (float)occurrences);
+		item.setCategory(t.getCategory().getCategory());
+		item.setType(t.getType().getType());
+		item.setName(t.getName());
+		
+		return item;
 	}
 
 }

@@ -10,7 +10,6 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -18,16 +17,18 @@ import org.springframework.stereotype.Component;
 
 import com.kamis.financemanager.business.LoanBusiness;
 import com.kamis.financemanager.config.YAMLConfig;
-import com.kamis.financemanager.constants.FinanceManagerConstants;
 import com.kamis.financemanager.database.domain.Loan;
 import com.kamis.financemanager.database.domain.LoanPayment;
 import com.kamis.financemanager.database.repository.LoanPaymentRepository;
 import com.kamis.financemanager.database.repository.LoanRepository;
+import com.kamis.financemanager.database.specifications.GenericSpecification;
+import com.kamis.financemanager.database.specifications.QueryOperation;
 import com.kamis.financemanager.exception.FinanceManagerException;
 import com.kamis.financemanager.factory.LoanFactory;
 import com.kamis.financemanager.rest.domain.loans.LoanPostRequest;
 import com.kamis.financemanager.rest.domain.loans.LoanResponse;
 import com.kamis.financemanager.rest.domain.loans.PagedLoanResponse;
+import com.kamis.financemanager.util.FinanceManagerUtil;
 import com.kamis.financemanager.validation.LoanValidation;
 
 import lombok.extern.slf4j.Slf4j;
@@ -199,50 +200,32 @@ public class LoanBusinessImpl implements LoanBusiness {
 		
 		List<Loan> loans;
 		int count = 0;
-		boolean doCountQuery = true; //determines whether count needs queried separately
+		
+		//Build specification
+		GenericSpecification<Loan> spec = new GenericSpecification<>();
+		spec = spec.where("userId", userId, QueryOperation.EQUALS);
+		
+		if (name != null && !name.isBlank()) {
+			spec = spec.and("name", name, QueryOperation.CONTAINS);
+		}
 		
 		//Validate request
 		loanValidation.validateGetAllLoansRequest(userId, sortBy, sortType);
 				
 		//Create Paging and sorting
-		Pageable pageable = null;
-		Sort sort = null;
+		Sort sort = FinanceManagerUtil.buildSort(sortBy, sortType);
+		Pageable pageable = FinanceManagerUtil.buildPageable(page, pageSize, sort);
 
-		//Sorting direction
-		boolean sortAsc = sortType == null || sortType.isBlank() 
-				|| sortType.equalsIgnoreCase(FinanceManagerConstants.SORT_TYPE_ASC);
-		
-		
-		if (sortBy != null && !sortBy.isBlank()) {
-			
-			sort = sortAsc ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
-		}
-		
-		if (page == null || page < 1) {
-			page = 1;
-		}
-		
-		//Build pageable. Note users will enter pages starting at 1 but it is 0 indexed, so we subtract 1 when building
-		//pageable objects
-		if (pageSize != null && pageSize >= 1 && sort != null) {
-			pageable = PageRequest.of(page-1, pageSize, sort);
-		} else if (pageSize != null && pageSize >= 1){
-			pageable = PageRequest.of(page-1, pageSize);
-		} else if (sort != null) {
-			pageable = Pageable.unpaged(sort);
-			doCountQuery = false;
-		} else {
-			pageable = Pageable.unpaged();
-			doCountQuery = false;
-		}
-		
 		//Fetch loans
-		if (name != null && !name.isBlank()) {
-			loans = loanRepository.getLoansByUserIdAndName(userId, name, pageable);
-			count = doCountQuery ? loanRepository.countByUserIdAndName(userId, name) : loans.size();
+		if (pageable != null) {
+			loans = loanRepository.findAll(spec.build(), pageable).toList();
+			count = (int)loanRepository.count(spec.build());
+		} else if (sort != null) {
+			loans = loanRepository.findAll(spec.build(), sort);
+			count = loans.size();
 		} else {
-			loans = loanRepository.findByUserId(userId, pageable);
-			count = doCountQuery ? loanRepository.countByUserId(userId) : loans.size();
+			loans = loanRepository.findAll(spec.build());
+			count = loans.size();
 		}
 		
 		return LoanFactory.buildPagedLoanResponse(loans, page, pageSize, count);

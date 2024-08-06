@@ -7,12 +7,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import com.kamis.financemanager.database.domain.Transaction;
 
 @Repository
-public interface TransactionRepository extends JpaRepository<Transaction, Integer> {
+public interface TransactionRepository extends JpaRepository<Transaction, Integer>, JpaSpecificationExecutor<Transaction> {
 
 	/**
 	 * Returns a list of transactions with the given userId and name
@@ -23,40 +24,18 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
 	public List<Transaction> findByUserIdAndName(int userId, String name);
 	
 	/**
-	 * Find one transaction by specification
-	 * @param spec The search specification
-	 * @return A list of Transactions matching the specification
-	 */
-	public Optional<Transaction> findOne(Specification<Transaction> spec);
-	
-	/**
-	 * Find all by specification
-	 * @param spec The search specification
-	 * @return A list of Transactions matching the specification
-	 */
-	public List<Transaction> findAll(Specification<Transaction> spec);
-	
-	/**
-	 * Find all by specification and page results
-	 * @param spec The search specification
-	 * @param pageable Pagination details
-	 * @return A list of Transactions matching the specification
-	 */
-	public List<Transaction> findAll(Specification<Transaction> spec, Pageable pageable);
-	
-	/**
 	 * Find all by specification and page results
 	 * @param spec The search specification
 	 * @param sort Sorting details
 	 * @return A list of Transactions matching the specification
 	 */
 	public List<Transaction> findAll(Specification<Transaction> spec, Sort sort);
-	
+
 	/**
-	 * Counts results by specification
-	 * @param spec The search specification
-	 * @return The number of results matching the specification
+	 * Retrieves all transactions by a user's id
+	 * @param userId
+	 * @return A list of transactions belonging to the given userId
 	 */
-	public int count(Specification<Transaction> spec);
+	public List<Transaction> findByUserId(Integer userId);
 
 }

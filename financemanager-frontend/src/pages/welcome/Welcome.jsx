@@ -1,6 +1,4 @@
 import Navbar from '../../components/Navbar'
-import Footer from '../../components/Footer'
-import Theme from '../../modals/theme/Theme';
 import WelcomeHeader from './sections/header/WelcomeHeader';
 import Disclaimer from './sections/disclaimer/Disclaimer';
 import Features from './sections/features/Features';
@@ -14,8 +12,6 @@ const Welcome = () => {
       <About />
       <Features />
       <Disclaimer />
-      <Theme />
-      <Footer />
     </div>
   )
 }

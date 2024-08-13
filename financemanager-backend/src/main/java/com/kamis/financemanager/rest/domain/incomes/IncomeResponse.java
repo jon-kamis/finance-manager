@@ -15,6 +15,8 @@ public class IncomeResponse {
 	private String name;
 	private Float withheldTax;
 	private Integer taxCredits;
+	private Date effectiveDate;
+	private Date expirationDate;
 	private Date createDate;
 	private Date lastUpdateDate;
 	private String lastUpdateBy;

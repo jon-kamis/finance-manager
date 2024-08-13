@@ -1,9 +1,87 @@
-import BasicTable from "./BasicTable";
+import { styled, Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TableRow } from "@mui/material";
 import Input from "./form/Input";
-import { MdKeyboardArrowLeft, MdKeyboardDoubleArrowLeft, MdKeyboardArrowRight, MdKeyboardDoubleArrowRight } from "react-icons/md";
+import { MdKeyboardArrowLeft, MdKeyboardDoubleArrowLeft, MdKeyboardArrowRight, MdKeyboardDoubleArrowRight, MdStarPurple500 } from "react-icons/md";
 import './css/paged-table.css'
+import { useEffect, useState } from "react";
 
-const PagedTable = ({ className, headings, rows, searchParameters, setSearchParameters, count }) => {
+const PagedTable = ({ headings, rows, searchParameters, setSearchParameters, count }) => {
+    const [tableRows, setTableRows] = useState([]);
+    const minRows = 10;
+
+    const StyledTableCell = styled(TableCell)(() => ({
+        [`&.${tableCellClasses.head}`]: {
+            backgroundColor: "var(--color-primary)",
+            color: "white",
+        },
+        [`&.${tableCellClasses.head}:first-child`]: {
+            borderTopLeftRadius: "var(--border-radius-2)",
+        },
+        [`&.${tableCellClasses.head}:last-child`]: {
+            borderTopRightRadius: "var(--border-radius-2)"
+        },
+        [`&.${tableCellClasses.body}`]: {
+            color: "var(--color-black)",
+        },
+        [`&`]: {
+            borderBottom: "none",
+        }
+    }));
+
+    const StyledTableRow = styled(TableRow)(() => ({
+        '&:nth-of-type(odd)': {
+            backgroundColor: "var(--color-light)",
+        },
+        '&:nth-of-type(even)': {
+            backgroundColor: "var(--color-white)",
+        },
+        // hide last border
+        '&:last-child td, &:last-child th': {
+            border: 0,
+        },
+        '&:td': {
+            color: "var(--color-black)",
+        },
+        '&': {
+            borderLeft: "1px solid var(--color-primary)",
+            borderRight: "1px solid var(--color-primary)",
+            height: "3rem",
+        },
+        '&:last-child': {
+            borderBottom: "none"
+        }
+    }));
+
+    useEffect(() => {
+        var newRows = [];
+
+        if (!rows) {
+            return [];
+        }
+
+        for (let i = 0; i < searchParameters.pageSize; i++) {
+            if (i < rows.length) {
+                newRows.push(rows[i])
+            } else {
+                newRows.push(buildEmptyRow(`empty_${i}`))
+            }
+        }
+
+        setTableRows(newRows);
+    }, [rows]);
+
+    const buildEmptyRow = (id) => {
+        var emptyRow = {id: id, data: []};
+
+        if (!headings) {
+            return emptyRow;
+        }
+
+        for (let i = 0; i < headings.length; i++) {
+            emptyRow.data.push({value: <p></p>})
+        }
+
+        return emptyRow;
+    }
 
     const handleChange = () => (event) => {
         let value = event.target.value;
@@ -15,7 +93,7 @@ const PagedTable = ({ className, headings, rows, searchParameters, setSearchPara
     }
 
     const getItemCountText = () => {
-        if (count == 0) {
+        if (count === 0) {
             return <h5>0 of 0</h5>
         } else {
             var startIndex = ((searchParameters.page - 1) * searchParameters.pageSize) + 1;
@@ -26,7 +104,6 @@ const PagedTable = ({ className, headings, rows, searchParameters, setSearchPara
 
     const getPageMaximum = () => {
         var max = (count > 0 && searchParameters.pageSize > 0 ? Math.ceil(count / searchParameters.pageSize) : 1);
-        console.log("page maximum is " + max);
         return max;
     }
 
@@ -50,15 +127,59 @@ const PagedTable = ({ className, headings, rows, searchParameters, setSearchPara
         }
     }
 
+    const updateSort = (name) => {
+        if (searchParameters) {
+            let sortBy = searchParameters.sortBy;
+            let sortType = searchParameters.sortType;
+            console.log(`Setting sortBy to ${name}`)
+            console.log(searchParameters)
+            if (searchParameters.sortBy === name) {
+                sortType = searchParameters.sortType && searchParameters.sortType === "asc" ? "desc" : "asc";
+            } else {
+                sortBy = name;
+            }
+
+            setSearchParameters({
+                ...searchParameters,
+                sortBy: sortBy,
+                sortType: sortType
+            });
+        }
+    }
+
     return (
-        <div className="paged-table__container">
-            <BasicTable className={className} headings={headings} rows={rows} />
+        <div className="table__container">
+            <TableContainer>
+                <Table sx={{ minWidth: 650, borderColor: "blue", padding: "0" }} aria-label="Income Transactions List">
+                    <TableHead>
+                        <TableRow>
+                            {
+                                headings.map(h =>
+                                    <StyledTableCell align={h.align ? h.align : "center"}><span className ="link__span" onClick = {() => updateSort(`${h.id}`)}>{h.label}</span></StyledTableCell>
+                                )
+                            }
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {tableRows && tableRows.map((row) => (
+                            <StyledTableRow
+                                key={row.id}
+                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                            >
+                                {row.data && row.data.map(d =>
+                                    <StyledTableCell key={row.id + "_" + d.value} align={d.align ? d.align : "center"}>{d.value}</StyledTableCell>
+                                )}
+                            </StyledTableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
             <div className="search-criteria__container">
                 <div className="filter__container">
                     <Input
                         title={"Filter"}
                         type={"text"}
-                        className={"form-control"}
+                        className={"form__filter"}
                         name={"filter"}
                         value={searchParameters.filter}
                         onChange={handleChange("")}
@@ -70,10 +191,10 @@ const PagedTable = ({ className, headings, rows, searchParameters, setSearchPara
                     }
                 </div>
                 <div className="paging__container">
-                    <span onClick={() => setPageMinimum()}><MdKeyboardDoubleArrowLeft/></span>
+                    <span onClick={() => setPageMinimum()}><MdKeyboardDoubleArrowLeft /></span>
                     <span onClick={() => decPage()}><MdKeyboardArrowLeft /></span>
-                    <span onClick={() => incPage()}><MdKeyboardArrowRight/></span>
-                    <span onClick={() => setPageMaximum()}><MdKeyboardDoubleArrowRight/></span>
+                    <span onClick={() => incPage()}><MdKeyboardArrowRight /></span>
+                    <span onClick={() => setPageMaximum()}><MdKeyboardDoubleArrowRight /></span>
                 </div>
             </div>
         </div>

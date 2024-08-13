@@ -35,6 +35,8 @@ public class IncomeFactory {
 		income.setAuditInfo(FinanceManagerUtil.getAuditInfo());
 		income.setFrequency(PaymentFrequencyEnum.valueOfLabel(request.getFrequency()));
 		income.setFilingType(FilingTypeEnum.valueOfLabel(request.getFilingType()));
+		income.setEffectiveDate(request.getEffectiveDate());
+		income.setExpirationDate(request.getExpirationDate());
 
 		return income;
 	}
@@ -57,6 +59,8 @@ public class IncomeFactory {
 		response.setAmount(income.getAmount());
 		response.setCategory(income.getCategory().getCategory());
 		response.setFrequency(income.getFrequency().getFrequency());
+		response.setEffectiveDate(income.getEffectiveDate());
+		response.setExpirationDate(income.getExpirationDate());
 
 		if (income.getAuditInfo() != null) {
 			response.setCreateDate(income.getAuditInfo().getCreateDt());

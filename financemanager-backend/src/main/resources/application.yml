@@ -28,6 +28,7 @@ genericSuccessMessage: "operation successful"
 effectiveDateRequiredErrorMsg: effective date is required
 invalidFrequencyErrorMsg: frequency is missing or invalid
 jwtExpiredErrorMsg: Token is expired. Please log in again
+genericDeletedMsg: Resource deleted successfully
 
 #Registration Messages
 usernameExistsError: "username already exists"
@@ -43,6 +44,8 @@ filingTypeRequiredForTaxesError: Filing type is required to calculate taxes on a
 unableToBuildTransactionDaysErrorMsg: Unable to generate transaction days. For bi-weekly frequencies, 'startDate' must be valid. For Monthly or Semi-Monthly frequencies, daysOfMonth must be valid. For Weekly frequencies, 'dayOfWeek'' must be valid. 
 unableToFindStandardWithholdingErrorMsg: Unable to locate standard tax withholding information for income
 stateTaxCalcMissingErrorMsg: Tax is enabled for user's state but no calculation exists for it
+incomeExpiredMsg: Income expired successfully
+incomeCreateMsg: Income created successfully
 
 # Transaction Messages
 invalidDayOfMonthErrorMsg: invalid transaction dates

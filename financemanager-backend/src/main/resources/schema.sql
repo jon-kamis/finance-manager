@@ -124,6 +124,8 @@ CREATE TABLE IF NOT EXISTS FMDB.incomes (
     filing_type character varying(255) NOT NULL,
     amount NUMERIC(10,2) NOT NULL,
     taxable boolean NOT NULL default 'true',
+    effective_dt timestamp without time zone NOT NULL,
+    expiration_dt timestamp without time zone,
     create_dt timestamp without time zone,
     last_update_dt timestamp without time zone,
     last_update_by character varying(255)

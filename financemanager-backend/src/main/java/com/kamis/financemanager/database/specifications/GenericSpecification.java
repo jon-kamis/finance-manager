@@ -1,5 +1,6 @@
 package com.kamis.financemanager.database.specifications;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -82,22 +83,22 @@ public class GenericSpecification<T> {
 	 *         AND predicate
 	 */
 	public Specification<T> build() {
-		if (params.size() == 0) {
+		if (params.isEmpty()) {
 			return null;
 		}
 
-		List<Specification<T>> specs = params.stream().map(p -> buildSpecification(p)).collect(Collectors.toList());
+		List<Specification<T>> specs = params.stream().map(this::buildSpecification).toList();
 
 		Specification<T> spec = specs.get(0);
 
 		log.debug("building generic specification where");
-		log.debug("{} {} {}", params.get(0).getKey(), params.get(0).getOperation(),
-				params.get(0).getValue().toString());
+		log.debug("{} {} {}", params.getFirst().getKey(), params.getFirst().getOperation(),
+				params.getFirst().getValue().toString());
 
 		// Build and chain specification objects
 		for (int i = 1; i < params.size(); i++) {
-			log.debug("{} {} {}", params.get(i).getType(), params.get(i).getKey(), params.get(i).getOperation(),
-					params.get(i).getValue().toString());
+			log.debug("{} {} {} {}", params.get(i).getType(), params.get(i).getKey(), params.get(i).getOperation(),
+					params.get(i).getValue() != null ? params.get(i).getValue().toString() : "NULL");
 
 			spec = params.get(i).getType() == PredicateType.AND ? Specification.where(spec).and(specs.get(i))
 					: Specification.where(spec).or(specs.get(i));
@@ -107,78 +108,48 @@ public class GenericSpecification<T> {
 	}
 
 	public Specification<T> buildSpecification(SearchCriteria criteria) {
-		Specification<T> spec = new Specification<>() {
 
+        return new Specification<>() {
+
+			@Serial
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-				Predicate predicate = buildCriteria(criteria, root, criteriaBuilder);
-				return predicate;
+                return buildCriteria(criteria, root, criteriaBuilder);
 			}
 
 		};
-
-		return spec;
 	}
 
 	@SuppressWarnings("unchecked")
 	private Predicate buildCriteria(SearchCriteria criteria, Root<T> root, CriteriaBuilder builder) {
-		switch (criteria.getOperation()) {
-		case EQUALS:
-
-			return builder.equal(root.<String>get(criteria.getKey()), criteria.getValue().toString());
-		case EQUALS_OBJECT:
-
-			return builder.equal(root.<String>get(criteria.getKey()), criteria.getValue());
-		case CONTAINS:
-
-			return builder.like(root.<String>get(criteria.getKey()),
-					SpecConstants.LIKE_STR + criteria.getValue().toString() + SpecConstants.LIKE_STR);
-		case NOT_CONTAINS:
-
-			return builder.notLike(root.<String>get(criteria.getKey()),
-					SpecConstants.LIKE_STR + criteria.getValue().toString() + SpecConstants.LIKE_STR);
-		case ENDS_WITH:
-
-			return builder.like(root.<String>get(criteria.getKey()),
-					SpecConstants.LIKE_STR + criteria.getValue().toString());
-		case GREATER_THAN:
-
-			return builder.greaterThan(root.<String>get(criteria.getKey()), criteria.getValue().toString());
-		case GREATER_THAN_EQUAL_TO:
-
-			return builder.greaterThanOrEqualTo(root.<String>get(criteria.getKey()), criteria.getValue().toString());
-		case LESS_THAN:
-
-			return builder.lessThan(root.<String>get(criteria.getKey()), criteria.getValue().toString());
-		case LESS_THAN_EQUAL_TO:
-
-			return builder.lessThanOrEqualTo(root.<String>get(criteria.getKey()), criteria.getValue().toString());
-		case NOT_EQUALS:
-
-			return builder.notEqual(root.<String>get(criteria.getKey()), criteria.getValue().toString());
-		case NOT_EQUALS_OBJECT:
-
-			return builder.notEqual(root.<String>get(criteria.getKey()), criteria.getValue());
-		case STARTS_WITH:
-
-			return builder.like(root.<String>get(criteria.getKey()),
-					criteria.getValue().toString() + SpecConstants.LIKE_STR);
-		case IS_NULL:
-
-			return builder.isNull(root.<String>get(criteria.getKey()));
-		case IS_NOT_NULL:
-
-			return builder.isNotNull(root.<String>get(criteria.getKey()));
-		case IN:
-			return root.get(criteria.getKey()).in((List<Object>)criteria.getValue());
-		case NOT_IN:
-
-			return builder.not(root.get(criteria.getKey()).in((List<Object>)criteria.getValue()));
-		default:
-			return null;
-		}
+        return switch (criteria.getOperation()) {
+            case EQUALS -> builder.equal(root.<String>get(criteria.getKey()), criteria.getValue().toString());
+            case EQUALS_OBJECT -> builder.equal(root.<String>get(criteria.getKey()), criteria.getValue());
+            case CONTAINS -> builder.like(root.<String>get(criteria.getKey()),
+                    SpecConstants.LIKE_STR + criteria.getValue().toString() + SpecConstants.LIKE_STR);
+            case NOT_CONTAINS -> builder.notLike(root.<String>get(criteria.getKey()),
+                    SpecConstants.LIKE_STR + criteria.getValue().toString() + SpecConstants.LIKE_STR);
+            case ENDS_WITH -> builder.like(root.<String>get(criteria.getKey()),
+                    SpecConstants.LIKE_STR + criteria.getValue().toString());
+            case GREATER_THAN ->
+                    builder.greaterThan(root.<String>get(criteria.getKey()), criteria.getValue().toString());
+            case GREATER_THAN_EQUAL_TO ->
+                    builder.greaterThanOrEqualTo(root.<String>get(criteria.getKey()), criteria.getValue().toString());
+            case LESS_THAN -> builder.lessThan(root.<String>get(criteria.getKey()), criteria.getValue().toString());
+            case LESS_THAN_EQUAL_TO ->
+                    builder.lessThanOrEqualTo(root.<String>get(criteria.getKey()), criteria.getValue().toString());
+            case NOT_EQUALS -> builder.notEqual(root.<String>get(criteria.getKey()), criteria.getValue().toString());
+            case NOT_EQUALS_OBJECT -> builder.notEqual(root.<String>get(criteria.getKey()), criteria.getValue());
+            case STARTS_WITH -> builder.like(root.<String>get(criteria.getKey()),
+                    criteria.getValue().toString() + SpecConstants.LIKE_STR);
+            case IS_NULL -> builder.isNull(root.get(criteria.getKey()));
+            case IS_NOT_NULL -> builder.isNotNull(root.get(criteria.getKey()));
+            case IN -> root.get(criteria.getKey()).in((List<Object>) criteria.getValue());
+            case NOT_IN -> builder.not(root.get(criteria.getKey()).in((List<Object>) criteria.getValue()));
+            default -> null;
+        };
 
 	}
 

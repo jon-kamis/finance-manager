@@ -1,3 +1,53 @@
 .income__container {
     text-align: center;
 }
+
+.income__container h2 {
+    margin-bottom: 2rem;
+}
+
+.edit__card-icon {
+    background: green;
+}
+
+.edit__card-delete {
+    background: red;
+}
+
+.edit__cards {
+    display: grid;
+    width: fit-content;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+    margin-inline: auto;
+}
+
+.edit__card-icon {
+    font-size: 1.3rem;
+    color: white;
+    border-radius: var(--border-radius-3);
+    width: fit-content;
+    margin-inline: auto;
+    padding: 0.6rem;
+    display: flex;
+    align-items: center;
+    transition: var(--transition)
+}
+
+.edit__card-icon:hover {
+    color: var(--color-white);
+    cursor: pointer;
+}
+
+.add__icon {
+    font-size: 2rem;
+    color: var(--color-black);
+    width: fit-content;
+    margin-inline: auto;
+    display: flex;
+    align-items: center;
+}
+
+span.add__icon {
+    color: white;
+}

@@ -161,6 +161,7 @@ const IncomeHeader = () => {
           }
         </div>
         <small>Calculated values are based on position start and end dates</small>
+        <small>All values ares estimates and accuracy is not garunteed</small>
       </div>
     </header>
   )

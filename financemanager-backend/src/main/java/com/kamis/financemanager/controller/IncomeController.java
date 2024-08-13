@@ -6,18 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.kamis.financemanager.business.IncomeBusiness;
 import com.kamis.financemanager.config.YAMLConfig;
 import com.kamis.financemanager.exception.FinanceManagerException;
 import com.kamis.financemanager.rest.domain.error.ErrorResponse;
 import com.kamis.financemanager.rest.domain.generic.SuccessMessageResponse;
+import com.kamis.financemanager.rest.domain.incomes.IncomeExpirationRequest;
 import com.kamis.financemanager.rest.domain.incomes.IncomePostRequest;
 import com.kamis.financemanager.rest.domain.incomes.IncomeResponse;
 import com.kamis.financemanager.rest.domain.incomes.IncomeSummaryResponse;
@@ -57,7 +53,7 @@ public class IncomeController {
 		boolean success = incomeBusiness.createIncome(userId, request);
 
 		if (success) {
-			SuccessMessageResponse response = new SuccessMessageResponse(myConfig.getTransactionCreatedMsg());
+			SuccessMessageResponse response = new SuccessMessageResponse(myConfig.getIncomeCreatedMsg());
 			return new ResponseEntity<>(response, HttpStatus.CREATED);
 		} else {
 			throw new FinanceManagerException(myConfig.getGenericInternalServerErrorMessage(),
@@ -87,6 +83,60 @@ public class IncomeController {
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} else {
 			throw new FinanceManagerException(myConfig.getGenericNotFoundErrorMsg(), HttpStatus.NOT_FOUND);
+		}
+
+	}
+	
+	@Operation(summary = "expire income")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK", content = {
+			@Content(mediaType = "application/json", schema = @Schema(implementation = SuccessMessageResponse.class)) }),
+			@ApiResponse(responseCode = "401", description = "UNAUTHORIZED", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
+			@ApiResponse(responseCode = "403", description = "FORBIDDEN", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
+			@ApiResponse(responseCode = "404", description = "NOT_FOUND", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
+			@ApiResponse(responseCode = "500", description = "INTERNAL_SERVER_ERROR", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }) })
+	@PreAuthorize("@securityService.hasAccess(authentication, #userId)")
+	@PatchMapping("/users/{userId}/incomes/{id}")
+	public ResponseEntity<?> expireIncomeById(@PathVariable Integer userId, @PathVariable Integer id, @RequestBody IncomeExpirationRequest request) {
+
+		boolean success = incomeBusiness.expireIncomeById(userId, id, request);
+
+		if (success) {
+			SuccessMessageResponse response = new SuccessMessageResponse(myConfig.getIncomeExpiredMsg());
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		} else {
+			throw new FinanceManagerException(myConfig.getGenericInternalServerErrorMessage(),
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+	}
+
+	@Operation(summary = "delete income")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK", content = {
+			@Content(mediaType = "application/json", schema = @Schema(implementation = SuccessMessageResponse.class)) }),
+			@ApiResponse(responseCode = "401", description = "UNAUTHORIZED", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
+			@ApiResponse(responseCode = "403", description = "FORBIDDEN", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
+			@ApiResponse(responseCode = "404", description = "NOT_FOUND", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
+			@ApiResponse(responseCode = "500", description = "INTERNAL_SERVER_ERROR", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }) })
+	@PreAuthorize("@securityService.hasAccess(authentication, #userId)")
+	@DeleteMapping("/users/{userId}/incomes/{id}")
+	public ResponseEntity<?> deleteIncomeById(@PathVariable Integer userId, @PathVariable Integer id) {
+
+		boolean success = incomeBusiness.deleteIncomeById(userId, id);
+
+		if (success) {
+			SuccessMessageResponse response = new SuccessMessageResponse(myConfig.getGenericDeletedMsg());
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		} else {
+			throw new FinanceManagerException(myConfig.getGenericInternalServerErrorMessage(),
+					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 	}

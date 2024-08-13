@@ -11,6 +11,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
+import com.kamis.financemanager.rest.domain.incomes.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -39,12 +40,6 @@ import com.kamis.financemanager.enums.TransactionTypeEnum;
 import com.kamis.financemanager.exception.FinanceManagerException;
 import com.kamis.financemanager.factory.IncomeFactory;
 import com.kamis.financemanager.factory.TransactionFactory;
-import com.kamis.financemanager.rest.domain.incomes.IncomeMonth;
-import com.kamis.financemanager.rest.domain.incomes.IncomePostRequest;
-import com.kamis.financemanager.rest.domain.incomes.IncomeResponse;
-import com.kamis.financemanager.rest.domain.incomes.IncomeSummary;
-import com.kamis.financemanager.rest.domain.incomes.IncomeSummaryResponse;
-import com.kamis.financemanager.rest.domain.incomes.PagedIncomeResponse;
 import com.kamis.financemanager.util.FinanceManagerUtil;
 import com.kamis.financemanager.validation.IncomeValidation;
 
@@ -302,12 +297,13 @@ public class IncomeBusinessImpl implements IncomeBusiness {
 		/* Build query specifications */
 
 		GenericSpecification<Income> spec = new GenericSpecification<>();
+		
 		spec = spec.where("userId", userId, QueryOperation.EQUALS);
-
+		
 		if (name != null && !name.isBlank()) {
 			spec = spec.and("name", name, QueryOperation.CONTAINS);
 		}
-
+		
 		/* Build Sorting options */
 
 		String sortByCleaned = FinanceManagerConstants.LOAN_VALID_SORT_TYPES.stream()
@@ -348,9 +344,8 @@ public class IncomeBusinessImpl implements IncomeBusiness {
 		IncomeSummary monthSummary = new IncomeSummary();
 		IncomeSummary annualSummary = new IncomeSummary();
 		Map<Integer, IncomeMonth> earningsMap = new HashMap<>();
-		List<IncomeMonth> earningsForcast = new ArrayList<>();
 
-		if (date == null) {
+        if (date == null) {
 			date = new Date();
 		}
 
@@ -367,7 +362,7 @@ public class IncomeBusinessImpl implements IncomeBusiness {
 		/* Fetch all transactions for the found incomes */
 		GenericSpecification<Transaction> tSpec = new GenericSpecification<>();
 		tSpec = tSpec.where("userId", userId, QueryOperation.EQUALS).and("parentId",
-				incomes.stream().map(i -> i.getId()).toList(), QueryOperation.IN);
+				incomes.stream().map(Income::getId).toList(), QueryOperation.IN);
 
 		List<Transaction> allTransactions = transactionRepository.findAll(tSpec.build());
 		List<Date> yearDates;
@@ -415,16 +410,16 @@ public class IncomeBusinessImpl implements IncomeBusiness {
 				yearIncome += (float) yearDates.size() * t.getAmount();
 			}
 
-			if (monthDates.size() > 0) {
+			if (!monthDates.isEmpty()) {
 				monthSummary.items.add(IncomeFactory.buildIncomeSummaryItem(t, monthDates.size()));
 			}
 			
-			if (yearDates.size() > 0) {
+			if (!yearDates.isEmpty()) {
 				annualSummary.items.add(IncomeFactory.buildIncomeSummaryItem(t, yearDates.size()));
 			}
 		}
 
-		earningsForcast.addAll(earningsMap.values());
+        List<IncomeMonth> earningsForecast = new ArrayList<>(earningsMap.values());
 
 		monthSummary.setTotalIncome(monthIncome);
 		monthSummary.setTotalTax(monthTax);
@@ -436,8 +431,65 @@ public class IncomeBusinessImpl implements IncomeBusiness {
 		response.setMonth(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().getMonth()
 				.getDisplayName(TextStyle.FULL, Locale.US));
 		response.setUserId(userId);
-		response.setForecastedEarnings(earningsForcast);
+		response.setForecastedEarnings(earningsForecast);
 
 		return response;
+	}
+
+	@Override
+	public boolean expireIncomeById(Integer userId, Integer id, IncomeExpirationRequest request) throws FinanceManagerException {
+
+		GenericSpecification<Income> incomeSpec = new GenericSpecification<>();
+		GenericSpecification<Transaction> transactionSpec = new GenericSpecification<>();
+
+		incomeSpec = incomeSpec.where("userId", userId, QueryOperation.EQUALS)
+				.and("id", id, QueryOperation.EQUALS);
+
+		transactionSpec = transactionSpec.where("parentTableName", TableNameEnum.INCOMES, QueryOperation.EQUALS)
+				.and("parentId", id, QueryOperation.EQUALS)
+				.and("expirationDate", null, QueryOperation.IS_NULL);
+
+		Optional<Income> i = incomeRepository.findOne(incomeSpec.build());
+		List<Transaction> transactions = transactionRepository.findAll(transactionSpec.build());
+
+		if (i.isEmpty()) {
+			throw new FinanceManagerException(myConfig.getGenericNotFoundMessage(), HttpStatus.NOT_FOUND);
+		}
+
+		Income income = i.get();
+		income.setExpirationDate(request.getExpirationDate());
+		incomeRepository.save(income);
+
+		for(Transaction t : transactions) {
+			t.setExpirationDate(request.getExpirationDate());
+		}
+
+		transactionRepository.saveAll(transactions);
+
+		return true;
+	}
+
+	@Override
+	public boolean deleteIncomeById(Integer userId, Integer id) throws FinanceManagerException {
+		GenericSpecification<Income> incomeSpec = new GenericSpecification<>();
+		GenericSpecification<Transaction> transactionSpec = new GenericSpecification<>();
+
+		incomeSpec = incomeSpec.where("userId", userId, QueryOperation.EQUALS)
+				.and("id", id, QueryOperation.EQUALS);
+
+		transactionSpec = transactionSpec.where("parentTableName", TableNameEnum.INCOMES, QueryOperation.EQUALS)
+				.and("parentId", id, QueryOperation.EQUALS);
+
+		Optional<Income> i = incomeRepository.findOne(incomeSpec.build());
+		List<Transaction> transactions = transactionRepository.findAll(transactionSpec.build());
+
+		if (i.isEmpty()) {
+			throw new FinanceManagerException(myConfig.getGenericNotFoundMessage(), HttpStatus.NOT_FOUND);
+		}
+
+		incomeRepository.delete(i.get());
+		transactionRepository.deleteAll(transactions);
+
+		return true;
 	}
 }

@@ -1,19 +1,41 @@
 const data = [
     {
-        id: 1,
-        value: "Name"
+        id: "name",
+        numeric: false,
+        disablePadding: true,
+        label: "Name",
+        align: "left"
     },
     {
-        id: 2,
-        value: "Type"
+        id: "type",
+        numeric: false,
+        disablePadding: true,
+        label: "Type",
     },
     {
-        id: 3,
-        value: "Frequency"
+        id: "effective",
+        numeric: false,
+        disablePadding: true,
+        label: "Effective",
     },
     {
-        id: 4,
-        value: "Amount"
+        id: "expires",
+        numeric: false,
+        disablePadding: true,
+        label: "Expires",
+    },
+    {
+        id: "frequency",
+        numeric: false,
+        disablePadding: true,
+        label: "Frequency",
+    },
+    {
+        id: "amount",
+        numeric: false,
+        disablePadding: true,
+        label: "Amount",
+        align: "right",
     }
 ];
 

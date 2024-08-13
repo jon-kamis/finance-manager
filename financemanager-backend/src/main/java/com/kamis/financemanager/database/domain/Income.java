@@ -1,5 +1,7 @@
 package com.kamis.financemanager.database.domain;
 
+import java.util.Date;
+
 import com.kamis.financemanager.enums.FilingTypeEnum;
 import com.kamis.financemanager.enums.PaymentFrequencyEnum;
 import com.kamis.financemanager.enums.TransactionCategoryEnum;
@@ -62,6 +64,12 @@ public class Income {
 	
 	@Column(name = "filing_type")
 	private FilingTypeEnum filingType;
+	
+	@Column(name = "effective_dt")
+	private Date effectiveDate;
+	
+	@Column(name = "expiration_dt")
+	private Date expirationDate;
 	
 	@Embedded
 	private AuditInfo auditInfo;

@@ -3,6 +3,7 @@ import Navbar from '../../components/Navbar'
 import IncomeHeader from './sections/header/IncomeHeader'
 import IncomeList from './sections/IncomeList/IncomeList'
 import IncomeTransactions from './sections/IncomeTransactions/IncomeTransactions'
+import CreateIncome from '../../modals/incomes/CreateIncome'
 
 const Income = () => {
   return (
@@ -11,6 +12,7 @@ const Income = () => {
       <IncomeHeader/>
       <IncomeList/>
       <IncomeTransactions/>
+      <CreateIncome/>
     </div>
   )
 }

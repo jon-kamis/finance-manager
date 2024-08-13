@@ -1,3 +1,7 @@
 .income__container-transactionsList {
     text-align: center;
 }
+
+.income__container-transactionsList h2 {
+    margin-bottom: 2rem;
+}

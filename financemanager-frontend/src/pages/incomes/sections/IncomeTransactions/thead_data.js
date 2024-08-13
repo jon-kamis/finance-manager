@@ -1,19 +1,29 @@
 const data = [
     {
-        id: 1,
-        value: "Name"
+        id: "name",
+        numeric: false,
+        disablePadding: true,
+        label: "Name",
+        align: "left"
     },
     {
-        id: 2,
-        value: "Type"
+        id: "type",
+        numeric: false,
+        disablePadding: true,
+        label: "Type",
     },
     {
-        id: 3,
-        value: "Frequency"
+        id: "frequency",
+        numeric: false,
+        disablePadding: true,
+        label: "Frequency",
     },
     {
-        id: 4,
-        value: "Amount"
+        id: "amount",
+        numeric: true,
+        disablePadding: true,
+        label: "Amount",
+        align: "right",
     }
 ];
 

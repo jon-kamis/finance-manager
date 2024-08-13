@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.kamis.financemanager.database.domain.Income;
 import com.kamis.financemanager.exception.FinanceManagerException;
+import com.kamis.financemanager.rest.domain.incomes.IncomeExpirationRequest;
 import com.kamis.financemanager.rest.domain.incomes.IncomePostRequest;
 import com.kamis.financemanager.rest.domain.incomes.IncomeResponse;
 import com.kamis.financemanager.rest.domain.incomes.IncomeSummaryResponse;
@@ -76,10 +77,28 @@ public interface IncomeBusiness {
 	/**
 	 * Returns an income summary of a user's income
 	 * @param userId The user to build the summary for
-	 * @param date A date containing the yearh and month desired for the report. Null dates result in using the current date
+	 * @param date A date containing the year and month desired for the report. Null dates result in using the current date
 	 * @return A summary of a user's income for a year
 	 * @throws FinanceManagerException
 	 */
 	public IncomeSummaryResponse getUserIncomeSummary(Integer userId, Date date) throws FinanceManagerException;
 
+	/**
+	 * Attempts to expire an income by its id. Also expires linked transactions
+	 * @param userId the id of the user who owns this income. used to verify ownership
+	 * @param id The id of the income to expire
+	 * @param request The request containing the new expiration date
+	 * @return true if the income was expired successfully
+	 * @throws FinanceManagerException
+	 */
+	public boolean expireIncomeById(Integer userId, Integer id, IncomeExpirationRequest request) throws FinanceManagerException;
+
+	/**
+	 * Attempts to delete an income by its id. Also deletes linked transactions
+	 * @param userId The id of the user who owns this income. used to verify ownership
+	 * @param id The id of the income to delete
+	 * @return true if the income was deleted successfully
+	 * @throws FinanceManagerException
+	 */
+	public boolean deleteIncomeById(Integer userId, Integer id) throws FinanceManagerException;
 }

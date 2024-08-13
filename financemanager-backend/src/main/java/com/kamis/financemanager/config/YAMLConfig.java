@@ -28,6 +28,7 @@ public class YAMLConfig {
 	private String effectiveDateRequiredErrorMsg;
 	private String invalidFrequencyErrorMsg;
 	private String jwtExpiredErrorMsg;
+	private String genericDeletedMsg;
 
 	// Loan messages
 	private String invalidLoanPaymentFrequencyError;
@@ -37,6 +38,8 @@ public class YAMLConfig {
 	private String filingTypeRequiredForTaxesError;
 	private String unableToFindStandardWithholdingErrorMsg;
 	private String stateTaxCalcMissingErrorMsg;
+	private String incomeExpiredMsg;
+	private String incomeCreatedMsg;
 	
 	//Tax Rates
 	private Float paIncomeTaxRate;

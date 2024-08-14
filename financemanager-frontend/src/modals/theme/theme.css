@@ -4,7 +4,6 @@
     left: 50%;
     z-index: 200;
     transform: translate(-50%, -50%);
-    background: #dedede;
     text-align: center;
     box-shadow: 0 3rem 3rem rgba(0, 0, 0, 0.2);
     padding: 3rem;
@@ -83,6 +82,7 @@
     width: 7rem;
     height: 2.5rem;
     background: white;
+    border: 2px solid var(--color-primary);
     border-radius: var(--border-radius-3);
     cursor: pointer;
 }

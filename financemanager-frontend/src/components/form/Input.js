@@ -3,11 +3,9 @@ import { forwardRef } from "react";
 const Input = forwardRef((props, ref) => {
     return (
         <div className="form__input">
-            <div className="form__input-label">
-                <label htmlFor={props.name}>
-                    <h5>{props.title}</h5>
+                <label htmlFor={props.name} className="form__input-label">
+                    {props.title}
                 </label>
-            </div>
             <div className="form__input-field">
                 <input
                     type={props.type}

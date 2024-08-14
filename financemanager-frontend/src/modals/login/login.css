@@ -18,7 +18,7 @@
 }
 
 .login__register span {
-    color: var(--color-primary);
+    color: #9999ff;
 }
 
 .login__register span:hover {

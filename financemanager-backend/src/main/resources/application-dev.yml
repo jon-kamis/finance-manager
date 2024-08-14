@@ -1,15 +1,15 @@
 spring:
   config:
     activate:
-      on-profile: prod
+      on-profile: dev
   datasource:
     driver-class-name: org.postgresql.Driver
     url: "jdbc:postgresql://192.168.1.87:5432/financemanager"
     username: postgres
     password: postgres
   jpa:
-    show-sql: false
+    show-sql: true
 
 logging:
-  level:
-    com.kamis: INFO
+  level: 
+    com.kamis: DEBUG

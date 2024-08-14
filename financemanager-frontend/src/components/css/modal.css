@@ -11,6 +11,77 @@
     animation: animateBackdrop 500ms ease-in forwards;
 }
 
+.card {
+    --color-primary: hsl(var(--primary-hue), 89%, 41%);
+}
+
+.card .form__input {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1rem;
+    font-size: 1.3rem;
+    text-align: left;
+}
+
+.card .form__input input {
+   font-size: 1.3rem;
+   text-align: center;
+}
+
+.card .form__select {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1rem;
+    font-size: 1.3rem;
+    text-align: left;
+}
+
+.card .form__select select {
+    font-size: 1.3rem;
+    text-align: center;
+}
+
+.card.modal__card {
+    color: var(--color-black);
+    background: var(--color-white);
+    border: solid 1px var(--color-dark);
+}
+
+.card.color-1 {
+    --primary-hue: 270;
+}
+
+.card.color-2 {
+    --primary-hue: 110;
+}
+
+.card.color-3 {
+    --primary-hue: 240;
+}
+
+.card.color-4 {
+    --primary-hue: 325;
+}
+
+.card.color-5 {
+    --primary-hue: 0;
+}
+
+.card.color-6 {
+    --primary-hue: 55;
+}
+
+.card.bg-dark {
+    --black-lightness: 96%;
+    --dark-lightness: 60%;
+    --light-lightness: 12%;
+    --white-lightness: 6%;
+    --color-white: hsl(0, 5%, var(--white-lightness));
+    --color-light: hsl(var(--primary-hue), 5%, var(--light-lightness));
+    --color-black: hsl(var(--primary-hue), 5%, var(--black-lightness));
+    --color-dark: hsl(var(--primary-hue), 5%, var(--dark-lightness));
+}
+
 @keyframes animateBackdrop {
     to {
         opacity: 1;

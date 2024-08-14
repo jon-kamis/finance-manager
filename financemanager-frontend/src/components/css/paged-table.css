@@ -37,17 +37,17 @@
     transition: var(--transition)
 }
 
-.form__input {
+.filter__container .form__input {
     display: flex;
     flex-direction: row;
     justify-content: center;
 }
 
-.form__input-label h5 {
+.filter__container .form__input-label h5 {
     color: white;
 }
 
-.form__input-label {
+.filter__container .form__input-label {
     display: flex;
     color: white;
     flex-direction: column;

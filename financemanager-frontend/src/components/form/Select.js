@@ -11,12 +11,12 @@ const Select = ( props ) => {
     return (
 
 
-        <div className="mb-3">
-            <label htmlFor={props.name} className="form-label">
+        <div className="form__select">
+            <label htmlFor={props.name} className="form__select-label">
                 {props.title}
             </label>
             <select
-                className="form-select"
+                className="form__select-input"
                 name={props.name}
                 id={props.name}
                 value={props.value}

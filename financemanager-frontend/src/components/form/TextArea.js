@@ -1,11 +1,11 @@
 const TextArea = (props) => {
     return (
-        <div className="mb-3">
-            <label htmlFor={props.name} className="form-label">
+        <div className="form__textarea">
+            <label htmlFor={props.name} className="form__textarea-label">
                 {props.title}
             </label>
             <textarea
-                className="form-control"
+                className="form__textarea-input"
                 id={props.name}
                 name={props.name}
                 value={props.value}

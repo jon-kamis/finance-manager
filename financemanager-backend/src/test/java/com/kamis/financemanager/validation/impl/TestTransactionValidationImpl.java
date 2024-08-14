@@ -40,6 +40,7 @@ public class TestTransactionValidationImpl {
 		Mockito.lenient().when(myConfig.getInvalidCategoryErrorMsg()).thenReturn(INV_CAT_ERR);
 		Mockito.lenient().when(myConfig.getInvalidFrequencyErrorMsg()).thenReturn(INV_FREQ_ERR);
 		Mockito.lenient().when(myConfig.getInvalidTransactionTypeErrorMsg()).thenReturn(INV_TYPE_ERR);
+		Mockito.lenient().when(myConfig.getInvalidTransactionSearchParentName()).thenReturn(INV_PARENT_TABLE_NAME_ERR);
 
 		Mockito.lenient().when(myConfig.getInvalidTransactionSearchCategory()).thenReturn(INV_SEARCH_CAT_ERR);
 		Mockito.lenient().when(myConfig.getInvalidTransactionSearchType()).thenReturn(INV_SEARCH_TYPE_ERR);
@@ -49,6 +50,7 @@ public class TestTransactionValidationImpl {
 
 	}
 
+	private static final String INV_PARENT_TABLE_NAME_ERR  = "invalid parent type";
 	private static final String USER_REQ_ERR_MSG = "user required";
 	private static final String INVALID_AMNT_ERR = "invalid amount";
 	private static final String AT_LEAST_ONE_DATE_ERR = "at least one date is required";
@@ -377,9 +379,9 @@ public class TestTransactionValidationImpl {
 	@Test
 	public void testValidateGetAllTransactionParameters_Valid() {
 
-		transactionValidation.validateGetAllTransactionParameters(1, null, null, null, null, null, null);
-		transactionValidation.validateGetAllTransactionParameters(1, "", "", "", "", null, null);
-		transactionValidation.validateGetAllTransactionParameters(1, "bill", "income", "name", "asc", 1, 1);
+		transactionValidation.validateGetAllTransactionParameters(1, null, null, null, null, null, null, null);
+		transactionValidation.validateGetAllTransactionParameters(1, "", "", "", "", "", null, null);
+		transactionValidation.validateGetAllTransactionParameters(1, "incomes", "bill", "income", "name", "asc", 1, 1);
 
 	}
 
@@ -388,7 +390,7 @@ public class TestTransactionValidationImpl {
 		FinanceManagerException e;
 
 		e = assertThrows(FinanceManagerException.class, () -> {
-			transactionValidation.validateGetAllTransactionParameters(null, null, null, null, null, null, null);
+			transactionValidation.validateGetAllTransactionParameters(null, null, null, null, null, null, null, null);
 		});
 
 		assert (e.getMessage().equals(myConfig.getUserIdRequiredError()));
@@ -400,10 +402,22 @@ public class TestTransactionValidationImpl {
 		FinanceManagerException e;
 
 		e = assertThrows(FinanceManagerException.class, () -> {
-			transactionValidation.validateGetAllTransactionParameters(0, null, null, null, null, null, null);
+			transactionValidation.validateGetAllTransactionParameters(0, null, null, null, null, null, null, null);
 		});
 
 		assert (e.getMessage().equals(myConfig.getUserIdRequiredError()));
+		assertEquals(400, e.getStatusCode().value());
+	}
+	
+	@Test
+	public void testValidateGetAllTransactionParameters_InvalidParentTableName() {
+		FinanceManagerException e;
+
+		e = assertThrows(FinanceManagerException.class, () -> {
+			transactionValidation.validateGetAllTransactionParameters(1, "iaminvalid", null, null, null, null, null, null);
+		});
+
+		assert (e.getMessage().equals(myConfig.getInvalidTransactionSearchParentName()));
 		assertEquals(400, e.getStatusCode().value());
 	}
 
@@ -412,7 +426,7 @@ public class TestTransactionValidationImpl {
 		FinanceManagerException e;
 
 		e = assertThrows(FinanceManagerException.class, () -> {
-			transactionValidation.validateGetAllTransactionParameters(1, "iaminvalid", null, null, null, null, null);
+			transactionValidation.validateGetAllTransactionParameters(1, null, "iaminvalid", null, null, null, null, null);
 		});
 
 		assert (e.getMessage().equals(myConfig.getInvalidTransactionSearchCategory()));
@@ -424,7 +438,7 @@ public class TestTransactionValidationImpl {
 		FinanceManagerException e;
 
 		e = assertThrows(FinanceManagerException.class, () -> {
-			transactionValidation.validateGetAllTransactionParameters(1, null, "iaminvalid", null, null, null, null);
+			transactionValidation.validateGetAllTransactionParameters(1, null, null, "iaminvalid", null, null, null, null);
 		});
 
 		assert (e.getMessage().equals(myConfig.getInvalidTransactionSearchType()));
@@ -436,7 +450,7 @@ public class TestTransactionValidationImpl {
 		FinanceManagerException e;
 
 		e = assertThrows(FinanceManagerException.class, () -> {
-			transactionValidation.validateGetAllTransactionParameters(1, null, null, "iaminvalid", null, null, null);
+			transactionValidation.validateGetAllTransactionParameters(1, null, null, null, "iaminvalid", null, null, null);
 		});
 
 		assert (e.getMessage().equals(myConfig.getInvalidSortByErrorMsg()));
@@ -448,7 +462,7 @@ public class TestTransactionValidationImpl {
 		FinanceManagerException e;
 
 		e = assertThrows(FinanceManagerException.class, () -> {
-			transactionValidation.validateGetAllTransactionParameters(1, null, null, null, "iaminvalid", null, null);
+			transactionValidation.validateGetAllTransactionParameters(1, null, null, null, null, "iaminvalid", null, null);
 		});
 
 		assert (e.getMessage().equals(myConfig.getInvalidSortTypeErrorMsg()));
@@ -460,21 +474,21 @@ public class TestTransactionValidationImpl {
 		FinanceManagerException e;
 
 		e = assertThrows(FinanceManagerException.class, () -> {
-			transactionValidation.validateGetAllTransactionParameters(1, null, null, null, null, 0, null);
+			transactionValidation.validateGetAllTransactionParameters(1, null, null, null, null, null, 0, null);
 		});
 
 		assert (e.getMessage().equals(myConfig.getInvalidPagingParameterErrorMsg()));
 		assertEquals(400, e.getStatusCode().value());
 
 		e = assertThrows(FinanceManagerException.class, () -> {
-			transactionValidation.validateGetAllTransactionParameters(1, null, null, null, null, 0, 0);
+			transactionValidation.validateGetAllTransactionParameters(1, null, null, null, null, null, 0, 0);
 		});
 
 		assert (e.getMessage().equals(myConfig.getInvalidPagingParameterErrorMsg()));
 		assertEquals(400, e.getStatusCode().value());
 
 		e = assertThrows(FinanceManagerException.class, () -> {
-			transactionValidation.validateGetAllTransactionParameters(1, null, null, null, null, null, 0);
+			transactionValidation.validateGetAllTransactionParameters(1, null, null, null, null, null, null, 0);
 		});
 
 		assert (e.getMessage().equals(myConfig.getInvalidPagingParameterErrorMsg()));

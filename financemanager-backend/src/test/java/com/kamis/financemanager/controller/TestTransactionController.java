@@ -109,6 +109,7 @@ public class TestTransactionController {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = { "admin", "user" })
+	@Transactional
 	public void TestGetAllUserTransactions() {
 
 		String adminUsername = "admin";

@@ -56,7 +56,12 @@ public class UserFactory {
 		u.setUsername(request.getUsername());
 		u.setPassword(request.getPassword());
 		u.setState(StateEnum.valueOfLabel(request.getState()));
-		u.setLocalTaxRate(request.getLocalTaxRate());
+		
+		if (request.getLocalTaxRate() == null) {
+			u.setLocalTaxRate((float)0);
+		} else {
+			u.setLocalTaxRate(request.getLocalTaxRate());
+		}
 		
 		AuditInfo auditInfo = new AuditInfo();
 		auditInfo.setCreateDt(new Date(System.currentTimeMillis()));

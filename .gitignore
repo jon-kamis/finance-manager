@@ -1,5 +1,8 @@
 ### Eclipse ###
 .metadata/
 
+### IntelliJ ###
+.idea/
+
 ### Postgres ###
 **/postgres-data/

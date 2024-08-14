@@ -16,6 +16,7 @@ public interface TransactionValidation {
 	/**
 	 * Validates a request to get all Transactions for a given user
 	 * @param userId The user to fetch transactions for
+	 * @param parentName The name of the parent table
 	 * @param category Filter by category
 	 * @param type Filter by type
 	 * @param sortBy Sort results
@@ -24,6 +25,6 @@ public interface TransactionValidation {
 	 * @param pageSize pageSize of results to return
 	 * @throws FinanceManagerException
 	 */
-	public void validateGetAllTransactionParameters(Integer userId, String category, String type,
+	public void validateGetAllTransactionParameters(Integer userId, String parentName, String category, String type,
 			String sortBy, String sortType, Integer page, Integer pageSize) throws FinanceManagerException;
 }

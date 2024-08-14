@@ -147,14 +147,14 @@ public class TransactionFactory {
 		transaction.setAuditInfo(FinanceManagerUtil.getAuditInfo());
 
 		switch (frequency) {
-		case BIWEEKLY:
+			case MONTHLY:
+			case BIWEEKLY:
 			
 			if (request.getStartDate() != null) {
 				transaction.addTransactionDay(buildTransactionDayBiweekly(request.getStartDate()));
 			}
 			
 			break;
-		case MONTHLY:
 		case SEMI_MONTHLY:
 			
 			if (request.getDaysOfMonth() != null && !request.getDaysOfMonth().isEmpty()) {

@@ -49,7 +49,7 @@ public class LoanFactory {
 		response.setItems(buildLoanResponseList(loans));
 		
 		response.setCount(count);
-		response.setPage(page);
+		response.setPage(page != null && page > 0 ? page : 1);
 		response.setPageSize(pageSize != null && pageSize > 0 ? pageSize : count);
 		
 		return response;

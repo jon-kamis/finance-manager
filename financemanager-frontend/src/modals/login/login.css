@@ -4,7 +4,7 @@
     left: 50%;
     z-index: 200;
     transform: translate(-50%, -50%);
-    background: #dedede;
+    background: var(--color-white);
     text-align: center;
     box-shadow: 0 3rem 3rem rgba(0, 0, 0, 0.2);
     padding: 3rem;
@@ -61,7 +61,7 @@ input[type=password] {
 }
 
 .card.login__modal:hover {
-    background: #dedede;
+    background: var(--color-light);
 }
 
 .card.login__modal small {

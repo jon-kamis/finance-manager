@@ -43,6 +43,7 @@ public class TransactionController {
 	public ResponseEntity<?> getAllUserTransactions(
 			@Parameter(name = "userId", description = "userId", example = "1", required = true) @PathVariable Integer userId,
 			@Parameter(name = "name", description = "Filter by transaction name", allowEmptyValue = true) @RequestParam(required = false) String name,
+			@Parameter(name = "parent", description = "Filter by parent table name", schema = @Schema(allowableValues= {"incomes"})) @RequestParam(required = false) String parent,
 			@Parameter(name = "category", description = "Filter by category", schema = @Schema(allowableValues = {
 					"benefit", "bill", "loan", "paycheck" })) @RequestParam(required = false) String category,
 			@Parameter(name = "type", description = "Filter by type", schema = @Schema(allowableValues = { "income",
@@ -52,7 +53,7 @@ public class TransactionController {
 			@Parameter(name = "page", description = "Page of results") @RequestParam(required = false) Integer page,
 			@Parameter(name = "pageSize", description = "Size of result pages to return") @RequestParam(required = false) Integer pageSize) {
 
-		PagedTransactionResponse response = transactionBusiness.getAllUserTransactions(userId, name, category, type, sortBy, sortType, page, pageSize);
+		PagedTransactionResponse response = transactionBusiness.getAllUserTransactions(userId, name, parent, category, type, sortBy, sortType, page, pageSize);
 		
 		return new ResponseEntity<>(response, HttpStatus.OK);
 

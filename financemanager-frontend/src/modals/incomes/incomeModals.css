@@ -1,0 +1,43 @@
+.card.income__modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 200;
+    transform: translate(-50%, -50%);
+    background: var(--color-light);
+    text-align: center;
+    box-shadow: 0 3rem 3rem rgba(0, 0, 0, 0.2);
+    padding: 3rem;
+    width: 30%;
+    opacity: 0;
+    animation: animateModal 500ms ease-in forwards;
+}
+
+@keyframes animateModal {
+    to {
+        opacity: 1;
+    }
+}
+
+.card.income__modal:hover {
+    background: var(--color-light);
+}
+
+.card.income__modal small {
+    margin-top: 0.6rem;
+    display: block;
+    width: 80%;
+    margin-inline: auto;
+}
+
+.income__wrapper {
+    margin: 3rem 0;
+}
+
+/* MEDIA QUERIES (phones) */
+@media screen and (max-width: 600px) {
+    .card.logout__modal {
+        width: var(--container-width-md);
+        padding: 3rem 1.5rem;
+    }
+}

@@ -4,13 +4,16 @@ import { ModalProvider } from './context/modal-context';
 import { UserProvider } from './context/user-context';
 import './index.css'
 import { ThemeProvider } from './context/theme-context';
+import { PageProvider } from './context/page-context';
 
 const root = ReactDom.createRoot(document.querySelector('#root'));
 root.render(
-    <UserProvider>
-        <ThemeProvider>
-            <ModalProvider>
-                <App />
-            </ModalProvider>
-        </ThemeProvider>
-    </UserProvider>);
+    <PageProvider>
+        <UserProvider>
+            <ThemeProvider>
+                <ModalProvider>
+                    <App />
+                </ModalProvider>
+            </ThemeProvider>
+        </UserProvider>
+    </PageProvider>);

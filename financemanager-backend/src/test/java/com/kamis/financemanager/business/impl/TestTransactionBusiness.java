@@ -138,7 +138,7 @@ public class TestTransactionBusiness {
 
 		User admin = optAdmin.get();
 
-		PagedTransactionResponse response = transactionBusiness.getAllUserTransactions(admin.getId(), null, null, null,
+		PagedTransactionResponse response = transactionBusiness.getAllUserTransactions(admin.getId(), null, null, null, null,
 				null, null, null, null);
 
 		assertEquals(3, response.getCount());
@@ -146,7 +146,7 @@ public class TestTransactionBusiness {
 		assertEquals(1, response.getPage());
 		assertEquals(3, response.getItems().size());
 
-		response = transactionBusiness.getAllUserTransactions(admin.getId(), "", "", "", "", "", null, null);
+		response = transactionBusiness.getAllUserTransactions(admin.getId(), "", "", "", "", "", "", null, null);
 
 		assertEquals(3, response.getCount());
 		assertEquals(3, response.getPageSize());
@@ -167,12 +167,12 @@ public class TestTransactionBusiness {
 
 		User admin = optAdmin.get();
 
-		PagedTransactionResponse response = transactionBusiness.getAllUserTransactions(admin.getId(), "test", null,
+		PagedTransactionResponse response = transactionBusiness.getAllUserTransactions(admin.getId(), "test", null, null,
 				null, null, null, null, null);
 
 		assertEquals(3, response.getItems().size());
 
-		response = transactionBusiness.getAllUserTransactions(admin.getId(), "testBill", null, null, null, null, null,
+		response = transactionBusiness.getAllUserTransactions(admin.getId(), "testBill", null, null, null, null, null, null,
 				null);
 
 		assertEquals(1, response.getItems().size());
@@ -192,7 +192,7 @@ public class TestTransactionBusiness {
 
 		User admin = optAdmin.get();
 
-		PagedTransactionResponse response = transactionBusiness.getAllUserTransactions(admin.getId(), null, "bill",
+		PagedTransactionResponse response = transactionBusiness.getAllUserTransactions(admin.getId(), null, null, "bill", 
 				null, null, null, null, null);
 
 		assertEquals(1, response.getCount());
@@ -215,7 +215,7 @@ public class TestTransactionBusiness {
 
 		User admin = optAdmin.get();
 
-		PagedTransactionResponse response = transactionBusiness.getAllUserTransactions(admin.getId(), null, null,
+		PagedTransactionResponse response = transactionBusiness.getAllUserTransactions(admin.getId(), null,  null, null,
 				"expense", null, null, null, null);
 
 		assertEquals(2, response.getCount());
@@ -243,7 +243,7 @@ public class TestTransactionBusiness {
 		PagedTransactionResponse response;
 
 		// Default sort is name
-		response = transactionBusiness.getAllUserTransactions(admin.getId(), null, null, null, null, null, null, null);
+		response = transactionBusiness.getAllUserTransactions(admin.getId(), null, null, null, null, null, null, null, null);
 
 		for (int i = 0; i < response.getItems().size() - 1; i++) {
 			log.info("Comparing Transactions no sortBy:");
@@ -253,7 +253,7 @@ public class TestTransactionBusiness {
 		}
 
 		// use name param
-		response = transactionBusiness.getAllUserTransactions(admin.getId(), null, null, null, "name", null, null,
+		response = transactionBusiness.getAllUserTransactions(admin.getId(), null, null, null, null, "name", null, null,
 				null);
 
 		for (int i = 0; i < response.getItems().size() - 1; i++) {
@@ -264,7 +264,7 @@ public class TestTransactionBusiness {
 		}
 
 		// Sort by amount
-		response = transactionBusiness.getAllUserTransactions(admin.getId(), null, null, null, "amount", null, null,
+		response = transactionBusiness.getAllUserTransactions(admin.getId(), null, null, null, null, "amount", null, null,
 				null);
 
 		for (int i = 0; i < response.getItems().size() - 1; i++) {
@@ -290,7 +290,7 @@ public class TestTransactionBusiness {
 		PagedTransactionResponse response;
 
 		// Default sortType is ascending
-		response = transactionBusiness.getAllUserTransactions(admin.getId(), null, null, null, null, null, null, null);
+		response = transactionBusiness.getAllUserTransactions(admin.getId(), null, null, null, null, null, null, null, null);
 
 		for (int i = 0; i < response.getItems().size() - 1; i++) {
 			log.info("Comparing Transactions no sort type:");
@@ -300,7 +300,7 @@ public class TestTransactionBusiness {
 		}
 
 		// set sort type to ascending
-		response = transactionBusiness.getAllUserTransactions(admin.getId(), null, null, null, null,
+		response = transactionBusiness.getAllUserTransactions(admin.getId(), null, null, null, null, null,
 				FinanceManagerConstants.SORT_TYPE_ASC, null, null);
 
 		for (int i = 0; i < response.getItems().size() - 1; i++) {
@@ -311,7 +311,7 @@ public class TestTransactionBusiness {
 		}
 
 		// set sort type to descending
-		response = transactionBusiness.getAllUserTransactions(admin.getId(), null, null, null, null,
+		response = transactionBusiness.getAllUserTransactions(admin.getId(), null, null, null, null, null,
 				FinanceManagerConstants.SORT_TYPE_DESC, null, null);
 
 		for (int i = 0; i < response.getItems().size() - 1; i++) {
@@ -338,7 +338,7 @@ public class TestTransactionBusiness {
 		PagedTransactionResponse response;
 
 		// Default pagination is everything
-		response = transactionBusiness.getAllUserTransactions(admin.getId(), null, null, null, null, null, null, null);
+		response = transactionBusiness.getAllUserTransactions(admin.getId(), null, null, null, null, null, null, null, null);
 
 		assertEquals(1, response.getPage());
 		assertEquals(3, response.getPageSize());
@@ -346,7 +346,7 @@ public class TestTransactionBusiness {
 		assertEquals(3, response.getItems().size());
 
 		// Default test splitting results into 2 pages
-		response = transactionBusiness.getAllUserTransactions(admin.getId(), null, null, null, null, null, 1, 2);
+		response = transactionBusiness.getAllUserTransactions(admin.getId(), null, null, null, null, null, null, 1, 2);
 
 		assertEquals(1, response.getPage());
 		assertEquals(2, response.getPageSize());
@@ -354,7 +354,7 @@ public class TestTransactionBusiness {
 		assertEquals(2, response.getItems().size());
 
 		// Second page
-		response = transactionBusiness.getAllUserTransactions(admin.getId(), null, null, null, null, null, 2, 2);
+		response = transactionBusiness.getAllUserTransactions(admin.getId(), null, null, null, null, null, null, 2, 2);
 
 		assertEquals(2, response.getPage());
 		assertEquals(2, response.getPageSize());
@@ -390,7 +390,7 @@ public class TestTransactionBusiness {
 				TransactionCategoryEnum.BILL, TransactionTypeEnum.EXPENSE, (float) 1));
 
 		// Query with all filters present
-		response = transactionBusiness.getAllUserTransactions(admin.getId(), "special",
+		response = transactionBusiness.getAllUserTransactions(admin.getId(), "special", null,
 				TransactionCategoryEnum.BENEFIT.getCategory(), TransactionTypeEnum.EXPENSE.getType(), "amount",
 				FinanceManagerConstants.SORT_TYPE_DESC, 2, 2);
 		

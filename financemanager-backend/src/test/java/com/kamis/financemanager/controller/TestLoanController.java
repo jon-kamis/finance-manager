@@ -47,8 +47,6 @@ public class TestLoanController {
 	@LocalServerPort
 	private Integer port;
 
-	private static final String TEST_PREFIX = "LoanController";
-
 	static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:latest");
 
 	@BeforeAll
@@ -78,8 +76,8 @@ public class TestLoanController {
 	}
 
 	private void cleanData() {
-		Optional<User> optAdmin = userRepository.findByUsername(TEST_PREFIX + "_admin");
-		Optional<User> optUser = userRepository.findByUsername(TEST_PREFIX + "_user");
+		Optional<User> optAdmin = userRepository.findByUsername("admin");
+		Optional<User> optUser = userRepository.findByUsername("user");
 
 		if (optAdmin.isPresent()) {
 			userRepository.delete(optAdmin.get());
@@ -105,8 +103,8 @@ public class TestLoanController {
 			userRole = roleRepository.findByName("user");
 		}
 
-		User admin = AppTestUtils.buildUser(TEST_PREFIX + "_admin", adminRole.get());
-		User user = AppTestUtils.buildUser(TEST_PREFIX + "_user", userRole.get());
+		User admin = AppTestUtils.buildUser("admin", adminRole.get());
+		User user = AppTestUtils.buildUser("user", userRole.get());
 
 		admin = userRepository.saveAndFlush(admin);
 		user = userRepository.saveAndFlush(user);
@@ -132,10 +130,11 @@ public class TestLoanController {
 
 	@Test
 	@WithMockUser(username = "admin", authorities = { "admin", "user" })
+	@Transactional
 	public void TestGetLoanById_admin() {
 
-		String adminUsername = TEST_PREFIX + "_admin";
-		String userUsername = TEST_PREFIX + "_user";
+		String adminUsername = "admin";
+		String userUsername = "user";
 
 		Optional<User> admin = userRepository.findByUsername(adminUsername);
 		Optional<User> user = userRepository.findByUsername(userUsername);
@@ -173,10 +172,11 @@ public class TestLoanController {
 
 	@Test
 	@WithMockUser(username = "user", authorities = { "user" })
+	@Transactional
 	public void TestGetLoanById_user() {
 
-		String adminUsername = TEST_PREFIX + "_admin";
-		String userUsername = TEST_PREFIX + "_user";
+		String adminUsername = "admin";
+		String userUsername = "user";
 
 		Optional<User> admin = userRepository.findByUsername(adminUsername);
 		Optional<User> user = userRepository.findByUsername(userUsername);

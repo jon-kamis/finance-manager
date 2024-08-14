@@ -7,14 +7,14 @@ const emptyUser = {
     roles: [],
     username: "",
     userId: "",
-    displayName: ""
+    displayName: "",
+    refreshTrigger: ""
 };
 
-export const UserProvider = ({children}) => {
+export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(emptyUser);
 
     const setUserHandler = (user) => {
-        console.log(user)
         setUser(user);
     }
 
@@ -22,7 +22,14 @@ export const UserProvider = ({children}) => {
         setUser(emptyUser)
     }
 
-    return <UserContext.Provider value={{user, setUserHandler, logoutUser}}>{children}</UserContext.Provider>
+    const refreshUserData = (timestamp) => {
+        setUser({
+            ...user,
+            refreshTrigger: timestamp
+        })
+    }
+
+    return <UserContext.Provider value={{ user, setUserHandler, logoutUser, refreshUserData }}>{children}</UserContext.Provider>
 }
 
 // Custom hook to consume the modal context anywhere in the app

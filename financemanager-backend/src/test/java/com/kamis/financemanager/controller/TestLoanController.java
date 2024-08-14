@@ -68,7 +68,7 @@ public class TestLoanController {
 
 	@BeforeEach
 	@Transactional
-	private void setup() {
+	public void setup() {
 		RestAssured.baseURI = "http://localhost:" + port + "/api";
 
 		cleanData();
@@ -79,13 +79,9 @@ public class TestLoanController {
 		Optional<User> optAdmin = userRepository.findByUsername("admin");
 		Optional<User> optUser = userRepository.findByUsername("user");
 
-		if (optAdmin.isPresent()) {
-			userRepository.delete(optAdmin.get());
-		}
+        optAdmin.ifPresent(user -> userRepository.delete(user));
 
-		if (optUser.isPresent()) {
-			userRepository.delete(optUser.get());
-		}
+        optUser.ifPresent(user -> userRepository.delete(user));
 
 	}
 
@@ -146,16 +142,16 @@ public class TestLoanController {
 		List<Loan> adminLoans = loanRepository.findByUserId(admin.get().getId());
 		List<Loan> userLoans = loanRepository.findByUserId(user.get().getId());
 
-		if (adminLoans == null || adminLoans.size() == 0) {
+		if (adminLoans == null || adminLoans.isEmpty()) {
 			throw new FinanceManagerException("admin loan was not found during pre-test setup");
 		}
 
-		if (userLoans == null || userLoans.size() == 0) {
+		if (userLoans == null || userLoans.isEmpty()) {
 			throw new FinanceManagerException("user loan was not found during pre-test setup");
 		}
 
-		Loan adminLoan = adminLoans.get(0);
-		Loan userLoan = userLoans.get(0);
+		Loan adminLoan = adminLoans.getFirst();
+		Loan userLoan = userLoans.getFirst();
 
 		// Admins can retrieve loans for themselves
 		given().contentType(ContentType.JSON)
@@ -188,16 +184,16 @@ public class TestLoanController {
 		List<Loan> adminLoans = loanRepository.findByUserId(admin.get().getId());
 		List<Loan> userLoans = loanRepository.findByUserId(user.get().getId());
 
-		if (adminLoans == null || adminLoans.size() == 0) {
+		if (adminLoans == null || adminLoans.isEmpty()) {
 			throw new FinanceManagerException("admin loan was not found during pre-test setup");
 		}
 
-		if (userLoans == null || userLoans.size() == 0) {
+		if (userLoans == null || userLoans.isEmpty()) {
 			throw new FinanceManagerException("user loan was not found during pre-test setup");
 		}
 
-		Loan adminLoan = adminLoans.get(0);
-		Loan userLoan = userLoans.get(0);
+		Loan adminLoan = adminLoans.getFirst();
+		Loan userLoan = userLoans.getFirst();
 
 		//Users can retrieve loans for themselves
 		given().contentType(ContentType.JSON)

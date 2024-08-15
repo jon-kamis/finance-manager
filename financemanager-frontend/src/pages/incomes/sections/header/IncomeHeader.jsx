@@ -3,13 +3,12 @@ import { useUserContext } from '../../../../context/user-context';
 import Toast from '../../../../components/alerting/Toast';
 import './header.css'
 import Card from '../../../../components/Card';
-import { UserApi } from '../../../../app-properties';
+import { UserApi, numberFormatOptions } from '../../../../app-properties';
 import { PieChart, pieArcLabelClasses } from '@mui/x-charts/PieChart';
 
 const IncomeHeader = () => {
   const { user, jwt } = useUserContext();
   const [userIncomeSummary, setUserIncomeSummary] = useState({});
-  const numberFormatOptions = { maximumFractionDigits: 2, minimumFractionDigits: 2 }
 
   const getAnnualIncomePercentage = () => {
     const percent = (userIncomeSummary.annualSummary.totalIncome - userIncomeSummary.annualSummary.totalTax) / userIncomeSummary.annualSummary.totalIncome;

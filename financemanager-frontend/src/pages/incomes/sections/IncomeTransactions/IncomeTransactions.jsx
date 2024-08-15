@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import tableHeadings from './thead_data';
 import Toast from '../../../../components/alerting/Toast';
 import { useUserContext } from '../../../../context/user-context';
-import { UserApi } from '../../../../app-properties';
+import { UserApi, numberFormatOptions } from '../../../../app-properties';
 import './transactions.css'
 import PagedTable from '../../../../components/PagedTable';
 import { formatFmText } from '../../../../functions/textFunctions';
@@ -19,7 +19,6 @@ const IncomeTransactions = () => {
     const [tableData, setTableData] = useState([]);
     const [searchParameters, setSearchParameters] = useState({ filter: "", page: 1, pageSize: 10, sortBy: "", sortType: "asc" })
     const { user, jwt } = useUserContext();
-    const numberFormatOptions = { maximumFractionDigits: 2, minimumFractionDigits: 2 }
 
     useEffect(() => {
         let data = [];

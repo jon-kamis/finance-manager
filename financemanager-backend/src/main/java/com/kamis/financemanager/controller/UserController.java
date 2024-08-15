@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.kamis.financemanager.business.UserBusiness;
 import com.kamis.financemanager.rest.domain.error.ErrorResponse;
@@ -78,11 +75,12 @@ public class UserController {
 					content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) })
 	})
 	@PreAuthorize("@securityService.hasAccess(authentication, #id)")
-	@GetMapping("/{id}/summary/{yearMonth}")
+	@GetMapping("/{id}/summary")
 	public ResponseEntity<?> getUserById(@Parameter(description = "id of the user to retrieve") @PathVariable int id,
-										 @Parameter(description = "year and month to retrieve", required = true, schema = @Schema(example ="yyyy-mm")) @PathVariable String yearMonth) {
+										 @Parameter(description = "year to retrieve. Default value is the current year", required = false, schema = @Schema(example ="yyyy")) @RequestParam(required = false) String year,
+										 @Parameter(description = "month to retrieve. Default value is the current month", required = false, schema = @Schema(example ="mm")) @RequestParam(required = false) String month) {
 
-		UserMonthlySummaryResponse response = userBusiness.getUserMonthlySummary(id, yearMonth);
+		UserMonthlySummaryResponse response = userBusiness.getUserMonthlySummary(id, year, month);
 
 		if (response == null) {
 			throw new FinanceManagerException(myConfig.getGenericInternalServerErrorMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

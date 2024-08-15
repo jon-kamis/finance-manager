@@ -25,9 +25,10 @@ public interface UserBusiness {
 	/**
 	 * Attempts to retrieve a user's month summary for a given year and month
 	 * @param id the Id of the user to retrieve
-	 * @param yearMonth The year and month of the summary to build
+	 * @param year The year of the summary to build
+	 * @param month The month of the summary to build
 	 * @return A UserMonthlySummaryResponse containing the given user's financial summary for the given year and month
 	 * @throws FinanceManagerException
 	 */
-    public UserMonthlySummaryResponse getUserMonthlySummary(int id, String yearMonth) throws FinanceManagerException;
+    public UserMonthlySummaryResponse getUserMonthlySummary(int id, String year, String month) throws FinanceManagerException;
 }

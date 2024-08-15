@@ -6,7 +6,9 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -52,11 +54,13 @@ public class TransactionBusinessImpl implements TransactionBusiness {
 	public boolean createTransaction(Integer userId, TransactionPostRequest request) throws FinanceManagerException {
 
 		transactionValidation.validateTransactionPostRequest(userId, request);
+        transactionRepository.save(TransactionFactory.buildTransactionFromPostRequest(userId, request));
 
-		return transactionRepository.save(TransactionFactory.buildTransactionFromPostRequest(userId, request)) != null;
+		return true;
 	}
 
 	@Override
+	@Transactional
 	public PagedTransactionResponse getAllUserTransactions(Integer userId, String name, String parentName, String category, String type,
 			String sortBy, String sortType, Integer page, Integer pageSize) throws FinanceManagerException {
 
@@ -91,7 +95,7 @@ public class TransactionBusinessImpl implements TransactionBusiness {
 				|| sortType.equalsIgnoreCase(FinanceManagerConstants.SORT_TYPE_ASC);
 
 		// Handle sorting
-		List<Order> orders = new ArrayList<Order>();
+		List<Order> orders = new ArrayList<>();
 
 		if (sortBy != null && !sortBy.isBlank() && !sortBy.equals(FinanceManagerConstants.TRANSACTION_SORT_BY_NAME)) {
 			orders.add(new Order(sortAsc ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy));
@@ -133,11 +137,12 @@ public class TransactionBusinessImpl implements TransactionBusiness {
 	}
 
 	@Override
+	@Transactional
 	public List<Date> getPaysInDateRange(Transaction t, Date startDate, Date endDate) throws FinanceManagerException {
 		LocalDate localStart = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		LocalDate localEnd = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
-		if (startDate == null || endDate == null || startDate.after(endDate)) {
+		if (startDate.after(endDate)) {
 			log.info(
 					"failed to get pays in date range for transaction due to invalid start or end date. startDate: {}, endDate: {}",
 					startDate, endDate);
@@ -149,32 +154,26 @@ public class TransactionBusinessImpl implements TransactionBusiness {
 			return new ArrayList<>();
 		}
 
-		switch (t.getFrequency()) {
-		case SEMI_MONTHLY:
-			// Verify transaction Days
-			if (t.getTransactionDays() == null || t.getTransactionDays().isEmpty()) {
-				log.error("expected exactly one transaction day entry for transaction frequency but found none");
-				return new ArrayList<>();
-			}
+        if (Objects.requireNonNull(t.getFrequency()) == PaymentFrequencyEnum.SEMI_MONTHLY) {// Verify transaction Days
+            if (t.getTransactionDays() == null || t.getTransactionDays().isEmpty()) {
+                log.error("expected exactly one transaction day entry for transaction frequency but found none");
+                return new ArrayList<>();
+            }
 
-			return getSemiMonthlyTransactionOccurrences(localStart, localEnd, t);
+            return getSemiMonthlyTransactionOccurrences(localStart, localEnd, t);
+        } else {
+        if (t.getTransactionDays() == null || t.getTransactionDays().isEmpty()) {
+            log.error("expected exactly one transaction day entry for transaction frequency but found none");
+            return new ArrayList<>();
 
-		default:
-
-			// Verify transaction Days
-			if (t.getTransactionDays() == null || t.getTransactionDays().isEmpty()) {
-				log.error("expected exactly one transaction day entry for transaction frequency but found none");
-				return new ArrayList<>();
-
-			} else if (t.getTransactionDays().size() > 1) {
-				log.error("expected exactly one transaction day entry for transaction frequency but found {}",
-						t.getTransactionDays().size());
-				return new ArrayList<>();
-			}
-
-			return getNonSemiMonthlyTransactionOccurrences(localStart, localEnd, t);
-		}
-	}
+        } else if (t.getTransactionDays().size() > 1) {
+            log.error("expected exactly one transaction day entry for transaction frequency but found {}",
+                    t.getTransactionDays().size());
+            return new ArrayList<>();
+        }
+}
+        return getNonSemiMonthlyTransactionOccurrences(localStart, localEnd, t);
+    }
 
 	/**
 	 * Generates a list of transaction occurrences for semi-monthly pay frequencies
@@ -195,26 +194,26 @@ public class TransactionBusinessImpl implements TransactionBusiness {
 			expirationDate = t.getExpirationDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		}
 
-		while (adjustTransactionOccurence(curMonth).compareTo(endDate) <= 0
-				&& (expirationDate == null || curMonth.compareTo(expirationDate) <= 0)) {
+		while (!adjustTransactionOccurrence(curMonth).isAfter(endDate)
+				&& (expirationDate == null || !curMonth.isAfter(expirationDate))) {
 
 			for (TransactionDay day : t.getTransactionDays()) {
 
 				// Handle semi-monthly pay falling after end of month
 				if (curMonth.getMonth().length(curMonth.isLeapYear()) < day.getDay()) {
-					occDate = adjustTransactionOccurence(LocalDate.of(curMonth.getYear(), curMonth.getMonth(),
+					occDate = adjustTransactionOccurrence(LocalDate.of(curMonth.getYear(), curMonth.getMonth(),
 							curMonth.getMonth().length(curMonth.isLeapYear())));
 				} else {
-					occDate = adjustTransactionOccurence(
+					occDate = adjustTransactionOccurrence(
 							LocalDate.of(curMonth.getYear(), curMonth.getMonth(), day.getDay()));
 				}
 
-				if (occDate.compareTo(startDate) >= 0 && occDate.compareTo(effectiveDate) >= 0
-						&& occDate.compareTo(endDate) <= 0
-						&& (expirationDate == null || occDate.compareTo(expirationDate) <= 0)) {
+				if (!occDate.isBefore(startDate) && !occDate.isBefore(effectiveDate)
+						&& !occDate.isAfter(endDate)
+						&& (expirationDate == null || !occDate.isAfter(expirationDate))) {
 					
 					occurrences.add(Date.from(
-							adjustTransactionOccurence(occDate).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+							adjustTransactionOccurrence(occDate).atStartOfDay(ZoneId.systemDefault()).toInstant()));
 				}
 			}
 
@@ -235,17 +234,17 @@ public class TransactionBusinessImpl implements TransactionBusiness {
 	 */
 	private List<Date> getNonSemiMonthlyTransactionOccurrences(LocalDate startDate, LocalDate endDate, Transaction t) {
 		List<Date> occurrences = new ArrayList<>();
-		LocalDate curOccurrence = null;
+		LocalDate curOccurrence;
 		LocalDate expirationDate = null;
 		LocalDate effectiveDate = t.getEffectiveDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
 		if (t.getFrequency() != PaymentFrequencyEnum.WEEKLY) {
-			curOccurrence = t.getTransactionDays().get(0).getStartDate().toInstant().atZone(ZoneId.systemDefault())
+			curOccurrence = t.getTransactionDays().getFirst().getStartDate().toInstant().atZone(ZoneId.systemDefault())
 					.toLocalDate();
 		} else {
 			curOccurrence = startDate;
 
-			while (curOccurrence.getDayOfWeek().getValue() < t.getTransactionDays().get(0).getWeekday().getDayIndex()) {
+			while (curOccurrence.getDayOfWeek().getValue() < t.getTransactionDays().getFirst().getWeekday().getDayIndex()) {
 				curOccurrence = curOccurrence.plusDays(1);
 			}
 		}
@@ -254,37 +253,28 @@ public class TransactionBusinessImpl implements TransactionBusiness {
 			expirationDate = t.getExpirationDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		}
 
-		while (adjustTransactionOccurence(curOccurrence).compareTo(endDate) <= 0
-				&& (expirationDate == null || curOccurrence.compareTo(expirationDate) <= 0)) {
+		while (!adjustTransactionOccurrence(curOccurrence).isAfter(endDate)
+				&& (expirationDate == null || !curOccurrence.isAfter(expirationDate))) {
 
-			LocalDate adjustedOccurrance = adjustTransactionOccurence(curOccurrence);
+			LocalDate adjustedOccurrence = adjustTransactionOccurrence(curOccurrence);
 
-			if (adjustedOccurrance.compareTo(startDate) >= 0 && adjustedOccurrance.compareTo(effectiveDate) >= 0) {
+			if (!adjustedOccurrence.isBefore(startDate) && !adjustedOccurrence.isBefore(effectiveDate)) {
 				occurrences.add(Date.from(
-						adjustTransactionOccurence(curOccurrence).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+						adjustTransactionOccurrence(curOccurrence).atStartOfDay(ZoneId.systemDefault()).toInstant()));
 			}
 
-			switch (t.getFrequency()) {
-			case ANNUAL:
-				curOccurrence = curOccurrence.plusYears(1);
-				break;
-			case BIWEEKLY:
-				curOccurrence = curOccurrence.plusWeeks(2);
-				break;
-			case MONTHLY:
-				curOccurrence = curOccurrence.plusMonths(1);
-				break;
-			case QUARTERLY:
-				curOccurrence = curOccurrence.plusMonths(3);
-				break;
-			case WEEKLY:
-				curOccurrence = curOccurrence.plusWeeks(1);
-				break;
-			default:
-				log.error("Unexpected frequency for transaction");
-				throw new FinanceManagerException(myConfig.getGenericInternalServerErrorMessage(),
-						HttpStatus.INTERNAL_SERVER_ERROR);
-			}
+            curOccurrence = switch (t.getFrequency()) {
+                case ANNUAL -> curOccurrence.plusYears(1);
+                case BIWEEKLY -> curOccurrence.plusWeeks(2);
+                case MONTHLY -> curOccurrence.plusMonths(1);
+                case QUARTERLY -> curOccurrence.plusMonths(3);
+                case WEEKLY -> curOccurrence.plusWeeks(1);
+                default -> {
+                    log.error("Unexpected frequency for transaction");
+                    throw new FinanceManagerException(myConfig.getGenericInternalServerErrorMessage(),
+                            HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            };
 		}
 
 		return occurrences;
@@ -297,11 +287,11 @@ public class TransactionBusinessImpl implements TransactionBusiness {
 	 * @return A LocalDate adjusted if it fell on the weekend or unchanged if during
 	 *         a weekday
 	 */
-	private LocalDate adjustTransactionOccurence(LocalDate occ) {
+	private LocalDate adjustTransactionOccurrence(LocalDate occ) {
 
 		// If the occurrence is on a Saturday or the last Sunday of a month it will
 		// instead occur on the previous Friday
-		// If the occurrence is on a Sunday and it is not the last Sunday of the month
+		// If the occurrence is on a Sunday, and it is not the last Sunday of the month
 		// it will instead occur on the following Monday
 		if (occ.getDayOfWeek() == DayOfWeek.SATURDAY || occ.plusDays(1).getMonthValue() > occ.getMonthValue()) {
 

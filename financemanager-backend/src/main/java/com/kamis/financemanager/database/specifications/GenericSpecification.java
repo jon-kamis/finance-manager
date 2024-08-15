@@ -2,6 +2,7 @@ package com.kamis.financemanager.database.specifications;
 
 import java.io.Serial;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -93,7 +94,7 @@ public class GenericSpecification<T> {
 
 		log.debug("building generic specification where");
 		log.debug("{} {} {}", params.getFirst().getKey(), params.getFirst().getOperation(),
-				params.getFirst().getValue().toString());
+				params.getFirst().getValue() != null ? params.getFirst().getValue().toString() : "NULL");
 
 		// Build and chain specification objects
 		for (int i = 1; i < params.size(); i++) {
@@ -148,7 +149,11 @@ public class GenericSpecification<T> {
             case IS_NOT_NULL -> builder.isNotNull(root.get(criteria.getKey()));
             case IN -> root.get(criteria.getKey()).in((List<Object>) criteria.getValue());
             case NOT_IN -> builder.not(root.get(criteria.getKey()).in((List<Object>) criteria.getValue()));
-            default -> null;
+            case GREATER_THAN_DATE -> builder.greaterThan(root.<Date>get(criteria.getKey()), (Date)criteria.getValue());
+            case GREATER_THAN_EQUAL_TO_DATE -> builder.greaterThanOrEqualTo(root.<Date>get(criteria.getKey()), (Date)criteria.getValue());
+            case LESS_THAN_DATE -> builder.lessThan(root.<Date>get(criteria.getKey()), (Date)criteria.getValue());
+            case LESS_THAN_EQUAL_TO_DATE -> builder.lessThanOrEqualTo(root.<Date>get(criteria.getKey()), (Date)criteria.getValue());
+            case EQUAL_DATE -> builder.equal(root.<Date>get(criteria.getKey()), (Date)criteria.getValue());
         };
 
 	}

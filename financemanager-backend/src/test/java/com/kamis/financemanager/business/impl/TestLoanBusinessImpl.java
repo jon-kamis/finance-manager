@@ -28,6 +28,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.containers.PostgreSQLContainer;
 
@@ -52,7 +53,7 @@ import jakarta.transaction.Transactional;
 
 @ActiveProfiles(profiles = "test")
 @ExtendWith(MockitoExtension.class)
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @Transactional
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class TestLoanBusinessImpl {

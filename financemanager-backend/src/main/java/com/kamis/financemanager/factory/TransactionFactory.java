@@ -1,6 +1,7 @@
 package com.kamis.financemanager.factory;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,10 +15,7 @@ import com.kamis.financemanager.enums.TransactionCategoryEnum;
 import com.kamis.financemanager.enums.TransactionTypeEnum;
 import com.kamis.financemanager.enums.WeekdayEnum;
 import com.kamis.financemanager.rest.domain.incomes.IncomePostRequest;
-import com.kamis.financemanager.rest.domain.transactions.PagedTransactionResponse;
-import com.kamis.financemanager.rest.domain.transactions.TransactionDayResponse;
-import com.kamis.financemanager.rest.domain.transactions.TransactionPostRequest;
-import com.kamis.financemanager.rest.domain.transactions.TransactionResponse;
+import com.kamis.financemanager.rest.domain.transactions.*;
 import com.kamis.financemanager.util.FinanceManagerUtil;
 
 public class TransactionFactory {
@@ -178,7 +176,11 @@ public class TransactionFactory {
 		return transaction;
 	}
 
-	//Builds a TransactionDay for a Weekly pay frequency
+	/**
+	 * Builds a TransactionDay for a transaction with a weekday
+	 * @param weekday The weekday to build the transactionDay for
+	 * @return A new TransactionDay
+	 */
 	private static TransactionDay buildTransactionDayWeekly(String weekday) {
 		TransactionDay day = new TransactionDay();
 		day.setWeekday(WeekdayEnum.valueOfLabel(weekday));
@@ -186,11 +188,39 @@ public class TransactionFactory {
 		return day;
 	}
 
-	//Builds a transactionDay for a biweekly pay frequency
+	/**
+	 * Builds a Transaction Day for a transaction with a startDate
+	 * @param startDate The startDate to build the transactionDay for
+	 * @return A new TransactionDay
+	 */
 	private static TransactionDay buildTransactionDayBiweekly(Date startDate) {
 		TransactionDay day = new TransactionDay();
 		day.setStartDate(startDate);
 		day.setAuditInfo(FinanceManagerUtil.getAuditInfo());
 		return day;
+	}
+
+	/**
+	 * Builds a list of TransactionOccurrences based on a Transaction and a list of occurrence dates
+	 * @param t The transaction to build the response for
+	 * @param occurrences The occurrences of the transaction to build responses for
+	 * @return A list of TransactionOccurrenceResponses for the given criteria
+	 */
+	public static List<TransactionOccuranceResponse> buildTransactionOccurrenceResponses(Transaction t, List<Date> occurrences) {
+		List<TransactionOccuranceResponse> responseList = new ArrayList<>();
+
+		for(Date d : occurrences) {
+			TransactionOccuranceResponse r = new TransactionOccuranceResponse();
+			r.setTransactionId(t.getId());
+			r.setDate(d);
+			r.setType(t.getType().getType());
+			r.setCategory(t.getCategory().getCategory());
+			r.setName(t.getName());
+			r.setAmount(t.getAmount());
+
+			responseList.add(r);
+		}
+
+		return responseList;
 	}
 }

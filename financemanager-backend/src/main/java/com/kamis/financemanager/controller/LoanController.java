@@ -89,7 +89,7 @@ public class LoanController {
 			@Parameter(description = "Sort direction. Allowable values are 'desc', 'asc'") @RequestParam(required = false) String sortType,
 			@Parameter(description = "Page of results") @RequestParam(required = false) Integer page,
 			@Parameter(description = "Size of result pages to return") @RequestParam(required = false) Integer pageSize) {
-		log.info("creating loan for user with id {}", userId);
+		log.info("fetching loan for user with id {}", userId);
 
 		if (userId == null) {
 			throw new FinanceManagerException(myConfig.getUserIdRequiredError(), HttpStatus.UNPROCESSABLE_ENTITY);
@@ -120,7 +120,7 @@ public class LoanController {
 	public ResponseEntity<?> getLoansById(
 			@Parameter(description = "id of the user to fetch loan for") @PathVariable Integer userId,
 			@Parameter(description = "id of the loan to search for") @PathVariable Integer loanId) {
-		log.info("creating loan for user with id {}", userId);
+		log.info("fetching loan with id {} for user with id {}", loanId, userId);
 
 		if (userId == null) {
 			throw new FinanceManagerException(myConfig.getUserIdRequiredError(), HttpStatus.UNPROCESSABLE_ENTITY);

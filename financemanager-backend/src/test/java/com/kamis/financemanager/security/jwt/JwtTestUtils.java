@@ -19,7 +19,6 @@ public class JwtTestUtils {
 		
 		headerList.add(contentType);
 		headerList.add(authorization);
-		Headers headers = new Headers(headerList);
-		return headers;
+        return new Headers(headerList);
 	}
 }

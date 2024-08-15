@@ -57,6 +57,9 @@ public class YAMLConfig {
 	private String invalidTransactionSearchType;
 	private String invalidTransactionSearchParentName;
 
+	// Summary messages
+	private String yearMonthInvalidErrorMsg;
+
 	// Registration Messages
 	private String usernameExistsError;
 	private String emailExistsError;

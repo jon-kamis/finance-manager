@@ -6,3 +6,7 @@ spring:
     show-sql: true
 
 showGenericSpecificationBuilder: true
+
+logging:
+  level:
+    com.kamis: DEBUG

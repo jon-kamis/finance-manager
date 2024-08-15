@@ -16,8 +16,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.containers.PostgreSQLContainer;
 
@@ -39,12 +42,12 @@ import com.kamis.financemanager.rest.domain.transactions.TransactionResponse;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
-@ActiveProfiles(profiles = "test")
-@ExtendWith(MockitoExtension.class)
-@RunWith(SpringRunner.class)
-@Transactional
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Slf4j
+@ActiveProfiles(profiles = "test")
+@SpringJUnitConfig
+@ExtendWith(SpringExtension.class)
+@ExtendWith(MockitoExtension.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class TestTransactionBusiness {
 
 	static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:latest");
@@ -126,7 +129,6 @@ public class TestTransactionBusiness {
 	}
 
 	@Test
-	@Transactional
 	@WithMockUser(username = "admin", authorities = { "admin", "user" })
 	public void testGetAllUserTransactionsNoFiltersOrPaging() {
 
@@ -155,7 +157,6 @@ public class TestTransactionBusiness {
 	}
 
 	@Test
-	@Transactional
 	@WithMockUser(username = "admin", authorities = { "admin", "user" })
 	public void testGetAllUserTransactionsFilterByName() {
 
@@ -180,7 +181,6 @@ public class TestTransactionBusiness {
 	}
 
 	@Test
-	@Transactional
 	@WithMockUser(username = "admin", authorities = { "admin", "user" })
 	public void testGetAllUserTransactionsFilterByCategory() {
 
@@ -203,7 +203,6 @@ public class TestTransactionBusiness {
 	}
 
 	@Test
-	@Transactional
 	@WithMockUser(username = "admin", authorities = { "admin", "user" })
 	public void testGetAllUserTransactionsFilterByType() {
 
@@ -229,7 +228,6 @@ public class TestTransactionBusiness {
 	}
 
 	@Test
-	@Transactional
 	@WithMockUser(username = "admin", authorities = { "admin", "user" })
 	public void testGetAllUserTransactionsSortBy() {
 
@@ -276,7 +274,6 @@ public class TestTransactionBusiness {
 	}
 
 	@Test
-	@Transactional
 	@WithMockUser(username = "admin", authorities = { "admin", "user" })
 	public void testGetAllUserTransactionsSortType() {
 
@@ -324,7 +321,6 @@ public class TestTransactionBusiness {
 	}
 
 	@Test
-	@Transactional
 	@WithMockUser(username = "admin", authorities = { "admin", "user" })
 	public void testGetAllUserTransactionsPagination() {
 

@@ -1,11 +1,10 @@
 package com.kamis.financemanager.business.impl;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.time.format.TextStyle;
+import java.util.*;
 
 import com.kamis.financemanager.business.TransactionBusiness;
 import com.kamis.financemanager.database.domain.Transaction;
@@ -17,7 +16,6 @@ import com.kamis.financemanager.factory.TransactionFactory;
 import com.kamis.financemanager.rest.domain.transactions.TransactionOccuranceResponse;
 import com.kamis.financemanager.rest.domain.transactions.TransactionTotals;
 import com.kamis.financemanager.rest.domain.users.UserMonthlySummaryResponse;
-import io.jsonwebtoken.lang.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
@@ -119,7 +117,7 @@ public class UserBusinessImpl implements UserBusiness {
 	}
 
 	@Override
-	public UserMonthlySummaryResponse getUserMonthlySummary(int id, String yearMonth) throws FinanceManagerException {
+	public UserMonthlySummaryResponse getUserMonthlySummary(int id, String yearStr, String monthStr) throws FinanceManagerException {
 
 		UserMonthlySummaryResponse response = new UserMonthlySummaryResponse();
 		List<TransactionOccuranceResponse> tOccurrences = new ArrayList<>();
@@ -135,29 +133,31 @@ public class UserBusinessImpl implements UserBusiness {
 		int year;
 		int month;
 
-		try {
-			String[] dateArr = Strings.split(yearMonth, "-");
-			year = Integer.parseInt(dateArr[0]);
-			month = Integer.parseInt(dateArr[1]);
-		} catch (Exception e) {
-			log.info("Caught exception when attempting to parse year and month. Throwing new bad request");
-			throw new FinanceManagerException(myConfig.getYearMonthInvalidErrorMsg(), HttpStatus.BAD_REQUEST);
+		if (yearStr == null || yearStr.isBlank()) {
+			year = LocalDate.now().getYear();
+		} else {
+			try {
+				year = Integer.parseInt(yearStr);
+			} catch (Exception e) {
+				log.info("Caught exception when attempting to parse year. Throwing new bad request");
+				throw new FinanceManagerException(myConfig.getYearMonthInvalidErrorMsg(), HttpStatus.BAD_REQUEST);
+			}
+		}
+
+		if (monthStr == null || monthStr.isBlank()) {
+			month = LocalDate.now().getMonth().getValue();
+		} else {
+			try {
+				month = Integer.parseInt(monthStr);
+			} catch (Exception e) {
+				log.info("Caught exception when attempting to parse month. Throwing new bad request");
+				throw new FinanceManagerException(myConfig.getYearMonthInvalidErrorMsg(), HttpStatus.BAD_REQUEST);
+			}
 		}
 
 		Date startDt = Date.from(LocalDate.of(year, month, 1).atStartOfDay(ZoneId.systemDefault()).toInstant());
 		Date endDt = Date.from(LocalDate.of(year, month + 1, 1).atStartOfDay(ZoneId.systemDefault()).toInstant().minusNanos(1));
-
-		GenericSpecification<Transaction> tSpec = new GenericSpecification<>();
-		GenericSpecification<Transaction> effDateSpec = new GenericSpecification<>();
-		GenericSpecification<Transaction> expDateSpec = new GenericSpecification<>();
-
-		expDateSpec = expDateSpec.where("expirationDate", null, QueryOperation.IS_NULL)
-				.or("expirationDate", startDt, QueryOperation.GREATER_THAN_EQUAL_TO_DATE);
-
-		effDateSpec = effDateSpec.where("effectiveDate", endDt, QueryOperation.LESS_THAN_EQUAL_TO_DATE);
-		tSpec = tSpec.where("userId", id, QueryOperation.EQUALS);
-
-		List<Transaction> transactions = transactionRepository.findAll(Specification.where(tSpec.build()).and(effDateSpec.build().and(expDateSpec.build())));
+		List<Transaction> transactions = getTransactionsForDateRange(id, startDt, endDt);
 
 		if (!transactions.isEmpty()) {
 			List<Date> occurrences;
@@ -167,9 +167,11 @@ public class UserBusinessImpl implements UserBusiness {
 
 				switch (t.getCategory()) {
                     case LOAN:
+						totals.totalExpense += t.getAmount() * occurrences.size();
 						totals.totalLoanPayments += t.getAmount() * occurrences.size();
                         break;
                     case TAXES :
+						totals.totalExpense += t.getAmount() * occurrences.size();
 						totals.totalTax += t.getAmount() * occurrences.size();
 						break;
 					case PAYCHECK:
@@ -177,6 +179,7 @@ public class UserBusinessImpl implements UserBusiness {
 						break;
 					case BENEFIT:
 						if (t.getType() == TransactionTypeEnum.EXPENSE) {
+							totals.totalExpense += t.getAmount() * occurrences.size();
 							totals.totalMisc += t.getAmount() * occurrences.size();
 						} else {
 							totals.totalIncome += t.getAmount() * occurrences.size();
@@ -189,9 +192,33 @@ public class UserBusinessImpl implements UserBusiness {
 			}
 		}
 
+		totals.setMonth(Month.of(month).getDisplayName(TextStyle.FULL, Locale.US));
+		totals.setNetIncome(totals.getTotalIncome() - totals.getTotalExpense());
+
 		response.setTransactions(tOccurrences);
 		response.setTotals(totals);
 		return response;
+	}
+
+	/**
+	 * Fetches all transactions for a given user and date range
+	 * @param id The id of the user to fetch transactions for
+	 * @param startDt The starting Date of the range to fetch transactions for
+	 * @param endDt The ending Date of the range to fetch transactions for
+	 * @return A list of all transactions for the given user which are effective for at least one day of the given range
+	 */
+	private List<Transaction> getTransactionsForDateRange(int id, Date startDt, Date endDt) {
+		GenericSpecification<Transaction> tSpec = new GenericSpecification<>();
+		GenericSpecification<Transaction> effDateSpec = new GenericSpecification<>();
+		GenericSpecification<Transaction> expDateSpec = new GenericSpecification<>();
+
+		expDateSpec = expDateSpec.where("expirationDate", null, QueryOperation.IS_NULL)
+				.or("expirationDate", startDt, QueryOperation.GREATER_THAN_EQUAL_TO_DATE);
+
+		effDateSpec = effDateSpec.where("effectiveDate", endDt, QueryOperation.LESS_THAN_EQUAL_TO_DATE);
+		tSpec = tSpec.where("userId", id, QueryOperation.EQUALS);
+
+		return transactionRepository.findAll(Specification.where(tSpec.build()).and(effDateSpec.build().and(expDateSpec.build())));
 	}
 
 }

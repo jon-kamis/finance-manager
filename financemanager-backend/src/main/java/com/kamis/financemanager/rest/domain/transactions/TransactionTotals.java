@@ -8,6 +8,8 @@ import lombok.Data;
 public class TransactionTotals {
     public String month;
     public float totalIncome;
+    public float totalExpense;
+    public float netIncome;
     public float totalTax;
     public float totalBills;
     public float totalLoanPayments;

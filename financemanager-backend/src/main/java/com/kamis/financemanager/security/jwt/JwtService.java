@@ -51,6 +51,7 @@ public class JwtService {
 		
 		claims.put(FinanceManagerConstants.JWT_CLAIM_USER_ID, user.get().getId());
 		claims.put(FinanceManagerConstants.JWT_CLAIM_USER_DISPLAY_NAME, user.get().getLastName() + ", " + user.get().getFirstName());
+		claims.put(FinanceManagerConstants.JWT_CLAIM_USER_FIRST_NAME, user.get().getFirstName());
 		claims.put(FinanceManagerConstants.JWT_CLAIM_USER_ROLES, user.get().getUserRoles().stream().map(ur -> ur.getRole().getName()).collect(Collectors.joining(",")));
 		
 		return createToken(claims, userName);

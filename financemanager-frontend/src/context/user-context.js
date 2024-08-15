@@ -8,6 +8,7 @@ const UserContext = createContext();
 const emptyUser = {
     roles: [],
     username: "",
+    firstName: "",
     userId: "",
     displayName: "",
     refreshTrigger: ""
@@ -78,6 +79,7 @@ export const UserProvider = ({ children }) => {
                 username: jwtDecode(jwt).sub,
                 userId: jwtDecode(jwt).userId,
                 displayName: jwtDecode(jwt).displayName,
+                firstName: jwtDecode(jwt).firstName,
                 roles: jwtDecode(jwt).userRoles.split(',')
             });
         }

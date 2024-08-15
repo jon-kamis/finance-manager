@@ -44,6 +44,7 @@ public class FinanceManagerConstants {
 	//JWT Constants
 	public static final String JWT_CLAIM_USER_ID = "userId";
 	public static final String JWT_CLAIM_USER_DISPLAY_NAME = "displayName";
+	public static final String JWT_CLAIM_USER_FIRST_NAME = "firstName";
 	public static final String JWT_CLAIM_USER_ROLES = "userRoles";
 
 }

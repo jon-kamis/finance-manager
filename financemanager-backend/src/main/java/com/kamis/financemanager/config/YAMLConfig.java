@@ -65,6 +65,7 @@ public class YAMLConfig {
 
 	// Auth messages
 	private String invalidCredentialsErrorMsg;
+	private String refreshTokenDoesNotExistErrorMsg;
 
 	// Role Constants
 	private String defaultUserRole;

@@ -24,7 +24,7 @@ const IncomeList = () => {
   const [incomes, setIncomes] = useState(defaultIncomeResponse);
   const [searchParameters, setSearchParameters] = useState({ filter: "", page: 1, pageSize: 10 })
   const [tableData, setTableData] = useState([]);
-  const { user, refreshUserData } = useUserContext();
+  const { user, jwt, refreshUserData } = useUserContext();
   const { showModalHandler } = useModalContext();
   const numberFormatOptions = { maximumFractionDigits: 2, minimumFractionDigits: 2 }
 
@@ -33,7 +33,7 @@ const IncomeList = () => {
       method: "DELETE",
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${user.jwt}`
+        'Authorization': `Bearer ${jwt}`
       },
       credentials: "include",
     }
@@ -86,7 +86,7 @@ const IncomeList = () => {
       method: "GET",
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${user.jwt}`
+        'Authorization': `Bearer ${jwt}`
       },
       credentials: "include",
     }

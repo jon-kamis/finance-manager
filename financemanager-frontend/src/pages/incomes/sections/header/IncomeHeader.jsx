@@ -7,7 +7,7 @@ import { UserApi } from '../../../../app-properties';
 import { PieChart, pieArcLabelClasses } from '@mui/x-charts/PieChart';
 
 const IncomeHeader = () => {
-  const { user } = useUserContext();
+  const { user, jwt } = useUserContext();
   const [userIncomeSummary, setUserIncomeSummary] = useState({});
   const numberFormatOptions = { maximumFractionDigits: 2, minimumFractionDigits: 2 }
 
@@ -36,7 +36,7 @@ const IncomeHeader = () => {
       method: "GET",
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${user.jwt}`
+        'Authorization': `Bearer ${jwt}`
       },
       credentials: "include",
     }

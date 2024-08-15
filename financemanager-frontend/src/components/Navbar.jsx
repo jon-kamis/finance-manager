@@ -7,7 +7,7 @@ import './css/navbar.css'
 import NavMenu from './NavMenu.jsx';
 
 const Navbar = () => {
-    const { user } = useUserContext();
+    const { jwt, user } = useUserContext();
     const { showModalHandler } = useModalContext();
 
     return (
@@ -18,7 +18,7 @@ const Navbar = () => {
                 </a>
                 <NavMenu />
                 <div className="nav__buttons">
-                    <button id="auth__icon" onClick={() => showModalHandler(user && user.jwt !== "" ? "logout" : "login")}>{user && user.jwt !== "" ? <MdOutlineLogout /> : <MdOutlineLogin />}</button>
+                    <button id="auth__icon" onClick={() => showModalHandler(jwt !== "" ? "logout" : "login")}>{jwt ? <MdOutlineLogout /> : <MdOutlineLogin />}</button>
                     <button id='theme__icon' onClick={() => showModalHandler("theme")}><IoIosColorPalette /></button>
                 </div>
                 <div className="nav__profile">

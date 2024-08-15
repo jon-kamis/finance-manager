@@ -61,6 +61,7 @@ invalidTransactionSearchParentName: parentName is invalid
 
 # Auth messages
 invalidCredentialsErrorMsg: "invalid credentials"
+refreshTokenDoesNotExistErrorMsg: "refresh token is invalid"
 
 # Role constants
 defaultUserRole: "user"

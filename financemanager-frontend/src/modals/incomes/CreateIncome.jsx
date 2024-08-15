@@ -27,7 +27,7 @@ const emptyIncomeReq = {
 
 const CreateIncome = () => {
     const { closeModalHandler } = useModalContext();
-    const { user, refreshUserData } = useUserContext();
+    const { user, jwt, refreshUserData } = useUserContext();
     const [incomeRequest, setIncomeRequest] = useState(emptyIncomeReq)
 
     const handleChange = () => (event) => {
@@ -88,7 +88,7 @@ const CreateIncome = () => {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${user.jwt}`
+                'Authorization': `Bearer ${jwt}`
             },
             credentials: "include",
             body: JSON.stringify(incomeRequest),

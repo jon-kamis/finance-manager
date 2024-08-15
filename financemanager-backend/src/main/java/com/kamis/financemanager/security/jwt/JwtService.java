@@ -1,13 +1,14 @@
 package com.kamis.financemanager.security.jwt;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.crypto.SecretKey;
 
+import com.kamis.financemanager.database.domain.RefreshToken;
+import com.kamis.financemanager.database.repository.RefreshTokenRepository;
+import com.kamis.financemanager.rest.domain.auth.JwtResponse;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -35,6 +36,9 @@ public class JwtService {
 	@Autowired
 	private UserRepository userRepository;
 
+	@Autowired
+	private RefreshTokenRepository refreshTokenRepository;
+
 	public String generateToken(String userName) throws FinanceManagerException{
 		Map<String, Object> claims = new HashMap<>();
 		Optional<User> user = userRepository.findByUsername(userName);
@@ -46,14 +50,14 @@ public class JwtService {
 		
 		claims.put(FinanceManagerConstants.JWT_CLAIM_USER_ID, user.get().getId());
 		claims.put(FinanceManagerConstants.JWT_CLAIM_USER_DISPLAY_NAME, user.get().getLastName() + ", " + user.get().getFirstName());
-		claims.put(FinanceManagerConstants.JWT_CLAIM_USER_ROLES, String.join(",", user.get().getUserRoles().stream().map(ur -> ur.getRole().getName()).collect(Collectors.toList())));
+		claims.put(FinanceManagerConstants.JWT_CLAIM_USER_ROLES, user.get().getUserRoles().stream().map(ur -> ur.getRole().getName()).collect(Collectors.joining(",")));
 		
 		return createToken(claims, userName);
 	}
 
 	private String createToken(Map<String, Object> claims, String userName) {
 		return Jwts.builder().claims(claims).subject(userName).issuedAt(new Date(System.currentTimeMillis()))
-				.expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30)).signWith(getSignKey()).compact();
+				.expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 10)).signWith(getSignKey()).compact();
 	}
 
 	private SecretKey getSignKey() {
@@ -89,5 +93,52 @@ public class JwtService {
 	public Boolean validateToken(String token, User user) {
 		final String username = extractUsername(token);
 		return (username.equals(user.getUsername()) && !isTokenExpired(token));
+	}
+
+	/**
+	 * Generates a Refresh UUID token
+	 * @param username The  username to generate the token for
+	 * @return a new UUID refresh token
+	 */
+	@Transactional
+	public UUID generateRefreshToken(String username) {
+		RefreshToken refreshToken = new RefreshToken();
+		refreshToken.setUsername(username);
+		refreshToken.setExpirationDate(new Date(System.currentTimeMillis() + 1000 * 60 * 10));
+		refreshToken.setToken(UUID.randomUUID());
+
+		//Remove existing refresh tokens for this user
+		refreshTokenRepository.deleteByUsername(username);
+		refreshTokenRepository.flush();
+
+		refreshToken = refreshTokenRepository.save(refreshToken);
+
+		return refreshToken.getToken();
+	}
+
+	/**
+	 * Validates a refresh token
+	 * @param token The refresh token to validate
+	 * @return true if the token is valid, false otherwise
+	 */
+	public boolean validateRefreshToken(UUID token) {
+		Optional<RefreshToken> refreshToken = refreshTokenRepository.findByToken(token);
+
+        return refreshToken.isPresent() && refreshToken.get().getExpirationDate().compareTo(new Date()) >= 0;
+    }
+
+	@Transactional
+	public JwtResponse generateTokensFromRefreshToken(UUID token) throws FinanceManagerException {
+		JwtResponse response = new JwtResponse();
+		Optional<RefreshToken> refreshToken = refreshTokenRepository.findByToken(token);
+
+		if (refreshToken.isEmpty()) {
+			throw new FinanceManagerException(myConfig.getRefreshTokenDoesNotExistErrorMsg(), HttpStatus.UNAUTHORIZED);
+		}
+
+		response.setRefreshToken(generateRefreshToken(refreshToken.get().getUsername()));
+		response.setAccessToken(generateToken(refreshToken.get().getUsername()));
+
+		return response;
 	}
 }

@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import Modal from '../../components/Modal'
 import Input from '../../components/form/Input'
-import { jwtDecode } from "jwt-decode";
 import { useUserContext } from '../../context/user-context';
 import './login.css'
 import Toast from '../../components/alerting/Toast';
@@ -10,7 +9,7 @@ import { AuthUrl } from '../../app-properties';
 
 const Login = () => {
     const { showModalHandler, closeModalHandler } = useModalContext();
-    const { user, setUserHandler } = useUserContext();
+    const { updateUserTokens } = useUserContext();
     const [loginRequest, setLoginRequest] = useState({
         username: "",
         password: "",
@@ -50,18 +49,13 @@ const Login = () => {
                         password: ""
                     })
                 } else {
-                    setUserHandler({
-                        ...user,
-                        jwt: data.accessToken,
-                        username: jwtDecode(data.accessToken).sub,
-                        userId: jwtDecode(data.accessToken).userId,
-                        displayName: jwtDecode(data.accessToken).displayName,
-                        roles: jwtDecode(data.accessToken).userRoles.split(',')
-                    });
                     setLoginRequest({
                         username: "",
                         password: ""
                     })
+
+                    updateUserTokens(data.accessToken, data.refreshToken);
+
                     Toast("Login successful!", "success");
                     closeModalHandler();
                 }

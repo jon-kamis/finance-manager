@@ -1,15 +1,16 @@
 package com.kamis.financemanager.rest.domain.auth;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class JwtResponse {
 
 	private String accessToken;
-
-	public JwtResponse(String accessToken) {
-		this.accessToken = accessToken;
-	}
+	private UUID refreshToken;
 }

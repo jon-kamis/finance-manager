@@ -21,6 +21,18 @@ CREATE TABLE IF NOT EXISTS FMDB.users (
 );
 
 --
+-- Name: refresh_tokens; Type: TABLE; Schema: FMDB; Owner: -
+--
+
+CREATE SEQUENCE IF NOT EXISTS FMDB.refresh_tokens_id_seq;
+CREATE TABLE IF NOT EXISTS FMDB.refresh_tokens (
+    id integer unique NOT NULL default nextval('FMDB.refresh_tokens_id_seq'),
+    token uuid unique NOT NULL,
+    username character varying(255) unique NOT NULL,
+    expiration_dt timestamp without time zone
+);
+
+--
 -- Name: roles; Type: TABLE; Schema: FMDB; Owner: -
 --
 

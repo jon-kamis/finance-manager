@@ -1,5 +1,7 @@
 package com.kamis.financemanager.controller;
 
+import com.kamis.financemanager.rest.domain.auth.RefreshTokenRequest;
+import com.kamis.financemanager.util.FinanceManagerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +30,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -66,25 +70,55 @@ public class AuthController {
 	})
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody AuthRequest request) {
-		final String method = "AuthController.login";
-		log.debug(LoggingConstants.ENTER_LOG, method);
-		
         
 		boolean authenticated = loginService.Login(request);
 		
 		if (authenticated) { 
             String token = jwtService.generateToken(request.getUsername());
-            
-            JwtResponse response = new JwtResponse(token);
-            
-    		log.debug(LoggingConstants.EXIT_LOG, method);
-            return new ResponseEntity<>(response, HttpStatus.OK); 
+            UUID refreshToken = jwtService.generateRefreshToken(request.getUsername());
+
+            JwtResponse response = new JwtResponse(token, refreshToken);
+
+			log.info("User {} has logged into the system using credentials", request.getUsername());
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } else { 
         	
-        	log.info(LoggingConstants.WarnBadCredentialsMessage, method, request.getUsername());
-    		log.debug(LoggingConstants.EXIT_LOG, method);
-            throw new FinanceManagerException(myConfig.getInvalidCredentialsErrorMsg(), HttpStatus.UNAUTHORIZED); 
+        	log.info(LoggingConstants.WarnBadCredentialsMessage, request.getUsername());
+            throw new FinanceManagerException(myConfig.getInvalidCredentialsErrorMsg(), HttpStatus.UNAUTHORIZED);
         } 	
+	}
+
+	@Operation(summary = "Refresh JWT Token using refresh token")
+	@ApiResponses( value = {
+			@ApiResponse(
+					responseCode = "200", description = "OK",
+					content = { @Content(mediaType = "application/json", schema = @Schema(implementation = JwtResponse.class)) }),
+			@ApiResponse(
+					responseCode = "401", description = "UNAUTHORIZED",
+					content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
+			@ApiResponse(
+					responseCode = "403", description = "FORBIDDEN",
+					content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
+			@ApiResponse(
+					responseCode = "404", description = "NOT_FOUND",
+					content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
+			@ApiResponse(
+					responseCode = "500", description = "INTERNAL_SERVER_ERROR",
+					content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) })
+	})
+	@PostMapping("/refresh")
+	public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest request) {
+
+		if (jwtService.validateRefreshToken(request.getRefreshToken())) {
+			JwtResponse response = jwtService.generateTokensFromRefreshToken(request.getRefreshToken());
+
+			log.info("User {} has refreshed their jwt token using a valid refresh token");
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		} else {
+
+			log.info(LoggingConstants.WarnBadRefreshTokenMessage, request.getRefreshToken());
+			throw new FinanceManagerException(myConfig.getInvalidCredentialsErrorMsg(), HttpStatus.UNAUTHORIZED);
+		}
 	}
 	
 	@Operation(summary = "Register for the application")

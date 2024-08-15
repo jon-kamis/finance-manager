@@ -18,7 +18,7 @@ const IncomeTransactions = () => {
     const [transactions, setTransactions] = useState(defaultTransactionResponse);
     const [tableData, setTableData] = useState([]);
     const [searchParameters, setSearchParameters] = useState({ filter: "", page: 1, pageSize: 10, sortBy: "", sortType: "asc" })
-    const { user } = useUserContext();
+    const { user, jwt } = useUserContext();
     const numberFormatOptions = { maximumFractionDigits: 2, minimumFractionDigits: 2 }
 
     useEffect(() => {
@@ -35,7 +35,7 @@ const IncomeTransactions = () => {
             method: "GET",
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${user.jwt}`
+                'Authorization': `Bearer ${jwt}`
             },
             credentials: "include",
         }

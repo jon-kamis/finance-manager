@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { RefreshUrl } from "../app-properties";
 import { jwtDecode } from "jwt-decode";
+import { usePageContext } from "./page-context";
 
 const UserContext = createContext();
 
@@ -13,28 +14,11 @@ const emptyUser = {
 };
 
 export const UserProvider = ({ children }) => {
+    const { setActivePageHandler } = usePageContext();
     const [user, setUser] = useState(emptyUser);
     const [refreshToken, setRefreshToken] = useState("");
     const [jwt, setJwt] = useState("");
     const TICK_INTERVAL = 600000;
-
-    const updateUserTokens = (jwt, refreshToken) => {
-        console.log(refreshToken)
-        setRefreshToken(refreshToken);
-        setJwt(jwt);
-
-        if(jwt && (!user.username || jwtDecode(jwt).sub !== user.username)) {
-            setUser({
-                ...user,
-                username: jwtDecode(jwt).sub,
-                userId: jwtDecode(jwt).userId,
-                displayName: jwtDecode(jwt).displayName,
-                roles: jwtDecode(jwt).userRoles.split(',')
-            });
-        }
-        setRefreshToken(refreshToken);
-        setJwt(jwt)
-    }
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -61,7 +45,8 @@ export const UserProvider = ({ children }) => {
                         }
                     })
                     .catch(error => {
-                        console.log("user is not logged in", error)
+                        console.log("failed to refresh user token", error);
+                        logoutUser();
                     })
             }
         }, TICK_INTERVAL);
@@ -71,7 +56,8 @@ export const UserProvider = ({ children }) => {
 
     const logoutUser = (user) => {
         setUser(emptyUser);
-        setRefreshToken("");
+        updateUserTokens("", "");
+        setActivePageHandler("welcome");
     }
 
     const refreshUserData = (timestamp) => {
@@ -79,6 +65,24 @@ export const UserProvider = ({ children }) => {
             ...user,
             refreshTrigger: timestamp
         })
+    }
+
+    const updateUserTokens = (jwt, refreshToken) => {
+        console.log(refreshToken)
+        setRefreshToken(refreshToken);
+        setJwt(jwt);
+
+        if(jwt && (!user.username || jwtDecode(jwt).sub !== user.username)) {
+            setUser({
+                ...user,
+                username: jwtDecode(jwt).sub,
+                userId: jwtDecode(jwt).userId,
+                displayName: jwtDecode(jwt).displayName,
+                roles: jwtDecode(jwt).userRoles.split(',')
+            });
+        }
+        setRefreshToken(refreshToken);
+        setJwt(jwt)
     }
 
     return <UserContext.Provider value={{ user, jwt, updateUserTokens, logoutUser, refreshUserData }}>{children}</UserContext.Provider>

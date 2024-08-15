@@ -36,6 +36,9 @@ emailExistsError: "email already exists"
 invalidPasswordError: "password must contain at least one letter"
 userRegisteredMessage: "user registered successfully"
 
+#Summary Messages
+yearMonthInvalidErrorMsg: year and month must be present in a valid 'yyyy-mm' format
+
 # Loan Messages
 invalidLoanPaymentFrequencyError: Valid frequencies for loan payments are monthly, bi-weekly, and weekly
 filingTypeRequiredForTaxesError: Filing type is required to calculate taxes on an income

@@ -33,7 +33,7 @@ public class LoginService{
 		log.debug(LoggingConstants.ENTER_LOG, method);
 		
 		if (request.getUsername().isBlank() || request.getPassword().isBlank()) {
-			log.debug("{} recieved request with empty username or password", method);
+			log.debug("{} received request with empty username or password", method);
 			log.debug(LoggingConstants.EXIT_LOG, method);
 			return false;
 		}
@@ -41,7 +41,7 @@ public class LoginService{
 		Optional<User> optUser = userRepository.findByUsername(request.getUsername());
 		
 		if (optUser.isEmpty()) {
-			log.debug("{} recieved request with empty username or password", method);
+			log.debug("{} received request with empty username or password", method);
 			log.debug(LoggingConstants.EXIT_LOG, method);
 			return false;
 		}

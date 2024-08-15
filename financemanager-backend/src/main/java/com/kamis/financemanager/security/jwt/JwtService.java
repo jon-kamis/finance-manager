@@ -39,6 +39,7 @@ public class JwtService {
 	@Autowired
 	private RefreshTokenRepository refreshTokenRepository;
 
+	@Transactional
 	public String generateToken(String userName) throws FinanceManagerException{
 		Map<String, Object> claims = new HashMap<>();
 		Optional<User> user = userRepository.findByUsername(userName);
@@ -57,7 +58,7 @@ public class JwtService {
 
 	private String createToken(Map<String, Object> claims, String userName) {
 		return Jwts.builder().claims(claims).subject(userName).issuedAt(new Date(System.currentTimeMillis()))
-				.expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 10)).signWith(getSignKey()).compact();
+				.expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 15)).signWith(getSignKey()).compact();
 	}
 
 	private SecretKey getSignKey() {
@@ -104,7 +105,7 @@ public class JwtService {
 	public UUID generateRefreshToken(String username) {
 		RefreshToken refreshToken = new RefreshToken();
 		refreshToken.setUsername(username);
-		refreshToken.setExpirationDate(new Date(System.currentTimeMillis() + 1000 * 60 * 10));
+		refreshToken.setExpirationDate(new Date(System.currentTimeMillis() + 1000 * 60 * 20));
 		refreshToken.setToken(UUID.randomUUID());
 
 		//Remove existing refresh tokens for this user

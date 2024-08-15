@@ -18,6 +18,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 import com.kamis.financemanager.AppTestUtils;
@@ -38,8 +39,8 @@ import io.restassured.specification.RequestSpecification;
 import jakarta.transaction.Transactional;
 
 @ActiveProfiles(profiles = "test")
+@SpringJUnitConfig
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class TestTransactionController {
 
@@ -67,31 +68,22 @@ public class TestTransactionController {
 
 	@BeforeEach
 	@Transactional
-	private void setup() {
+	public void setup() {
 
-		transactionRepository.deleteAll();
 		userRepository.deleteAll();
+		roleRepository.deleteAll();
+		transactionRepository.deleteAll();
 
 		RestAssured.baseURI = "http://localhost:" + port + "/api";
 
-		Optional<Role> adminRole = roleRepository.findByName("admin");
-		Optional<Role> userRole = roleRepository.findByName("user");
+		Role adminRole = roleRepository.saveAndFlush(AppTestUtils.buildRole("admin"));
+		Role userRole = roleRepository.saveAndFlush(AppTestUtils.buildRole("user"));
 
-		if (adminRole.isEmpty()) {
-			roleRepository.saveAndFlush(AppTestUtils.buildRole("admin"));
-			adminRole = roleRepository.findByName("admin");
-		}
+		User admin = AppTestUtils.buildUser("admin", adminRole);
+		User user = AppTestUtils.buildUser("user", userRole);
 
-		if (userRole.isEmpty()) {
-			roleRepository.saveAndFlush(AppTestUtils.buildRole("user"));
-			userRole = roleRepository.findByName("user");
-		}
-
-		User admin = AppTestUtils.buildUser("admin", adminRole.get());
-		User user = AppTestUtils.buildUser("user", userRole.get());
-
-		admin = userRepository.saveAndFlush(admin);
-		user = userRepository.saveAndFlush(user);
+		userRepository.save(admin);
+		userRepository.save(user);
 
 	}
 
@@ -108,8 +100,6 @@ public class TestTransactionController {
 	private TransactionRepository transactionRepository;
 
 	@Test
-	@WithMockUser(username = "admin", authorities = { "admin", "user" })
-	@Transactional
 	public void TestGetAllUserTransactions() {
 
 		String adminUsername = "admin";

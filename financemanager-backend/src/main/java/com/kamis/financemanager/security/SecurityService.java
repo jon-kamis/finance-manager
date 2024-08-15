@@ -18,9 +18,9 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class SecurityService {
 
-	private UserRepository userRepository;
+	private final UserRepository userRepository;
 	
-	private YAMLConfig myConfig;
+	private final YAMLConfig myConfig;
 	
 	public SecurityService(UserRepository userRepository, YAMLConfig myConfig) {
 		this.userRepository = userRepository;
@@ -43,9 +43,8 @@ public class SecurityService {
 	public boolean isAdmin(Authentication authentication) {
 		log.debug("Inside securityservice.isAdmin");
 		if (authentication.getAuthorities().stream()
-				.filter(a -> a.getAuthority()
-						.equalsIgnoreCase(FinanceManagerConstants.ADMIN_ROLE))
-				.findFirst().isPresent()) {
+				.anyMatch(a -> a.getAuthority()
+						.equalsIgnoreCase(FinanceManagerConstants.ADMIN_ROLE))) {
 			log.debug("user is administrator");
 			return true;
 		}

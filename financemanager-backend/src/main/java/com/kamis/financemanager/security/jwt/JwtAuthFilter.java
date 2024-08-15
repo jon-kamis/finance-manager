@@ -3,6 +3,8 @@ package com.kamis.financemanager.security.jwt;
 import java.io.IOException;
 import java.util.Optional;
 
+import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +20,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+@Slf4j
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter{
 
@@ -53,11 +56,18 @@ public class JwtAuthFilter extends OncePerRequestFilter{
 				User user = optUser.get();
 				
 				if (jwtService.validateToken(token,  user)) {
+					log.debug("Successfully authenticated user {}", user.getUsername());
 					UserDetails userInfo = new UserInfo(user, userRoleRepository.findByUserId(user.getId())); 
 					UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userInfo, null, userInfo.getAuthorities());
 					SecurityContextHolder.getContext().setAuthentication(authToken);
+				} else {
+					log.debug("User {} attempted to access the system with an expired JWT", user.getUsername());
 				}
+			} else {
+				log.debug("User with username {} attempted to access the system but was not found", username);
 			}
+		} else {
+			log.debug("JwtAuthFilter attempted to validate a JWT token but no username was found or the security context was null");
 		}
 	
 		filterChain.doFilter(request, response);

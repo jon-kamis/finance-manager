@@ -7,20 +7,21 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import com.kamis.financemanager.security.SecurityService;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 import com.kamis.financemanager.AppTestUtils;
@@ -39,13 +40,16 @@ import io.restassured.http.ContentType;
 import jakarta.transaction.Transactional;
 
 @ActiveProfiles(profiles = "test")
+@SpringJUnitConfig
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class TestLoanController {
 
 	@LocalServerPort
 	private Integer port;
+
+	@Mock
+	private SecurityService securityService;
 
 	static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:latest");
 
@@ -67,7 +71,6 @@ public class TestLoanController {
 	}
 
 	@BeforeEach
-	@Transactional
 	public void setup() {
 		RestAssured.baseURI = "http://localhost:" + port + "/api";
 
@@ -75,32 +78,22 @@ public class TestLoanController {
 		insertData();
 	}
 
+	@Transactional
 	private void cleanData() {
-		Optional<User> optAdmin = userRepository.findByUsername("admin");
-		Optional<User> optUser = userRepository.findByUsername("user");
-
-        optAdmin.ifPresent(user -> userRepository.delete(user));
-
-        optUser.ifPresent(user -> userRepository.delete(user));
+		userRepository.deleteAll();
+		roleRepository.deleteAll();
+		loanRepository.deleteAll();
 
 	}
 
+	@Transactional
 	private void insertData() {
-		Optional<Role> adminRole = roleRepository.findByName("admin");
-		Optional<Role> userRole = roleRepository.findByName("user");
 
-		if (adminRole.isEmpty()) {
-			roleRepository.saveAndFlush(AppTestUtils.buildRole("admin"));
-			adminRole = roleRepository.findByName("admin");
-		}
+		Role adminRole = roleRepository.saveAndFlush(AppTestUtils.buildRole("admin"));
+		Role userRole = roleRepository.saveAndFlush(AppTestUtils.buildRole("user"));
 
-		if (userRole.isEmpty()) {
-			roleRepository.saveAndFlush(AppTestUtils.buildRole("user"));
-			userRole = roleRepository.findByName("user");
-		}
-
-		User admin = AppTestUtils.buildUser("admin", adminRole.get());
-		User user = AppTestUtils.buildUser("user", userRole.get());
+		User admin = AppTestUtils.buildUser("admin", adminRole);
+		User user = AppTestUtils.buildUser("user", userRole);
 
 		admin = userRepository.saveAndFlush(admin);
 		user = userRepository.saveAndFlush(user);
@@ -125,8 +118,6 @@ public class TestLoanController {
 	private LoanRepository loanRepository;
 
 	@Test
-	@WithMockUser(username = "admin", authorities = { "admin", "user" })
-	@Transactional
 	public void TestGetLoanById_admin() {
 
 		String adminUsername = "admin";
@@ -167,8 +158,6 @@ public class TestLoanController {
 	}
 
 	@Test
-	@WithMockUser(username = "user", authorities = { "user" })
-	@Transactional
 	public void TestGetLoanById_user() {
 
 		String adminUsername = "admin";

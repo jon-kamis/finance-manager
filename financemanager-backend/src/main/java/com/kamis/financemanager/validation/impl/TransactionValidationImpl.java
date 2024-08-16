@@ -40,7 +40,7 @@ public class TransactionValidationImpl implements TransactionValidation {
 			throw new FinanceManagerException(myConfig.getInvalidAmountErrorMsg(), HttpStatus.BAD_REQUEST);
 		}
 
-		if (request.getDaysOfMonth() == null || request.getDaysOfMonth().size() == 0) {
+		if (request.getDaysOfMonth() == null || request.getDaysOfMonth().isEmpty()) {
 			throw new FinanceManagerException(myConfig.getAtLeastOneDateRequiredErrorMsg(), HttpStatus.BAD_REQUEST);
 		} else {
 
@@ -80,45 +80,72 @@ public class TransactionValidationImpl implements TransactionValidation {
 	@Override
 	public void validateGetAllTransactionParameters(Integer userId, String parentName, String category, String type,
 			String sortBy, String sortType, Integer page, Integer pageSize) throws FinanceManagerException {
-		
-		if (userId == null || userId < 1) {
-			throw new FinanceManagerException(myConfig.getUserIdRequiredError(), HttpStatus.BAD_REQUEST);
-		}
-		
-		if (parentName != null && !parentName.isBlank()
-				&& Stream.of(TableNameEnum.values()).noneMatch(c -> c.getName().equalsIgnoreCase(parentName))) {
-			throw new FinanceManagerException(myConfig.getInvalidTransactionSearchParentName(), HttpStatus.BAD_REQUEST);
-		}
-		
-		if (category != null && !category.isBlank()
-				&& Arrays.asList(TransactionCategoryEnum.values()).stream()
-				.noneMatch(c -> c.getCategory().equals(category))) {
-			throw new FinanceManagerException(myConfig.getInvalidTransactionSearchCategory(), HttpStatus.BAD_REQUEST);
-		}
-		
-		if (type != null && !type.isBlank()
-				&& Arrays.asList(TransactionTypeEnum.values()).stream()
-				.noneMatch(t -> t.getType().equals(type))) {
-			throw new FinanceManagerException(myConfig.getInvalidTransactionSearchType(), HttpStatus.BAD_REQUEST);
-		}
-		
+
 		if (sortBy != null && !sortBy.isBlank()
 				&& FinanceManagerConstants.TRANSACTION_VALID_SORT_OPTIONS.stream()
 				.noneMatch(t -> t.equals(sortBy))) {
 			throw new FinanceManagerException(myConfig.getInvalidSortByErrorMsg(), HttpStatus.BAD_REQUEST);
 		}
+
+		validateCommonGetTransactionParameters(userId, parentName, category, type, sortType, page, pageSize);
 		
+	}
+
+	@Override
+	public void validateGetAllTransactionOccurrenceParameters(Integer userId, String parent, String category, String type, String sortBy, String sortType, Integer page, Integer pageSize) {
+
+		if (sortBy != null && !sortBy.isBlank()
+				&& FinanceManagerConstants.TRANSACTION_OCCURRENCE_VALID_SORT_OPTIONS.stream()
+				.noneMatch(t -> t.equals(sortBy))) {
+			throw new FinanceManagerException(myConfig.getInvalidSortByErrorMsg(), HttpStatus.BAD_REQUEST);
+		}
+
+		validateCommonGetTransactionParameters(userId, parent, category, type, sortType, page, pageSize);
+	}
+
+	/**
+	 * Validates common parameters for Get Transaction requests
+	 * @param userId The user to fetch transactions for
+	 * @param parentName The name of the parent table
+	 * @param category Filter by category
+	 * @param type Filter by type
+	 * @param sortType direction to sort results
+	 * @param page page of results to return
+	 * @param pageSize pageSize of results to return
+	 * @throws FinanceManagerException
+	 */
+	private void validateCommonGetTransactionParameters(Integer userId, String parentName, String category, String type, String sortType, Integer page, Integer pageSize) throws FinanceManagerException {
+		if (userId == null || userId < 1) {
+			throw new FinanceManagerException(myConfig.getUserIdRequiredError(), HttpStatus.BAD_REQUEST);
+		}
+
+		if (parentName != null && !parentName.isBlank()
+				&& Stream.of(TableNameEnum.values()).noneMatch(c -> c.getName().equalsIgnoreCase(parentName))) {
+			throw new FinanceManagerException(myConfig.getInvalidTransactionSearchParentName(), HttpStatus.BAD_REQUEST);
+		}
+
+		if (category != null && !category.isBlank()
+				&& Arrays.asList(TransactionCategoryEnum.values()).stream()
+				.noneMatch(c -> c.getCategory().equals(category))) {
+			throw new FinanceManagerException(myConfig.getInvalidTransactionSearchCategory(), HttpStatus.BAD_REQUEST);
+		}
+
+		if (type != null && !type.isBlank()
+				&& Arrays.asList(TransactionTypeEnum.values()).stream()
+				.noneMatch(t -> t.getType().equals(type))) {
+			throw new FinanceManagerException(myConfig.getInvalidTransactionSearchType(), HttpStatus.BAD_REQUEST);
+		}
+
 		if (sortType != null && !sortType.isBlank()
 				&& FinanceManagerConstants.VALID_SORT_TYPES.stream()
 				.noneMatch(t -> t.equals(sortType))) {
 			throw new FinanceManagerException(myConfig.getInvalidSortTypeErrorMsg(), HttpStatus.BAD_REQUEST);
 		}
-		
+
 		if ((page != null && page < 1) || pageSize != null && pageSize < 1) {
 			throw new FinanceManagerException(myConfig.getInvalidPagingParameterErrorMsg(), HttpStatus.BAD_REQUEST);
 
 		}
-		
 	}
 
 }

@@ -12,6 +12,7 @@ const PagedTable = ({ headings, rows, searchParameters, setSearchParameters, cou
         [`&.${tableCellClasses.head}`]: {
             backgroundColor: "var(--color-primary)",
             color: "white",
+            padding: "20px",
         },
         [`&.${tableCellClasses.head}:first-child`]: {
             borderTopLeftRadius: "var(--border-radius-2)",
@@ -24,7 +25,7 @@ const PagedTable = ({ headings, rows, searchParameters, setSearchParameters, cou
         },
         [`&`]: {
             borderBottom: "none",
-        }
+        },
     }));
 
     const StyledTableRow = styled(TableRow)(() => ({
@@ -44,10 +45,16 @@ const PagedTable = ({ headings, rows, searchParameters, setSearchParameters, cou
         '&': {
             borderLeft: "1px solid var(--color-primary)",
             borderRight: "1px solid var(--color-primary)",
-            height: "3rem",
+            height: "4rem",
         },
         '&:last-child': {
             borderBottom: "none"
+        },
+        '& td:first-child': {
+            paddingLeft: "20px"
+        },
+        '& td:last-child': {
+            paddingRight: "20px"
         }
     }));
 
@@ -89,6 +96,7 @@ const PagedTable = ({ headings, rows, searchParameters, setSearchParameters, cou
         setSearchParameters({
             ...searchParameters,
             [name]: value,
+            page: 1
         })
     }
 
@@ -150,12 +158,12 @@ const PagedTable = ({ headings, rows, searchParameters, setSearchParameters, cou
     return (
         <div className="table__container">
             <TableContainer>
-                <Table sx={{ minWidth: 650, borderColor: "blue", padding: "0" }} aria-label="Income Transactions List">
+                <Table sx={{ minWidth: "80%", borderColor: "blue", padding: "0" }} aria-label="Income Transactions List">
                     <TableHead>
                         <TableRow>
                             {
                                 headings.map(h =>
-                                    <StyledTableCell align={h.align ? h.align : "center"}><span className ="link__span" onClick = {() => updateSort(`${h.id}`)}>{h.label}</span></StyledTableCell>
+                                    <StyledTableCell align={h.align ? h.align : "center"} padding = "none"><span className ="link__span" onClick = {() => updateSort(`${h.id}`)}>{h.label}</span></StyledTableCell>
                                 )
                             }
                         </TableRow>
@@ -165,9 +173,10 @@ const PagedTable = ({ headings, rows, searchParameters, setSearchParameters, cou
                             <StyledTableRow
                                 key={row.id}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                padding="none"
                             >
                                 {row.data && row.data.map(d =>
-                                    <StyledTableCell key={row.id + "_" + d.value} align={d.align ? d.align : "center"}>{d.value}</StyledTableCell>
+                                    <StyledTableCell key={row.id + "_" + d.value} align={d.align ? d.align : "center"} padding = "none">{d.value}</StyledTableCell>
                                 )}
                             </StyledTableRow>
                         ))}

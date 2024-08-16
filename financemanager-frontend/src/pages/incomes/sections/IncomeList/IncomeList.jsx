@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useUserContext } from '../../../../context/user-context';
 import tableHeadings from './thead_data';
 import Toast from '../../../../components/alerting/Toast';
-import { UserApi } from '../../../../app-properties';
+import { UserApi, numberFormatOptions } from '../../../../app-properties';
 import PagedTable from '../../../../components/PagedTable';
 import './incomes.css'
 import { format, parseISO } from "date-fns";
@@ -26,7 +26,6 @@ const IncomeList = () => {
   const [tableData, setTableData] = useState([]);
   const { user, jwt, refreshUserData } = useUserContext();
   const { showModalHandler } = useModalContext();
-  const numberFormatOptions = { maximumFractionDigits: 2, minimumFractionDigits: 2 }
 
   function deleteIncome(id) {
     const requestOptions = {

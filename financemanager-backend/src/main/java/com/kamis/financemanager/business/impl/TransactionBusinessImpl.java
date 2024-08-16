@@ -77,7 +77,7 @@ public class TransactionBusinessImpl implements TransactionBusiness {
 		}
 		
 		if (parentName != null && !parentName.isBlank()) {
-			spec.and("parentTableName", TableNameEnum.valueOfLabel(parentName), QueryOperation.EQUALS);
+			spec.and("parentTableName", TableNameEnum.valueOfLabel(parentName), QueryOperation.EQUALS_OBJECT);
 		}
 
 		if (category != null && !category.isBlank()) {

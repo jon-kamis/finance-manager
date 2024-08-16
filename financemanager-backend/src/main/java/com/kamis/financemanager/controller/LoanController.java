@@ -104,7 +104,7 @@ public class LoanController {
 		}
 	}
 	
-	@Operation(summary = "Get all loans for a user")
+	@Operation(summary = "Get loans for a user by its id")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "CREATED", content = {
 			@Content(mediaType = "application/json", schema = @Schema(implementation = PagedLoanResponse.class)) }),
 			@ApiResponse(responseCode = "401", description = "UNAUTHORIZED", content = {

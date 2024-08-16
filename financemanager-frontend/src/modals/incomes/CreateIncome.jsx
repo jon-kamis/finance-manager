@@ -6,8 +6,9 @@ import Toast from '../../components/alerting/Toast';
 import { useModalContext } from '../../context/modal-context';
 import { UserApi } from '../../app-properties';
 import Select from '../../components/form/Select';
-import { incFrequencies, weekdayData } from './incomeData'
+import { weekdayData } from './incomeData'
 import { useUserContext } from '../../context/user-context';
+import { payFrequencies } from '../../app-properties';
 
 const emptyIncomeReq = {
     name: "",
@@ -125,7 +126,7 @@ const CreateIncome = () => {
                         type={"text"}
                         className={"form-control"}
                         name={"name"}
-                        value={incomeRequest.username}
+                        value={incomeRequest.name}
                         onChange={handleChange("")}
                     />
                     <Input
@@ -181,7 +182,7 @@ const CreateIncome = () => {
                         name={"frequency"}
                         value={incomeRequest.frequency}
                         onChange={handleChange("")}
-                        options={incFrequencies.map(f => ({ id: f.id, value: f.value }))}
+                        options={payFrequencies.map(f => ({ id: f.id, value: f.value }))}
                         placeHolder={"Select"}
                     />
                     {

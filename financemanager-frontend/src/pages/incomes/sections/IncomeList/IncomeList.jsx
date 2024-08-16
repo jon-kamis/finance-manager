@@ -128,7 +128,14 @@ const IncomeList = () => {
     <section id="income__list">
       <div className="container income__container">
         <h2>Incomes</h2>
-        <PagedTable key="income__list" className={"table__container-dark"} headings={genHeadings(tableHeadings)} rows={tableData} searchParameters={searchParameters} count={incomes && incomes.count ? incomes.count : 0} setSearchParameters={setSearchParameters} />
+        <PagedTable
+          key="income__list"
+          className={"table__container-dark"}
+          headings={genHeadings(tableHeadings)}
+          rows={tableData}
+          searchParameters={searchParameters}
+          count={incomes && incomes.count ? incomes.count : 0}
+          setSearchParameters={setSearchParameters} />
       </div>
     </section>
   )

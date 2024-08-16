@@ -52,4 +52,5 @@ public class FinanceManagerConstants {
 	public static final String JWT_CLAIM_USER_FIRST_NAME = "firstName";
 	public static final String JWT_CLAIM_USER_ROLES = "userRoles";
 
+	public static final String LOAN_PAYMENT_TRANSACTION_SUFFIX = " Payment";
 }

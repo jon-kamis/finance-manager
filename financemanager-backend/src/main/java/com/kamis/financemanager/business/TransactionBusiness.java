@@ -3,7 +3,9 @@ package com.kamis.financemanager.business;
 import java.util.Date;
 import java.util.List;
 
+import com.kamis.financemanager.database.domain.LoanPayment;
 import com.kamis.financemanager.database.domain.Transaction;
+import com.kamis.financemanager.enums.PaymentFrequencyEnum;
 import com.kamis.financemanager.exception.FinanceManagerException;
 import com.kamis.financemanager.rest.domain.transactions.PagedTransactionOccurrenceResponse;
 import com.kamis.financemanager.rest.domain.transactions.PagedTransactionResponse;
@@ -79,4 +81,10 @@ public interface TransactionBusiness {
 	 * @return A list of all transactions for the given user which are effective for at least one day of the given range
 	 */
 	public List<Transaction> getTransactionsForDateRange(int userId, Date startDt, Date endDt, String name, String parent, String category, String type, String sortBy, String sortType, Integer page, Integer pageSize);
+
+	/**
+	 * Generates and saves a new list of Transactions for a loan payment list
+	 * @param loanPayments The list of loan payments to save the transactions for
+	 */
+	public void buildAndSaveTransactionsForLoanPayments(List<LoanPayment> loanPayments);
 }

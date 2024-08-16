@@ -1,5 +1,8 @@
 package com.kamis.financemanager.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum PaymentFrequencyEnum {
 
 	MONTHLY("monthly", 12),
@@ -7,10 +10,11 @@ public enum PaymentFrequencyEnum {
 	BIWEEKLY("bi-weekly", 26),
 	WEEKLY("weekly", 52),
 	QUARTERLY("quarterly", 4),
-	ANNUAL("annual", 1);
+	ANNUAL("annual", 1),
+	ONE_TIME_ONLY("one-time-only", 1);
 
-	private String frequency;
-	private int numPays;
+	private final String frequency;
+	private final int numPays;
 	
 	PaymentFrequencyEnum(String frequency, int numPays) {
 		this.frequency = frequency;
@@ -25,13 +29,5 @@ public enum PaymentFrequencyEnum {
 	    }
 	    return null;
 	}
-	
-	public String getFrequency() {
-		return frequency;
-	}
-	
-	public int getNumPays() {
-		return numPays;
-	}
-		
+
 }

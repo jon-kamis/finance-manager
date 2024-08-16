@@ -6,7 +6,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.kamis.financemanager.constants.FinanceManagerConstants;
 import com.kamis.financemanager.database.domain.Income;
+import com.kamis.financemanager.database.domain.LoanPayment;
 import com.kamis.financemanager.database.domain.Transaction;
 import com.kamis.financemanager.database.domain.TransactionDay;
 import com.kamis.financemanager.enums.PaymentFrequencyEnum;
@@ -17,6 +19,7 @@ import com.kamis.financemanager.enums.WeekdayEnum;
 import com.kamis.financemanager.rest.domain.incomes.IncomePostRequest;
 import com.kamis.financemanager.rest.domain.transactions.*;
 import com.kamis.financemanager.util.FinanceManagerUtil;
+import jakarta.persistence.Table;
 
 public class TransactionFactory {
 
@@ -124,7 +127,6 @@ public class TransactionFactory {
 	/**
 	 * Builds a new transaction object for an income object
 	 * 
-	 * @param userId  The income that will own this transaction
 	 * @param request The income post request
 	 * @return A transaction object built for the given income
 	 */
@@ -169,7 +171,8 @@ public class TransactionFactory {
 			}
 			
 			break;
-		default:
+            case null:
+            default:
 			break;
 		}
 
@@ -222,5 +225,41 @@ public class TransactionFactory {
 		}
 
 		return responseList;
+	}
+
+	/**
+	 * Builds a Transaction for a LoanPayment
+	 * @param loanPayment the loanPayment object to build the transaction for
+	 * @return A new Transaction Object
+	 */
+    public static Transaction buildTransactionFromLoanPayment(LoanPayment loanPayment) {
+		Transaction t = new Transaction();
+		t.setName(loanPayment.getLoan().getName() + FinanceManagerConstants.LOAN_PAYMENT_TRANSACTION_SUFFIX);
+		t.setType(TransactionTypeEnum.EXPENSE);
+		t.setCategory(TransactionCategoryEnum.LOAN);
+		t.setAmount(loanPayment.getAmount());
+		t.addTransactionDay(buildTransactionDayForLoanPayment(loanPayment));
+		t.setExpirationDate(loanPayment.getPaymentDate());
+		t.setEffectiveDate(loanPayment.getPaymentDate());
+		t.setAuditInfo(FinanceManagerUtil.getAuditInfo());
+		t.setFrequency(loanPayment.isManualPayment() ? PaymentFrequencyEnum.ONE_TIME_ONLY : loanPayment.getLoan().getFrequency());
+		t.setUserId(loanPayment.getLoan().getUserId());
+		t.setParentId(loanPayment.getId());
+		t.setParentTableName(TableNameEnum.LOANS);
+
+		return t;
+    }
+
+	/**
+	 * Creates a TransactionDay object for a loan payment
+	 * @param loanPayment The loanPayment to build the transactionDay object for
+	 * @return A new TransactionDay built for the given loan payment
+	 */
+	private static TransactionDay buildTransactionDayForLoanPayment(LoanPayment loanPayment) {
+		TransactionDay day = new TransactionDay();
+		day.setAuditInfo(FinanceManagerUtil.getAuditInfo());
+		day.setStartDate(loanPayment.getPaymentDate());
+
+		return day;
 	}
 }

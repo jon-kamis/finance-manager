@@ -39,7 +39,7 @@ const IncomeTransactions = () => {
             credentials: "include",
         }
 
-        fetch(`${UserApi}/${user.userId}/transactions?parentName=incomes&name=${searchParameters.filter}&page=${searchParameters.page}&pageSize=${searchParameters.pageSize}&sortBy=${searchParameters.sortBy}&sortType=${searchParameters.sortType}`, requestOptions)
+        fetch(`${UserApi}/${user.userId}/transactions?parent=incomes&name=${searchParameters.filter}&page=${searchParameters.page}&pageSize=${searchParameters.pageSize}&sortBy=${searchParameters.sortBy}&sortType=${searchParameters.sortType}`, requestOptions)
             .then((response) => {
                 if (!response.ok) throw new Error(response.statusText);
                 else return response.json();

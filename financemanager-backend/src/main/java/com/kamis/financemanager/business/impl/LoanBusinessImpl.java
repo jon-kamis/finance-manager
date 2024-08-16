@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import com.kamis.financemanager.business.TransactionBusiness;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Pageable;
@@ -42,14 +43,17 @@ public class LoanBusinessImpl implements LoanBusiness {
 	
 	@Autowired
 	private LoanPaymentRepository loanPaymentRepository;
-	
+
 	@Autowired
 	private LoanValidation loanValidation;
 	
 	@Lazy
 	@Autowired
 	private LoanBusiness loanBusiness;
-	
+
+	@Autowired
+	private TransactionBusiness transactionBusiness;
+
 	@Autowired
 	private YAMLConfig myConfig;
 	
@@ -60,8 +64,10 @@ public class LoanBusinessImpl implements LoanBusiness {
 		loan = loanBusiness.calculateLoanPament(loan);
 		loan = loanBusiness.calculatePaymentSchedule(loan);
 		loan.setBalance(getLoanBalance(loan));
-		
-		return loanRepository.saveAndFlush(loan) != null;
+
+        loanRepository.saveAndFlush(loan);
+		transactionBusiness.buildAndSaveTransactionsForLoanPayments(loan.getPayments());
+        return true;
 	}
 
 	@Override
@@ -73,19 +79,13 @@ public class LoanBusinessImpl implements LoanBusiness {
 		float payment; //Payment for new loan
 		
 		//Get payments per year
-		switch(loan.getFrequency()) {
-		case BIWEEKLY:
-			n = 26;
-			break;
-		case MONTHLY:
-			n = 12;
-			break;
-		case WEEKLY:
-			n = 52;
-			break;
-		default:
-			throw new FinanceManagerException(myConfig.getInvalidLoanPaymentFrequencyError(), HttpStatus.UNPROCESSABLE_ENTITY);
-		}
+        n = switch (loan.getFrequency()) {
+            case BIWEEKLY -> 26;
+            case MONTHLY -> 12;
+            case WEEKLY -> 52;
+            default ->
+                    throw new FinanceManagerException(myConfig.getInvalidLoanPaymentFrequencyError(), HttpStatus.UNPROCESSABLE_ENTITY);
+        };
 		
 		// Payment Equation:
 		// Payment is P / {[(1+i)^n]-1} / [i(1+i)^n] where P is starting principal, i is the interest rate divided by 12, and n is the number of payments
@@ -118,22 +118,16 @@ public class LoanBusinessImpl implements LoanBusiness {
 		int paymentNum = 0;
 		int paysPerYear = 0;
 		
-		//Convert to localdate for easier addition of days/months
+		//Convert to local date for easier addition of days/months
 		LocalDate payDate = loan.getFirstPaymentDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-		
-		switch(loan.getFrequency()) {
-		case MONTHLY:
-			paysPerYear = 12;
-			break;
-		case BIWEEKLY:
-			paysPerYear = 26;
-			break;
-		case WEEKLY:
-			paysPerYear = 52;
-			break;
-		default:
-			throw new FinanceManagerException(myConfig.getInvalidLoanPaymentFrequencyError(), HttpStatus.UNPROCESSABLE_ENTITY);
-		}
+
+        paysPerYear = switch (loan.getFrequency()) {
+            case MONTHLY -> 12;
+            case BIWEEKLY -> 26;
+            case WEEKLY -> 52;
+            default ->
+                    throw new FinanceManagerException(myConfig.getInvalidLoanPaymentFrequencyError(), HttpStatus.UNPROCESSABLE_ENTITY);
+        };
 		
 		while (total > 0) {
 			amount = loan.getPayment();
@@ -163,24 +157,22 @@ public class LoanBusinessImpl implements LoanBusiness {
 			payItem.setPaymentDate(Date.from(payDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
 			
 			//Increment paydate
-			switch(loan.getFrequency()) {
-			case MONTHLY:
-				payDate.plusMonths(1);
-				paysPerYear = 12;
-				break;
-			case BIWEEKLY:
-				payDate.plusWeeks(2);
-				paysPerYear = 26;
-				break;
-			case WEEKLY:
-				payDate.plusWeeks(1);
-				paysPerYear = 52;
-				break;
-			default:
-				throw new FinanceManagerException(myConfig.getInvalidLoanPaymentFrequencyError(), HttpStatus.UNPROCESSABLE_ENTITY);
-			}
+             switch (loan.getFrequency()) {
+                case MONTHLY -> {
+                    payDate = payDate.plusMonths(1);
+                }
+                case BIWEEKLY -> {
+                    payDate = payDate.plusWeeks(2);
+                }
+                case WEEKLY -> {
+                    payDate = payDate.plusWeeks(1);
+                }
+                default ->
+                        throw new FinanceManagerException(myConfig.getInvalidLoanPaymentFrequencyError(), HttpStatus.UNPROCESSABLE_ENTITY);
+            };
 						
 			loan.AddLoanPayment(payItem);
+
 		}
 
 		float calcErr = loan.getPrincipal() - principalToDate;

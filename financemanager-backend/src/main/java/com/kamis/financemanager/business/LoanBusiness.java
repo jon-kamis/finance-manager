@@ -27,6 +27,7 @@ public interface LoanBusiness {
 	
 	/**
 	 * Calculates the payment schedule for a loan
+	 *
 	 * @param loan The loan to perform the payment schedule calculation on
 	 * @return The loan with payment schedule list filled
 	 * @throws FinanceManagerException

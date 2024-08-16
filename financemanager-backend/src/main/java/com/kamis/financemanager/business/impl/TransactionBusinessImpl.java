@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
 
+import com.kamis.financemanager.database.domain.LoanPayment;
 import com.kamis.financemanager.rest.domain.transactions.PagedTransactionOccurrenceResponse;
 import com.kamis.financemanager.rest.domain.transactions.TransactionOccuranceResponse;
 import jakarta.transaction.Transactional;
@@ -295,6 +296,17 @@ public class TransactionBusinessImpl implements TransactionBusiness {
 		tSpec = tSpec.where("userId", userId, QueryOperation.EQUALS);
 
 		return transactionRepository.findAll(Specification.where(tSpec.build()).and(effDateSpec.build().and(expDateSpec.build())));
+	}
+
+	@Override
+	public void buildAndSaveTransactionsForLoanPayments(List<LoanPayment> loanPayments) {
+		List<Transaction> tList = new ArrayList<>();
+
+		for (LoanPayment l : loanPayments) {
+			tList.add(TransactionFactory.buildTransactionFromLoanPayment(l));
+		}
+
+		transactionRepository.saveAll(tList);
 	}
 
 	/**

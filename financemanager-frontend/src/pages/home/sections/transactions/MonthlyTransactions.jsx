@@ -17,7 +17,8 @@ const defaultResponse = {
 
 const MonthlyTransactions = () => {
     const { user, jwt } = useUserContext();
-    const [searchParameters, setSearchParameters] = useState({ filter: "", page: 1, pageSize: 10, sortBy: "", sortType: "asc" })
+    const [incSearchParameters, setIncSearchParameters] = useState({ filter: "", page: 1, pageSize: 10, sortBy: "", sortType: "asc" })
+    const [expSearchParameters, setExpSearchParameters] = useState({ filter: "", page: 1, pageSize: 10, sortBy: "", sortType: "asc" })
     const [incomeTableData, setIncomeTableData] = useState([]);
     const [expenseTableData, setExpenseTableData] = useState([]);
     const [incomes, setIncomes] = useState(defaultResponse);
@@ -77,7 +78,7 @@ const MonthlyTransactions = () => {
           credentials: "include",
         }
     
-        fetch(`${UserApi}/${user.userId}/transaction-occurrences?startDate=${getStartDate()}&endDate=${getEndDate()}&type=income&name=${searchParameters.filter}&page=${searchParameters.page}&pageSize=${searchParameters.pageSize}&sortBy=${searchParameters.sortBy}&sortType=${searchParameters.sortType}`, requestOptions)
+        fetch(`${UserApi}/${user.userId}/transaction-occurrences?startDate=${getStartDate()}&endDate=${getEndDate()}&type=income&name=${incSearchParameters.filter}&page=${incSearchParameters.page}&pageSize=${incSearchParameters.pageSize}&sortBy=${incSearchParameters.sortBy}&sortType=${incSearchParameters.sortType}`, requestOptions)
           .then((response) => {
             if (!response.ok) throw new Error(response.statusText);
             else return response.json();
@@ -93,7 +94,7 @@ const MonthlyTransactions = () => {
           .catch(error => {
             Toast(error.message, "error");
           })
-      }, [user, searchParameters])
+      }, [user, incSearchParameters])
 
       useEffect(() => {
         const requestOptions = {
@@ -105,7 +106,7 @@ const MonthlyTransactions = () => {
           credentials: "include",
         }
     
-        fetch(`${UserApi}/${user.userId}/transaction-occurrences?startDate=${getStartDate()}&endDate=${getEndDate()}&type=expense&name=${searchParameters.filter}&page=${searchParameters.page}&pageSize=${searchParameters.pageSize}&sortBy=${searchParameters.sortBy}&sortType=${searchParameters.sortType}`, requestOptions)
+        fetch(`${UserApi}/${user.userId}/transaction-occurrences?startDate=${getStartDate()}&endDate=${getEndDate()}&type=expense&name=${expSearchParameters.filter}&page=${expSearchParameters.page}&pageSize=${expSearchParameters.pageSize}&sortBy=${expSearchParameters.sortBy}&sortType=${expSearchParameters.sortType}`, requestOptions)
           .then((response) => {
             if (!response.ok) throw new Error(response.statusText);
             else return response.json();
@@ -121,7 +122,7 @@ const MonthlyTransactions = () => {
           .catch(error => {
             Toast(error.message, "error");
           })
-      }, [user, searchParameters])
+      }, [user, expSearchParameters])
 
     const getCurMonth = () => {
         let curMonth = new Date().getMonth();
@@ -166,20 +167,20 @@ const MonthlyTransactions = () => {
                         className={"table__container-dark"} 
                         headings={tableHeadings} 
                         rows={incomeTableData} 
-                        searchParameters={searchParameters} 
+                        searchParameters={incSearchParameters} 
                         count={incomes && incomes.count ? incomes.count : 0} 
-                        setSearchParameters={setSearchParameters} />
+                        setSearchParameters={setIncSearchParameters} />
                 </div>
                 <div className="monthlyTransactions__expenses">
                     <h2>Expenses</h2>
                     <PagedTable 
-                        key="mt-income__list" 
+                        key="mt-expense__list" 
                         className={"table__container-dark"} 
                         headings={tableHeadings} 
                         rows={expenseTableData} 
-                        searchParameters={searchParameters} 
+                        searchParameters={expSearchParameters} 
                         count={expenses && expenses.count ? expenses.count : 0} 
-                        setSearchParameters={setSearchParameters} />
+                        setSearchParameters={setExpSearchParameters} />
                 </div>
             </div>
         </section>

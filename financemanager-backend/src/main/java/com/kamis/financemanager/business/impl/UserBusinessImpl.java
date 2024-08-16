@@ -157,7 +157,7 @@ public class UserBusinessImpl implements UserBusiness {
 
 		Date startDt = Date.from(LocalDate.of(year, month, 1).atStartOfDay(ZoneId.systemDefault()).toInstant());
 		Date endDt = Date.from(LocalDate.of(year, month + 1, 1).atStartOfDay(ZoneId.systemDefault()).toInstant().minusNanos(1));
-		List<Transaction> transactions = getTransactionsForDateRange(id, startDt, endDt);
+		List<Transaction> transactions = transactionBusiness.getTransactionsForDateRange(id, startDt, endDt, null, null, null, null, null, null, null, null);
 
 		if (!transactions.isEmpty()) {
 			List<Date> occurrences;
@@ -199,26 +199,4 @@ public class UserBusinessImpl implements UserBusiness {
 		response.setTotals(totals);
 		return response;
 	}
-
-	/**
-	 * Fetches all transactions for a given user and date range
-	 * @param id The id of the user to fetch transactions for
-	 * @param startDt The starting Date of the range to fetch transactions for
-	 * @param endDt The ending Date of the range to fetch transactions for
-	 * @return A list of all transactions for the given user which are effective for at least one day of the given range
-	 */
-	private List<Transaction> getTransactionsForDateRange(int id, Date startDt, Date endDt) {
-		GenericSpecification<Transaction> tSpec = new GenericSpecification<>();
-		GenericSpecification<Transaction> effDateSpec = new GenericSpecification<>();
-		GenericSpecification<Transaction> expDateSpec = new GenericSpecification<>();
-
-		expDateSpec = expDateSpec.where("expirationDate", null, QueryOperation.IS_NULL)
-				.or("expirationDate", startDt, QueryOperation.GREATER_THAN_EQUAL_TO_DATE);
-
-		effDateSpec = effDateSpec.where("effectiveDate", endDt, QueryOperation.LESS_THAN_EQUAL_TO_DATE);
-		tSpec = tSpec.where("userId", id, QueryOperation.EQUALS);
-
-		return transactionRepository.findAll(Specification.where(tSpec.build()).and(effDateSpec.build().and(expDateSpec.build())));
-	}
-
 }

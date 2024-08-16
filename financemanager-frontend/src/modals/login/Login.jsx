@@ -6,10 +6,13 @@ import './login.css'
 import Toast from '../../components/alerting/Toast';
 import { useModalContext } from '../../context/modal-context';
 import { AuthUrl } from '../../app-properties';
+import { usePageContext } from '../../context/page-context';
 
 const Login = () => {
     const { showModalHandler, closeModalHandler } = useModalContext();
     const { updateUserTokens } = useUserContext();
+    const { setActivePageHandler } = usePageContext();
+
     const [loginRequest, setLoginRequest] = useState({
         username: "",
         password: "",
@@ -58,6 +61,7 @@ const Login = () => {
 
                     Toast("Login successful!", "success");
                     closeModalHandler();
+                    setActivePageHandler("home")
                 }
             })
             .catch(error => {

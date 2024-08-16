@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.kamis.financemanager.database.domain.Transaction;
 import com.kamis.financemanager.exception.FinanceManagerException;
+import com.kamis.financemanager.rest.domain.transactions.PagedTransactionOccurrenceResponse;
 import com.kamis.financemanager.rest.domain.transactions.PagedTransactionResponse;
 import com.kamis.financemanager.rest.domain.transactions.TransactionPostRequest;
 
@@ -44,4 +45,38 @@ public interface TransactionBusiness {
 	 * @throws FinanceManagerException
 	 */
 	public List<Date> getPaysInDateRange(Transaction t, Date startDate, Date endDate) throws FinanceManagerException;
+
+	/**
+	 * Returns a list of all User Transaction Occurrences for a date range
+	 * @param userId The id of the user to retrieve transaction occurrences for
+	 * @param startDate The starting date of the range to search
+	 * @param endDate The ending date of the range to search
+	 * @param name Filter results by name
+	 * @param parent Filter results by parent type
+	 * @param category Filter results by category
+	 * @param type Filter results by transaction type
+	 * @param sortBy Sort Results by field
+	 * @param sortType Sort Direction
+	 * @param page Page of results to return
+	 * @param pageSize Size of pages to return
+	 * @return A PagedTransactionOccurrenceResponse holding the requested data
+	 */
+	public PagedTransactionOccurrenceResponse getAllUserTransactionOccurrences(Integer userId, Date startDate, Date endDate, String name, String parent, String category, String type, String sortBy, String sortType, Integer page, Integer pageSize);
+
+	/**
+	 * Fetches all transactions for a given user and date range
+	 * @param userId The id of the user to fetch transactions for
+	 * @param startDt The starting Date of the range to fetch transactions for
+	 * @param endDt The ending Date of the range to fetch transactions for
+	 * @param name Filter results by name
+	 * @param parent Filter results by parent type
+	 * @param category Filter results by category
+	 * @param type Filter results by transaction type
+	 * @param sortBy Sort Results by field
+	 * @param sortType Sort Direction
+	 * @param page Page of results to return
+	 * @param pageSize Size of pages to return
+	 * @return A list of all transactions for the given user which are effective for at least one day of the given range
+	 */
+	public List<Transaction> getTransactionsForDateRange(int userId, Date startDt, Date endDt, String name, String parent, String category, String type, String sortBy, String sortType, Integer page, Integer pageSize);
 }

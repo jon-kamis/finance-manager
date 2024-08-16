@@ -19,8 +19,13 @@ public class FinanceManagerConstants {
 	public static final String TRANSACTION_SORT_BY_CATEGORY = "category";
 	public static final String TRANSACTION_SORT_BY_NAME = "name";
 	public static final String TRANSACTION_SORT_BY_TYPE = "type";
+	public static final String TRANSACTION_SORT_BY_FREQ = "frequency";
+	public static final String TRANSACTION_OCC_SORT_BY_DATE = "date";
+
 	public static final List<String> TRANSACTION_VALID_SORT_OPTIONS = Arrays.asList(new String[] {TRANSACTION_SORT_BY_AMOUNT, TRANSACTION_SORT_BY_CATEGORY, 
-			TRANSACTION_SORT_BY_NAME, TRANSACTION_SORT_BY_TYPE});
+			TRANSACTION_SORT_BY_NAME, TRANSACTION_SORT_BY_TYPE, TRANSACTION_SORT_BY_FREQ});
+	public static final List<String> TRANSACTION_OCCURRENCE_VALID_SORT_OPTIONS = Arrays.asList(new String[] {TRANSACTION_SORT_BY_AMOUNT, TRANSACTION_SORT_BY_CATEGORY,
+			TRANSACTION_SORT_BY_NAME, TRANSACTION_SORT_BY_TYPE, TRANSACTION_SORT_BY_FREQ, TRANSACTION_OCC_SORT_BY_DATE});
 	
 	//Income constants
 	public static final String TAX_NAME_FEDERAL = "Federal tax";

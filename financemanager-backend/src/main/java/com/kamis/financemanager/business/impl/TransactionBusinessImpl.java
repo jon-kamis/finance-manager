@@ -3,18 +3,19 @@ package com.kamis.financemanager.business.impl;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
+import com.kamis.financemanager.rest.domain.transactions.PagedTransactionOccurrenceResponse;
+import com.kamis.financemanager.rest.domain.transactions.TransactionOccuranceResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 
 import com.kamis.financemanager.business.TransactionBusiness;
@@ -174,6 +175,127 @@ public class TransactionBusinessImpl implements TransactionBusiness {
 }
         return getNonSemiMonthlyTransactionOccurrences(localStart, localEnd, t);
     }
+
+	@Override
+	public PagedTransactionOccurrenceResponse getAllUserTransactionOccurrences(Integer userId, Date startDate, Date endDate, String name, String parent, String category, String type, String sortBy, String sortType, Integer page, Integer pageSize) {
+
+		transactionValidation.validateGetAllTransactionOccurrenceParameters(userId, parent, category, type, sortBy, sortType, page, pageSize);
+
+		GenericSpecification<Transaction> tSpec = new GenericSpecification<>();
+		GenericSpecification<Transaction> effDateSpec = new GenericSpecification<>();
+		GenericSpecification<Transaction> expDateSpec = new GenericSpecification<>();
+
+		expDateSpec = expDateSpec.where("expirationDate", null, QueryOperation.IS_NULL)
+				.or("expirationDate", startDate, QueryOperation.GREATER_THAN_EQUAL_TO_DATE);
+
+		effDateSpec = effDateSpec.where("effectiveDate", endDate, QueryOperation.LESS_THAN_EQUAL_TO_DATE);
+		tSpec = tSpec.where("userId", userId, QueryOperation.EQUALS);
+
+		if (name != null && !name.isBlank()) {
+			tSpec = tSpec.and("name", name, QueryOperation.CONTAINS);
+		}
+
+		if (parent != null && !parent.isBlank()) {
+			tSpec = tSpec.and("parentTableName", TableNameEnum.valueOfLabel(parent), QueryOperation.EQUALS_OBJECT);
+		}
+
+		if (category != null && !category.isBlank()) {
+			tSpec = tSpec.and("category", TransactionCategoryEnum.valueOfLabel(category), QueryOperation.EQUALS_OBJECT);
+		}
+
+		if (type != null && !type.isBlank()) {
+			tSpec = tSpec.and("type", TransactionTypeEnum.valueOfLabel(type), QueryOperation.EQUALS_OBJECT);
+		}
+
+		Specification<Transaction> spec = Specification.where(tSpec.build()).and(effDateSpec.build().and(expDateSpec.build()));
+
+		if (page == null || page < 1) {
+			page = 1;
+		}
+
+		// Set sort direction
+		boolean sortAsc = sortType == null || sortType.isBlank()
+				|| sortType.equalsIgnoreCase(FinanceManagerConstants.SORT_TYPE_ASC);
+
+		List<Transaction> transactions = transactionRepository.findAll(spec);
+
+		PagedTransactionOccurrenceResponse response = new PagedTransactionOccurrenceResponse();
+		List<TransactionOccuranceResponse> tOccurrences = new ArrayList<>();
+
+		for (Transaction t : transactions) {
+			List<Date> occurrences = getPaysInDateRange(t, startDate, endDate);
+			tOccurrences.addAll(TransactionFactory.buildTransactionOccurrenceResponses(t, occurrences));
+		}
+
+		//Handle paging and sorting manually due to occurrences not being 1 to 1 with db records
+		if (sortBy == null) {
+			sortBy = "";
+		}
+
+		if (!tOccurrences.isEmpty()) {
+            tOccurrences = switch (sortBy) {
+                case FinanceManagerConstants.TRANSACTION_SORT_BY_CATEGORY ->
+                        tOccurrences.stream().sorted(Comparator.comparing(TransactionOccuranceResponse::getCategory).thenComparing(TransactionOccuranceResponse::getName)).toList();
+                case FinanceManagerConstants.TRANSACTION_SORT_BY_TYPE ->
+                        tOccurrences.stream().sorted(Comparator.comparing(TransactionOccuranceResponse::getType).thenComparing(TransactionOccuranceResponse::getName)).toList();
+                case FinanceManagerConstants.TRANSACTION_OCC_SORT_BY_DATE ->
+                        tOccurrences.stream().sorted(Comparator.comparing(TransactionOccuranceResponse::getDate).thenComparing(TransactionOccuranceResponse::getName)).toList();
+                case FinanceManagerConstants.TRANSACTION_SORT_BY_AMOUNT ->
+                        tOccurrences.stream().sorted(Comparator.comparing(TransactionOccuranceResponse::getAmount).thenComparing(TransactionOccuranceResponse::getName)).toList();
+                default ->
+                        tOccurrences.stream().sorted(Comparator.comparing(TransactionOccuranceResponse::getName).thenComparing(TransactionOccuranceResponse::getAmount)).toList();
+            };
+
+			if (!sortAsc) {
+				tOccurrences = tOccurrences.reversed();
+			}
+		}
+
+		response.setCount(tOccurrences.size());
+
+		if (pageSize != null && pageSize > 0) {
+			int startIndex = (page - 1 ) * pageSize;
+			int endIndex = startIndex + pageSize;
+
+			if (startIndex >= tOccurrences.size()) {
+
+				response.setItems(new ArrayList<>());
+
+			} else {
+
+				if (endIndex > tOccurrences.size()) {
+					endIndex = tOccurrences.size();
+				}
+
+				log.info("startIndex {} endIndex {}", startIndex, endIndex);
+				response.setItems(tOccurrences.subList(startIndex, endIndex));
+			}
+
+		} else {
+			response.setItems(tOccurrences);
+		}
+
+		response.setPage(page);
+		response.setPageSize(pageSize != null && pageSize > 0 ? pageSize : tOccurrences.size());
+
+		return response;
+	}
+
+	@Override
+	public List<Transaction> getTransactionsForDateRange(int userId, Date startDt, Date endDt, String name, String parent, String category, String type, String sortBy, String sortType, Integer page, Integer pageSize) {
+
+		GenericSpecification<Transaction> tSpec = new GenericSpecification<>();
+		GenericSpecification<Transaction> effDateSpec = new GenericSpecification<>();
+		GenericSpecification<Transaction> expDateSpec = new GenericSpecification<>();
+
+		expDateSpec = expDateSpec.where("expirationDate", null, QueryOperation.IS_NULL)
+				.or("expirationDate", startDt, QueryOperation.GREATER_THAN_EQUAL_TO_DATE);
+
+		effDateSpec = effDateSpec.where("effectiveDate", endDt, QueryOperation.LESS_THAN_EQUAL_TO_DATE);
+		tSpec = tSpec.where("userId", userId, QueryOperation.EQUALS);
+
+		return transactionRepository.findAll(Specification.where(tSpec.build()).and(effDateSpec.build().and(expDateSpec.build())));
+	}
 
 	/**
 	 * Generates a list of transaction occurrences for semi-monthly pay frequencies

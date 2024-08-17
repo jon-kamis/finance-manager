@@ -232,8 +232,9 @@ public class TransactionFactory {
 	 * @param loanPayment the loanPayment object to build the transaction for
 	 * @return A new Transaction Object
 	 */
-    public static Transaction buildTransactionFromLoanPayment(LoanPayment loanPayment) {
+    public static Transaction buildTransactionFromLoanPayment(LoanPayment loanPayment, int userId) {
 		Transaction t = new Transaction();
+		t.setUserId(userId);
 		t.setName(loanPayment.getLoan().getName() + FinanceManagerConstants.LOAN_PAYMENT_TRANSACTION_SUFFIX);
 		t.setType(TransactionTypeEnum.EXPENSE);
 		t.setCategory(TransactionCategoryEnum.LOAN);

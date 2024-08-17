@@ -63,6 +63,10 @@ header {
     border-color: var(--color-light);
 }
 
+.card.home__header-chart:hover {
+    transform: translateY(0);
+}
+
 .home__charts {
     margin: 3rem 3rem 1.5rem;
     display: grid;

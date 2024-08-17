@@ -86,8 +86,9 @@ public interface TransactionBusiness {
 	/**
 	 * Generates and saves a new list of Transactions for a loan payment list
 	 * @param loanPayments The list of loan payments to save the transactions for
+	 * @param userId The user who owns the loan this payment is for
 	 */
-	public void buildAndSaveTransactionsForLoanPayments(List<LoanPayment> loanPayments);
+	public void buildAndSaveTransactionsForLoanPayments(List<LoanPayment> loanPayments, int userId);
 
 	/**
 	 * Deletes all Transactions by a Loan

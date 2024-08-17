@@ -4,6 +4,14 @@ export function formatFmText(text) {
     switch (text) {
         case "paycheck":
             return "Paycheck";
+        case "taxes":
+            return "Taxes";
+        case "bill":
+            return "Bill";
+        case "benefit":
+            return "Benefit"
+        case "loan-payment":
+            return "Loan"
         case "semi-monthly":
             return "Semi Monthly"
         case "monthly":

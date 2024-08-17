@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Optional;
 
 import com.kamis.financemanager.business.TransactionBusiness;
+import com.kamis.financemanager.database.domain.User;
+import com.kamis.financemanager.database.repository.UserRepository;
+import com.kamis.financemanager.rest.domain.loans.UserLoanSummaryResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -49,6 +52,9 @@ public class LoanBusinessImpl implements LoanBusiness {
 	private LoanPaymentRepository loanPaymentRepository;
 
 	@Autowired
+	private UserRepository userRepository;
+
+	@Autowired
 	private LoanValidation loanValidation;
 	
 	@Lazy
@@ -70,7 +76,7 @@ public class LoanBusinessImpl implements LoanBusiness {
 		loan.setBalance(getLoanBalance(loan));
 
         loanRepository.saveAndFlush(loan);
-		transactionBusiness.buildAndSaveTransactionsForLoanPayments(loan.getPayments());
+		transactionBusiness.buildAndSaveTransactionsForLoanPayments(loan.getPayments(), userId);
         return true;
 	}
 
@@ -306,6 +312,33 @@ public class LoanBusinessImpl implements LoanBusiness {
 		loanRepository.deleteById(loanId);
 
 		return true;
+	}
+
+	@Override
+	public UserLoanSummaryResponse getUserLoanSummary(Integer userId) {
+		Optional<User> user = userRepository.findById(userId);
+
+		if (user.isEmpty()) {
+			log.info("attempted to fetch loan summary for user with id {} but user was not found", userId);
+			return null;
+		}
+
+		UserLoanSummaryResponse response = new UserLoanSummaryResponse();
+		float balance = 0;
+		float cost = 0;
+
+		response.setCount(user.get().getLoans().size());
+
+		for(Loan l : user.get().getLoans()) {
+			balance += l.getBalance() != null ? l.getBalance() : 0;
+			cost += l.getPayment() != null ? l.getPayment() : 0;
+		}
+
+		response.setMonthlyCost(cost);
+		response.setCurrentDebt(balance);
+
+		return response;
+
 	}
 
 }

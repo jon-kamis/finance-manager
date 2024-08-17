@@ -5,6 +5,7 @@ import com.kamis.financemanager.exception.FinanceManagerException;
 import com.kamis.financemanager.rest.domain.loans.LoanPostRequest;
 import com.kamis.financemanager.rest.domain.loans.LoanResponse;
 import com.kamis.financemanager.rest.domain.loans.PagedLoanResponse;
+import com.kamis.financemanager.rest.domain.loans.UserLoanSummaryResponse;
 
 public interface LoanBusiness {
 
@@ -81,4 +82,11 @@ public interface LoanBusiness {
 	 * @throws FinanceManagerException
 	 */
 	public boolean deleteLoanById(Integer userId, Integer loanId) throws FinanceManagerException;
+
+	/**
+	 * Attempts to get a loan summary for a user
+	 * @param userId The id of the user to get the summary for
+	 * @return A UserLoanSummary for the given user
+	 */
+	public UserLoanSummaryResponse getUserLoanSummary(Integer userId);
 }

@@ -9,6 +9,34 @@ const LoanHeader = () => {
   const { user, jwt } = useUserContext();
   const [userLoanSummary, setUserLoanSummary] = useState({});
 
+  useEffect(() => {
+    const requestOptions = {
+      method: "GET",
+      headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${jwt}`
+      },
+      credentials: "include",
+  }
+
+  fetch(`${UserApi}/${user.userId}/loan-summary`, requestOptions)
+      .then((response) => {
+          if (!response.ok) throw new Error(response.statusText);
+          else return response.json();
+      })
+      .then((data) => {
+          if (data.error) {
+              Toast(data.message, "error");
+
+          } else {
+              setUserLoanSummary(data);
+          }
+      })
+      .catch(error => {
+          Toast(error.message, "error");
+      })
+  }, [user])
+
   return (
     <header id="header">
       <div className="container header__container">

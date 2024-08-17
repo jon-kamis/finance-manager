@@ -300,11 +300,11 @@ public class TransactionBusinessImpl implements TransactionBusiness {
 	}
 
 	@Override
-	public void buildAndSaveTransactionsForLoanPayments(List<LoanPayment> loanPayments) {
+	public void buildAndSaveTransactionsForLoanPayments(List<LoanPayment> loanPayments, int userId) {
 		List<Transaction> tList = new ArrayList<>();
 
 		for (LoanPayment l : loanPayments) {
-			tList.add(TransactionFactory.buildTransactionFromLoanPayment(l));
+			tList.add(TransactionFactory.buildTransactionFromLoanPayment(l, userId));
 		}
 
 		transactionRepository.saveAll(tList);
@@ -417,7 +417,7 @@ public class TransactionBusinessImpl implements TransactionBusiness {
 
 			LocalDate adjustedOccurrence = adjustTransactionOccurrence(curOccurrence);
 
-			if (!adjustedOccurrence.isBefore(startDate) && !adjustedOccurrence.isBefore(effectiveDate)) {
+			if (!adjustedOccurrence.isBefore(startDate) && (!adjustedOccurrence.isBefore(effectiveDate) || t.getCategory() == TransactionCategoryEnum.LOAN)) {
 				occurrences.add(Date.from(
 						adjustTransactionOccurrence(curOccurrence).atStartOfDay(ZoneId.systemDefault()).toInstant()));
 			}

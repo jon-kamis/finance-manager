@@ -1,75 +1,97 @@
-.about__container {
+header {
+    margin-top: 5rem;
+    height: cal(100vh -5rem);
+    display: grid;
+    place-items: center;
+    background: var(--color-white);
+    transition: var(--transition);
+}
+
+.tools__container {
+    margin-top: 2rem;
     display: grid;
     grid-template-columns: 30% 58%;
     gap: 12%;
 }
 
-.about__left {
+.tools__left {
     height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
 
-.about__image {
+.tools__right {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.tools__image {
     height: fit-content;
     max-height: 40rem;
     overflow: hidden;
-    border: 1rem solid var(--color-white);
     transition: var(--transition);
 }
 
-.about__image:hover {
+.tools__image:hover {
     border-width: 0;
+    margin: -0.5rem;
 }
 
-.about__cards {
+.tools__cards {
     margin: 3rem 0 1.5rem;
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(1, 1fr);
     gap: 1.5rem;
+    justify-content: center;
 }
 
-.card.about__card {
+.card.tools__card {
     text-align: center;
+    width: fit-content;
+    background-color: var(--color-light);
 }
 
-.about__card-icon {
+.card.tools__card:hover {
+    background: var(--color-white);
+    border: 1px solid var(--color-light);
+}
+
+.tools__card-icon {
     font-size: 1.3rem;
     color: var(--color-black);
-    background: var(--color-light);
+    background: var(--color-white);
     border-radius: var(--border-radius-3);
     width: fit-content;
     margin-inline: auto;
+    margin-bottom: 1rem;
     padding: 0.6rem;
     display: flex;
     align-items: center;
     transition: var(--transition)
 }
 
-.card.about__card:hover .about__card-icon {
+.card.tools__card:hover .tools__card-icon {
     background: var(--color-primary);
     color: var(--color-white)
 }
 
-.card.about__card h5 {
+.card.tools__card h5 {
     margin: 1.2rem 0;
-}
-
-.about__right p {
-    margin-bottom: 1rem;
 }
 
 /* MEDIA QUERIES (tablets) */
 @media screen and (max-width: 1024px) {
-    .about__left {
+    .tools__left {
         display: none;
     }
-    .about__container {
+    .tools__container {
         grid-template-columns: 1fr;
     }
 
-    .about__right h2 {
+    .tools__right h2 {
         text-align: center;
     }
 }
@@ -77,12 +99,12 @@
 /* MEDIA QUERIES (phones) */
 @media screen and (max-width: 600px) {
     
-    .about__cards {
+    .tools__cards {
         grid-template-columns: 1fr;
         gap: 1rem;
     }
 
-    .about__right .btn {
+    .tools__right .btn {
         margin-top: 2rem;
     }
 }

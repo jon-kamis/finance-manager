@@ -1,9 +1,13 @@
+import { leastDigitsFormatOptions } from "../app-properties";
+
 export function formatFmText(text) {
     switch (text) {
         case "paycheck":
             return "Paycheck";
         case "semi-monthly":
             return "Semi Monthly"
+        case "monthly":
+            return "Monthly"
         case "bi-weekly":
             return "Bi-Weekly"
         case "quarterly":
@@ -16,5 +20,13 @@ export function formatFmText(text) {
             return "Expense"
         default:
             return text;
+    }
+}
+
+export function formatLoanTerm(term) {
+    if (term < 100) {
+        return `${term} months`
+    } else {
+        return `${Intl.NumberFormat("en-US", leastDigitsFormatOptions).format(term / 12)} years`
     }
 }

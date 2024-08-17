@@ -12,13 +12,16 @@ const PagedTable = ({ headings, rows, searchParameters, setSearchParameters, cou
         [`&.${tableCellClasses.head}`]: {
             backgroundColor: "var(--color-primary)",
             color: "white",
-            padding: "20px",
+            paddingTop: "20px",
+            paddingBottom: "20px"
         },
         [`&.${tableCellClasses.head}:first-child`]: {
             borderTopLeftRadius: "var(--border-radius-2)",
+            paddingLeft: "20px"
         },
         [`&.${tableCellClasses.head}:last-child`]: {
-            borderTopRightRadius: "var(--border-radius-2)"
+            borderTopRightRadius: "var(--border-radius-2)",
+            paddingRight: "20px"
         },
         [`&.${tableCellClasses.body}`]: {
             color: "var(--color-black)",
@@ -163,7 +166,7 @@ const PagedTable = ({ headings, rows, searchParameters, setSearchParameters, cou
                         <TableRow>
                             {
                                 headings.map(h =>
-                                    <StyledTableCell align={h.align ? h.align : "center"} padding = "none"><span className ="link__span" onClick = {() => updateSort(`${h.id}`)}>{h.label}</span></StyledTableCell>
+                                    <StyledTableCell align={h.align ? h.align : "center"} padding = "none"><span className ="link__span" onClick = {() => !h.ignoreSort && updateSort(`${h.id}`)}>{h.label}</span></StyledTableCell>
                                 )
                             }
                         </TableRow>

@@ -53,7 +53,10 @@ public class LoanPayment {
 
 	@Column(name="balance")
 	private Float balance;
-	
+
+	@Column(name="is_manual")
+	private boolean manualPayment;
+
 	@Embedded
 	private AuditInfo auditInfo;
 }

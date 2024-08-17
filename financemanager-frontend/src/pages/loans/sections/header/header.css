@@ -1,0 +1,64 @@
+header {
+    margin-top: 5rem;
+    height: cal(100vh -5rem);
+    display: grid;
+    place-items: center;
+    background: var(--color-white);
+    transition: var(--transition);
+}
+
+.loanHeader__container {
+    margin-top: 2rem;
+    display: grid;
+    grid-template-columns: 30% 58%;
+    gap: 12%;
+}
+
+.loanHeader__cards {
+    margin: 3rem 0 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3rem;
+}
+
+.card.loan__card {
+    text-align: center;
+    background: var(--color-light);
+    min-width: 20rem;
+}
+
+.card.loan__card:hover {
+    background: var(--color-white);
+    border: 1px solid var(--color-light);
+}
+
+.card.loan__card h5 {
+    margin: 1.2rem 0;
+}
+
+/* MEDIA QUERIES (tablets) */
+@media screen and (max-width: 1024px) {
+    .loanHeader__left {
+        display: none;
+    }
+    .loanHeader__container {
+        grid-template-columns: 1fr;
+    }
+
+    .loanHeader__right h2 {
+        text-align: center;
+    }
+}
+
+/* MEDIA QUERIES (phones) */
+@media screen and (max-width: 600px) {
+    
+    .loanHeader__cards {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .loanHeader__right .btn {
+        margin-top: 2rem;
+    }
+}

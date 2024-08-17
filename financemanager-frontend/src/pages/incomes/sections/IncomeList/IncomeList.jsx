@@ -22,7 +22,7 @@ const defaultIncomeResponse = {
 const IncomeList = () => {
 
   const [incomes, setIncomes] = useState(defaultIncomeResponse);
-  const [searchParameters, setSearchParameters] = useState({ filter: "", page: 1, pageSize: 10 })
+  const [searchParameters, setSearchParameters] = useState({ filter: "", page: 1, pageSize: 10, sortBy: "", sortType: "asc" })
   const [tableData, setTableData] = useState([]);
   const { user, jwt, refreshUserData } = useUserContext();
   const { showModalHandler } = useModalContext();
@@ -90,7 +90,7 @@ const IncomeList = () => {
       credentials: "include",
     }
 
-    fetch(`${UserApi}/${user.userId}/incomes?name=${searchParameters.filter}&page=${searchParameters.page}&pageSize=${searchParameters.pageSize}`, requestOptions)
+    fetch(`${UserApi}/${user.userId}/incomes?name=${searchParameters.filter}&page=${searchParameters.page}&pageSize=${searchParameters.pageSize}&sortBy=${searchParameters.sortBy}&sortType=${searchParameters.sortType}`, requestOptions)
       .then((response) => {
         if (!response.ok) throw new Error(response.statusText);
         else return response.json();
@@ -115,6 +115,7 @@ const IncomeList = () => {
     headings.push({
       id: "add_income",
       numeric: false,
+      ignoreSort: true,
       disablePadding: true,
       label: <span className="add__icon" onClick={() => showModalHandler("income__create")}><GoPlus /></span>,
       align: "center"
@@ -128,7 +129,14 @@ const IncomeList = () => {
     <section id="income__list">
       <div className="container income__container">
         <h2>Incomes</h2>
-        <PagedTable key="income__list" className={"table__container-dark"} headings={genHeadings(tableHeadings)} rows={tableData} searchParameters={searchParameters} count={incomes && incomes.count ? incomes.count : 0} setSearchParameters={setSearchParameters} />
+        <PagedTable
+          key="income__list"
+          className={"table__container-dark"}
+          headings={genHeadings(tableHeadings)}
+          rows={tableData}
+          searchParameters={searchParameters}
+          count={incomes && incomes.count ? incomes.count : 0}
+          setSearchParameters={setSearchParameters} />
       </div>
     </section>
   )

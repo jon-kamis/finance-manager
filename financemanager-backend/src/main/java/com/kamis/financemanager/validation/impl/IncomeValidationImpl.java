@@ -26,7 +26,7 @@ public class IncomeValidationImpl implements IncomeValidation {
 
 		// Validate SortBy
 		if (sortBy != null && !sortBy.isBlank()
-				&& !FinanceManagerConstants.INCOME_VALID_SORT_OPTIONS.contains(sortType.toLowerCase())) {
+				&& !FinanceManagerConstants.INCOME_VALID_SORT_OPTIONS.contains(sortBy.toLowerCase())) {
 			throw new FinanceManagerException(myConfig.getInvalidSortByErrorMsg(), HttpStatus.BAD_REQUEST);
 		}
 

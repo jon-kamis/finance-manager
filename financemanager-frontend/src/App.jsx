@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import { usePageContext } from './context/page-context';
 import Income from './pages/incomes/Income';
 import Home from './pages/home/Home';
+import Loans from './pages/loans/Loans';
 
 const App = () => {
     const mainRef = useRef();
@@ -21,6 +22,8 @@ const App = () => {
             return (<Income />);
         } else if (activePage === "home") {
             return (<Home />);
+        } else if (activePage === "loans") {
+            return (<Loans />);
         }
     }
 

@@ -17,7 +17,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -29,7 +28,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 import com.kamis.financemanager.AppTestUtils;
@@ -489,9 +487,9 @@ public class TestLoanBusinessImpl {
 		
 		assertEquals(60, loan.getPayments().size());
 		
-		LoanPayment firstPayment = loan.getPayments().get(0);
+		LoanPayment firstPayment = loan.getPayments().getFirst();
 		LoanPayment secondPayment = loan.getPayments().get(1);
-		LoanPayment lastPayment = loan.getPayments().get(loan.getPayments().size()-1);
+		LoanPayment lastPayment = loan.getPayments().getLast();
 
 		assertEquals((float)60000, lastPayment.getPrincipalToDate());
 		assertEquals(firstPayment.getPrincipal() + secondPayment.getPrincipal(), secondPayment.getPrincipalToDate());

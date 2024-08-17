@@ -16,6 +16,7 @@
     color: var(--color-black);
     border-radius: var(--border-radius-3);
     width: fit-content;
+    background: var(--color-white);
     margin-inline: auto;
     padding: 0.6rem;
     display: flex;

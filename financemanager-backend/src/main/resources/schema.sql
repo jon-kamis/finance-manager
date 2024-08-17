@@ -89,6 +89,7 @@ CREATE TABLE IF NOT EXISTS FMDB.loan_payments (
     interest_to_date NUMERIC(10,2) NOT NULL,
     amount NUMERIC(10,2) NOT NULL,
     balance NUMERIC(10,2) NOT NULL,
+    is_manual boolean NOT NULL default false,
     create_dt timestamp without time zone,
     last_update_dt timestamp without time zone,
     last_update_by character varying(255)

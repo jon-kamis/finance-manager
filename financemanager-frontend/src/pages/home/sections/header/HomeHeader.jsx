@@ -4,7 +4,7 @@ import { useUserContext } from '../../../../context/user-context';
 import { UserApi, numberFormatOptions } from '../../../../app-properties';
 import Toast from '../../../../components/alerting/Toast';
 import Card from '../../../../components/Card';
-import { pieArcLabelClasses, PieChart } from '@mui/x-charts';
+import { PieChart } from '@mui/x-charts';
 
 const defaultUserMonthSummary = {
   totals: {
@@ -23,6 +23,7 @@ const defaultUserMonthSummary = {
 const HomeHeader = () => {
   const { user, jwt } = useUserContext();
   const [userMonthSummary, setUserMonthSummary] = useState(defaultUserMonthSummary);
+  const [pieData, setPieData] = useState([]);
 
   useEffect(() => {
     const requestOptions = {
@@ -51,6 +52,32 @@ const HomeHeader = () => {
         Toast(error.message, "error");
       })
   }, [user, jwt])
+
+  useEffect(() => {
+    let data = [];
+    
+    if (userMonthSummary.totals.netIncome > 0) {
+      data.push({ id: 0, color: 'blue', value: userMonthSummary.totals.netIncome, label: `Extra Funds` });
+    }
+
+    if (userMonthSummary.totals.totalTax > 0) {
+      data.push({ id: 1, color: 'red', value: userMonthSummary.totals.totalTax, label: `Tax` });
+    } 
+
+    if (userMonthSummary.totals.totalBills > 0) {
+      data.push({ id: 1, color: 'purple', value: userMonthSummary.totals.totalBills, label: `Bills` });
+    }
+
+    if (userMonthSummary.totals.totalMisc > 0) {
+      data.push({ id: 1, color: 'orange', value: userMonthSummary.totals.totalMisc, label: `Misc` });
+    }
+    
+    if (userMonthSummary.totals.totalLoanPayments > 0) {
+      data.push({ id: 1, color: 'yellow', value: userMonthSummary.totals.totalLoanPayments, label: `Loans` });
+    }
+
+    setPieData(data);
+  }, [userMonthSummary])
 
   return (
     <header id="home-header">
@@ -89,15 +116,7 @@ const HomeHeader = () => {
                   series={[
                     {
                       outerRadius: 150,
-                      data: [
-                        userMonthSummary.totals.netIncome > 0 && { id: 0, color: 'blue', value: userMonthSummary.totals.netIncome, label: `Extra Funds` },
-                        userMonthSummary.totals.totalTax > 0 && { id: 1, color: 'red', value: userMonthSummary.totals.totalTax, label: `Tax` },
-                        userMonthSummary.totals.totalBills > 0 && { id: 1, color: 'purple', value: userMonthSummary.totals.totalBills, label: `Bills` },
-                        userMonthSummary.totals.totalMisc > 0 && { id: 1, color: 'orange', value: userMonthSummary.totals.totalMisc, label: `Misc` },
-                        userMonthSummary.totals.totalLoanPayments > 0 && { id: 1, color: 'yellow', value: userMonthSummary.totals.totalLoanPayments, label: `Loans` }
-
-                      ],
-                      type: 'pie',
+                      data: pieData,
                     }
                   ]}
                   width={500}

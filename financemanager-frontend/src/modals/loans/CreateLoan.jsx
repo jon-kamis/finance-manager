@@ -6,7 +6,7 @@ import Toast from '../../components/alerting/Toast';
 import { useModalContext } from '../../context/modal-context';
 import { payFrequencies, UserApi } from '../../app-properties';
 import { useUserContext } from '../../context/user-context';
-import { Select } from '@mui/material';
+import Select from '../../components/form/Select';
 
 const emptyLoanReq = {
     name: "",

@@ -470,6 +470,7 @@ public class IncomeBusinessImpl implements IncomeBusiness {
 	}
 
 	@Override
+	@Transactional
 	public boolean deleteIncomeById(Integer userId, Integer id) throws FinanceManagerException {
 		GenericSpecification<Income> incomeSpec = new GenericSpecification<>();
 		GenericSpecification<Transaction> transactionSpec = new GenericSpecification<>();
@@ -477,18 +478,23 @@ public class IncomeBusinessImpl implements IncomeBusiness {
 		incomeSpec = incomeSpec.where("userId", userId, QueryOperation.EQUALS)
 				.and("id", id, QueryOperation.EQUALS);
 
-		transactionSpec = transactionSpec.where("parentTableName", TableNameEnum.INCOMES, QueryOperation.EQUALS)
+		transactionSpec = transactionSpec.where("parentTableName", TableNameEnum.INCOMES, QueryOperation.EQUALS_OBJECT)
 				.and("parentId", id, QueryOperation.EQUALS);
 
 		Optional<Income> i = incomeRepository.findOne(incomeSpec.build());
-		List<Transaction> transactions = transactionRepository.findAll(transactionSpec.build());
-
 		if (i.isEmpty()) {
 			throw new FinanceManagerException(myConfig.getGenericNotFoundMessage(), HttpStatus.NOT_FOUND);
 		}
 
+		log.info("Deleting Income {}", id);
 		incomeRepository.delete(i.get());
-		transactionRepository.deleteAll(transactions);
+
+		List<Transaction> transactions = transactionRepository.findAll(transactionSpec.build());
+
+		if(!transactions.isEmpty()) {
+			transactionRepository.deleteAll(transactions);
+			log.info("Deleted {} transactions associated with income", transactions.size());
+		}
 
 		return true;
 	}

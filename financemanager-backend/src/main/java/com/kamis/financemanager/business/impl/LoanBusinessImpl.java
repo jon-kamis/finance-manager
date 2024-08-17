@@ -292,4 +292,20 @@ public class LoanBusinessImpl implements LoanBusiness {
 		log.info("Completed Async task to update all loan balances. Execution time: {}", Duration.between(start, Instant.now()));
 	}
 
+	@Override
+	public boolean deleteLoanById(Integer userId, Integer loanId) throws FinanceManagerException {
+
+		//Verify loan exists and belongs to provided userId
+		Optional<Loan> loan = loanRepository.findByIdAndUserId(loanId, userId);
+		if (loan.isEmpty()) {
+			throw new FinanceManagerException(myConfig.getGenericNotFoundMessage(), HttpStatus.NOT_FOUND);
+		}
+
+		//Delete transactions for this loan
+		transactionBusiness.deleteByLoan(loan.get());
+		loanRepository.deleteById(loanId);
+
+		return true;
+	}
+
 }

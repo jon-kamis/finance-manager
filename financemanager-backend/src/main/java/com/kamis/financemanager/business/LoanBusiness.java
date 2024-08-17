@@ -62,4 +62,14 @@ public interface LoanBusiness {
 	 * @return A Loan object matching the given criteria or null if one is not found
 	 */
 	public LoanResponse getLoanById(Integer userId, Integer loanId);
+
+	/**
+	 * Updates balances for all loans
+	 */
+	public void updateLoanBalances();
+
+	/**
+	 * Updates balances for all loans in the background
+	 */
+	public void updateLoanBalancesAsync();
 }

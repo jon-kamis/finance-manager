@@ -1,5 +1,7 @@
 package com.kamis.financemanager.business.impl;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -284,7 +286,10 @@ public class LoanBusinessImpl implements LoanBusiness {
 	@Async
 	@Override
 	public void updateLoanBalancesAsync() {
-		updateLoanBalances();
+		Instant start = Instant.now();
+		log.info("Beginning Async task to update all loan balances");
+		loanBusiness.updateLoanBalances();
+		log.info("Completed Async task to update all loan balances. Execution time: {}", Duration.between(start, Instant.now()));
 	}
 
 }

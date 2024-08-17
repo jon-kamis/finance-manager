@@ -18,9 +18,6 @@ public class Jobs {
 
     @Scheduled(cron="0 0 * * * *")
     public void updateLoanBalances() {
-        Instant start = Instant.now();
-        log.info("Beginning Async task to update all loan balances");
-        loanBusiness.updateLoanBalances();
-        log.info("Completed Async task to update all loan balances. Execution time: {}", Duration.between(start, Instant.now()));
+        loanBusiness.updateLoanBalancesAsync();
     }
 }

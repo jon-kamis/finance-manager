@@ -72,4 +72,13 @@ public interface LoanBusiness {
 	 * Updates balances for all loans in the background
 	 */
 	public void updateLoanBalancesAsync();
+
+	/**
+	 * Attempts to delete a loan for a given user by its id
+	 * @param userId The userId of the user owning the loan
+	 * @param loanId The id of the loan to delete
+	 * @return true if the loan is deleted
+	 * @throws FinanceManagerException
+	 */
+	public boolean deleteLoanById(Integer userId, Integer loanId) throws FinanceManagerException;
 }

@@ -1,15 +1,12 @@
 package com.kamis.financemanager.controller;
 
+import com.kamis.financemanager.FinancemanagerApplication;
+import com.kamis.financemanager.util.FinanceManagerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.kamis.financemanager.business.LoanBusiness;
 import com.kamis.financemanager.config.YAMLConfig;
@@ -132,6 +129,33 @@ public class LoanController {
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} else {
 			throw new FinanceManagerException(myConfig.getGenericNotFoundMessage(), HttpStatus.NOT_FOUND);
+		}
+	}
+
+	@Operation(summary = "Delete loan for a user by its id")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "CREATED", content = {
+			@Content(mediaType = "application/json", schema = @Schema(implementation = SuccessMessageResponse.class)) }),
+			@ApiResponse(responseCode = "401", description = "UNAUTHORIZED", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
+			@ApiResponse(responseCode = "403", description = "FORBIDDEN", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
+			@ApiResponse(responseCode = "404", description = "NOT_FOUND", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
+			@ApiResponse(responseCode = "500", description = "INTERNAL_SERVER_ERROR", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }) })
+	@PreAuthorize("@securityService.hasAccess(authentication, #userId)")
+	@DeleteMapping("/users/{userId}/loans/{loanId}")
+	public ResponseEntity<?> deleteLoanById(
+			@Parameter(description = "id of the user to fetch loan for") @PathVariable Integer userId,
+			@Parameter(description = "id of the loan to search for") @PathVariable Integer loanId) {
+		log.info("user {} requesting to deleting loan with id {} for user with id {}", FinanceManagerUtil.getLoggedInUserName(), loanId, userId);
+
+		boolean success = loanBusiness.deleteLoanById(userId, loanId);
+
+		if (success) {
+			return new ResponseEntity<>(new SuccessMessageResponse(myConfig.getGenericSuccessMessage()), HttpStatus.OK);
+		} else {
+			throw new FinanceManagerException(myConfig.getGenericInternalServerErrorMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 }

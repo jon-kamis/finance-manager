@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
 
+import com.kamis.financemanager.database.domain.Loan;
 import com.kamis.financemanager.database.domain.LoanPayment;
 import com.kamis.financemanager.rest.domain.transactions.PagedTransactionOccurrenceResponse;
 import com.kamis.financemanager.rest.domain.transactions.TransactionOccuranceResponse;
@@ -307,6 +308,30 @@ public class TransactionBusinessImpl implements TransactionBusiness {
 		}
 
 		transactionRepository.saveAll(tList);
+	}
+
+	@Override
+	@Transactional
+	public void deleteByLoan(Loan loan) {
+
+		List<Integer> payIds = new ArrayList<>();
+
+		for (LoanPayment p : loan.getPayments()) {
+			payIds.add(p.getId());
+		}
+
+		GenericSpecification<Transaction> spec = new GenericSpecification<>();
+		spec = spec.where("parentTableName", TableNameEnum.LOANS, QueryOperation.EQUALS_OBJECT)
+						.and("parentId", payIds, QueryOperation.IN);
+
+		log.info("Attempting to delete all transactions associated with loan {}", loan.getId());
+		List<Transaction> transactions = transactionRepository.findAll(spec.build());
+
+		//We delete this way so that JPA can delete child records
+		if(!transactions.isEmpty()) {
+			transactionRepository.deleteAll(transactions);
+			log.info("Deleted {} records", transactions.size());
+		}
 	}
 
 	/**

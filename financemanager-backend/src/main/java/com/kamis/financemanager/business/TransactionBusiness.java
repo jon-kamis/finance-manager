@@ -3,6 +3,7 @@ package com.kamis.financemanager.business;
 import java.util.Date;
 import java.util.List;
 
+import com.kamis.financemanager.database.domain.Loan;
 import com.kamis.financemanager.database.domain.LoanPayment;
 import com.kamis.financemanager.database.domain.Transaction;
 import com.kamis.financemanager.enums.PaymentFrequencyEnum;
@@ -87,4 +88,10 @@ public interface TransactionBusiness {
 	 * @param loanPayments The list of loan payments to save the transactions for
 	 */
 	public void buildAndSaveTransactionsForLoanPayments(List<LoanPayment> loanPayments);
+
+	/**
+	 * Deletes all Transactions by a Loan
+	 * @param l The loan to delete transactions for
+	 */
+	public void deleteByLoan(Loan l);
 }

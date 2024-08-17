@@ -9,11 +9,13 @@ import java.util.List;
 import java.util.Optional;
 
 import com.kamis.financemanager.business.TransactionBusiness;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import com.kamis.financemanager.business.LoanBusiness;
@@ -254,6 +256,35 @@ public class LoanBusinessImpl implements LoanBusiness {
 		}
 		
 		return LoanFactory.buildLoanResponse(optLoan.get());
+	}
+
+	@Override
+	@Transactional
+	public void updateLoanBalances() {
+
+		GenericSpecification<Loan> spec = new GenericSpecification<>();
+		spec = spec.where("balance", 0, QueryOperation.GREATER_THAN);
+
+		List<Loan> allLoans = loanRepository.findAll(spec.build());
+		float balance;
+
+		for (Loan l : allLoans) {
+			balance = loanBusiness.getLoanBalance(l);
+
+			if (l.getBalance() != balance) {
+				log.info("updating balance for loan {}", l.getId());
+				l.setBalance(balance);
+				loanRepository.save(l);
+			} else {
+				log.info("balance for loan {} is up to date", l.getId());
+			}
+		}
+	}
+
+	@Async
+	@Override
+	public void updateLoanBalancesAsync() {
+		updateLoanBalances();
 	}
 
 }

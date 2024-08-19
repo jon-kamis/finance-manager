@@ -11,12 +11,14 @@ const emptyUser = {
     firstName: "",
     userId: "",
     displayName: "",
-    refreshTrigger: ""
+    refreshTrigger: "",
 };
 
 export const UserProvider = ({ children }) => {
     const { setActivePageHandler } = usePageContext();
     const [user, setUser] = useState(emptyUser);
+    const [loan, setLoan] = useState({});
+    const [income, setIncome] = useState({});
     const [refreshToken, setRefreshToken] = useState("");
     const [jwt, setJwt] = useState("");
     const TICK_INTERVAL = 600000;
@@ -59,6 +61,8 @@ export const UserProvider = ({ children }) => {
         setUser(emptyUser);
         updateUserTokens("", "");
         setActivePageHandler("welcome");
+        setLoan({});
+        setIncome({});
     }
 
     const refreshUserData = (timestamp) => {
@@ -87,7 +91,7 @@ export const UserProvider = ({ children }) => {
         setJwt(jwt)
     }
 
-    return <UserContext.Provider value={{ user, jwt, updateUserTokens, logoutUser, refreshUserData }}>{children}</UserContext.Provider>
+    return <UserContext.Provider value={{ user, jwt, updateUserTokens, logoutUser, refreshUserData, loan, setLoan, income, setIncome }}>{children}</UserContext.Provider>
 }
 
 // Custom hook to consume the modal context anywhere in the app

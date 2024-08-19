@@ -9,6 +9,7 @@ import { usePageContext } from './context/page-context';
 import Income from './pages/incomes/Income';
 import Home from './pages/home/Home';
 import Loans from './pages/loans/Loans';
+import EditCompareLoan from './pages/loans/EditCompareLoan';
 
 const App = () => {
     const mainRef = useRef();
@@ -24,6 +25,8 @@ const App = () => {
             return (<Home />);
         } else if (activePage === "loans") {
             return (<Loans />);
+        } else if (activePage === "loans-edit") {
+            return (<EditCompareLoan />);
         }
     }
 

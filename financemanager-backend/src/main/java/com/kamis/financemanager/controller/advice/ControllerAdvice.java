@@ -69,6 +69,7 @@ public class ControllerAdvice extends LoggingConstants {
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	public ErrorResponse handleGenericException(Exception e) {
 		log.info(e.getMessage());
+		log.error(e.toString());
         return new ErrorResponse(myConfig.getGenericInternalServerErrorMessage());
 	}
 }

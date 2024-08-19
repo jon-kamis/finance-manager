@@ -217,6 +217,8 @@ img {
 main {
     --color-primary: hsl(var(--primary-hue), 89%, 41%);
     color: var(--color-dark);
+    min-height: 100vh;
+    background: var(--color-primary);
 }
 
 main.color-1 {

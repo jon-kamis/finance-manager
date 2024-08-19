@@ -1,0 +1,55 @@
+.editLoan__btns {
+    margin-top: 5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    justify-content: space-around;
+}
+
+.wrapper {
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+}
+
+.card.editLoan__form-container {
+    color: var(--color-black);
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    align-items: center;
+    border: 1px solid var(--color-dark);
+}
+
+.editLoan__tool-page {
+    display: flex;
+    justify-content: center;
+}
+
+.editLoan__form {
+    width: 30rem;
+    margin-left: 5rem;
+    margin-right: 5rem;
+}
+
+.editLoan__inputBtns {
+    margin-top: 3rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.card.editLoan__form-container h2 {
+    margin-bottom: 3rem;
+    margin-top: 1rem;
+}
+
+.card.editLoan__form-container:hover {
+    transform: translateY(0);
+    background: var(--color-white);
+    border-color: var(--color-dark);
+}
+
+.editCompare-form {
+    background: var(--color-light);
+    color: var(--color-black);
+}

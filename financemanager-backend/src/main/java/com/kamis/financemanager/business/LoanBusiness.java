@@ -2,7 +2,7 @@ package com.kamis.financemanager.business;
 
 import com.kamis.financemanager.database.domain.Loan;
 import com.kamis.financemanager.exception.FinanceManagerException;
-import com.kamis.financemanager.rest.domain.loans.LoanPostRequest;
+import com.kamis.financemanager.rest.domain.loans.LoanRequest;
 import com.kamis.financemanager.rest.domain.loans.LoanResponse;
 import com.kamis.financemanager.rest.domain.loans.PagedLoanResponse;
 import com.kamis.financemanager.rest.domain.loans.UserLoanSummaryResponse;
@@ -16,7 +16,7 @@ public interface LoanBusiness {
 	 * @return true if the loan was created succesfully
 	 * @throws FinanceManagerException
 	 */
-	public boolean createLoan(LoanPostRequest request, Integer userId) throws FinanceManagerException;
+	public boolean createLoan(LoanRequest request, Integer userId) throws FinanceManagerException;
 
 	/**
 	 * Attempts to perform payment calculations on a new Loan object
@@ -89,4 +89,14 @@ public interface LoanBusiness {
 	 * @return A UserLoanSummary for the given user
 	 */
 	public UserLoanSummaryResponse getUserLoanSummary(Integer userId);
+
+	/**
+	 * Attempts to update a loan by its id for a given user
+	 * @param userId The userId of the owner of the loan to update
+	 * @param loanId The id of the loan to update
+	 * @param request The updated values for the loan
+	 * @return A LoanResponse containing the updated loan values
+	 * @throws FinanceManagerException
+	 */
+	LoanResponse updateLoanById(Integer userId, Integer loanId, LoanRequest request) throws FinanceManagerException;
 }

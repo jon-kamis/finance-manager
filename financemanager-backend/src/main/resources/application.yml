@@ -18,7 +18,7 @@ jwtSecret: financemanagersecretthatyoushouldoverridewithanenvironmentvar
 
 # generic error messages
 genericAccessDeniedErrorMsg: access denied
-genericInternalServerErrorMessage: an unexpected error has occured
+genericInternalServerErrorMessage: an unexpected error has occurred
 genericMethodNotAllowedErrorMsg: method not allowed
 genericNotFoundErrorMsg: "the requested entity was not found"
 genericNotFoundMessage: "resource not found"
@@ -29,6 +29,8 @@ effectiveDateRequiredErrorMsg: effective date is required
 invalidFrequencyErrorMsg: frequency is missing or invalid
 jwtExpiredErrorMsg: Token is expired. Please log in again
 genericDeletedMsg: Resource deleted successfully
+genericBadRequestMessage: bad request
+genericUnprocessableError: request was unprocessable
 
 #Registration Messages
 usernameExistsError: "username already exists"

@@ -1,5 +1,7 @@
 package com.kamis.financemanager.validation.impl;
 
+import com.kamis.financemanager.enums.PaymentFrequencyEnum;
+import com.kamis.financemanager.rest.domain.loans.LoanRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -11,6 +13,8 @@ import com.kamis.financemanager.validation.FinanceManagerValidation;
 import com.kamis.financemanager.validation.LoanValidation;
 
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.stream.Stream;
 
 @Slf4j
 @Component
@@ -39,6 +43,51 @@ public class LoanValidationImpl implements LoanValidation {
 		
 		financeManagerValidation.validateSortType(sortType);
 		
+	}
+
+	@Override
+	public void validateLoanRequest(LoanRequest request) throws FinanceManagerException {
+
+		boolean isValid = true;
+
+		if (request == null) {
+			throw new FinanceManagerException(myConfig.getGenericBadRequestMessage(), HttpStatus.BAD_REQUEST);
+		}
+
+		if (request.getName() == null || request.getName().isBlank()) {
+			log.info("invalid request. name is required");
+			isValid = false;
+		}
+
+		if (request.getTerm() == null || request.getTerm() < 1 ) {
+			log.info("invalid request. term is required");
+			isValid = false;
+		}
+
+		if (request.getRate() == null || request.getRate() < 0) {
+			log.info("invalid request. rate is required");
+			isValid = false;
+		}
+
+		if (request.getFrequency() == null ||
+				PaymentFrequencyEnum.valueOfLabel(request.getFrequency()) == null) {
+			log.info("invalid request. frequency is required");
+			isValid = false;
+		}
+
+		if (request.getPrincipal() == null || request.getPrincipal() < 1) {
+			log.info("invalid request. principal is required");
+			isValid = false;
+		}
+
+		if (request.getFirstPaymentDate() == null) {
+			log.info("invalid request. first payment date is required");
+			isValid = false;
+		}
+
+		if (!isValid) {
+			throw new FinanceManagerException(myConfig.getGenericUnprocessableError(), HttpStatus.UNPROCESSABLE_ENTITY);
+		}
 	}
 
 }

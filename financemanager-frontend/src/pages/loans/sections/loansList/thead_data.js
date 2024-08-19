@@ -14,6 +14,13 @@ const data = [
         align: "right"
     },
     {
+        id: "balance",
+        numeric: true,
+        disablePadding: true,
+        label: "Balance",
+        align: "right"
+    },
+    {
         id: "startDate",
         numeric: false,
         disablePadding: true,

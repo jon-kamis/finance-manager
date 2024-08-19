@@ -43,7 +43,7 @@ import com.kamis.financemanager.database.repository.UserRepository;
 import com.kamis.financemanager.database.repository.UserRoleRepository;
 import com.kamis.financemanager.enums.PaymentFrequencyEnum;
 import com.kamis.financemanager.exception.FinanceManagerException;
-import com.kamis.financemanager.rest.domain.loans.LoanPostRequest;
+import com.kamis.financemanager.rest.domain.loans.LoanRequest;
 import com.kamis.financemanager.rest.domain.loans.LoanResponse;
 import com.kamis.financemanager.rest.domain.loans.PagedLoanResponse;
 
@@ -507,7 +507,7 @@ public class TestLoanBusinessImpl {
 		User user = optUser.get();
 		String loanName = "testLoanFor_testCreateLoan";
 		
-		LoanPostRequest request = new LoanPostRequest();
+		LoanRequest request = new LoanRequest();
 		request.setFirstPaymentDate(new Date());
 		request.setFrequency(PaymentFrequencyEnum.MONTHLY.getFrequency());
 		request.setName(loanName);

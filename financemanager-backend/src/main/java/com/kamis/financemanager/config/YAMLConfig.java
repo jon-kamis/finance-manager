@@ -29,6 +29,8 @@ public class YAMLConfig {
 	private String invalidFrequencyErrorMsg;
 	private String jwtExpiredErrorMsg;
 	private String genericDeletedMsg;
+	private String genericBadRequestMessage;
+	private String genericUnprocessableError;
 
 	// Loan messages
 	private String invalidLoanPaymentFrequencyError;

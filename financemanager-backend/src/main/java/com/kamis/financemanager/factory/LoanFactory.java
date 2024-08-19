@@ -8,7 +8,7 @@ import com.kamis.financemanager.database.domain.Loan;
 import com.kamis.financemanager.database.domain.LoanPayment;
 import com.kamis.financemanager.enums.PaymentFrequencyEnum;
 import com.kamis.financemanager.rest.domain.loans.LoanPaymentItemResponse;
-import com.kamis.financemanager.rest.domain.loans.LoanPostRequest;
+import com.kamis.financemanager.rest.domain.loans.LoanRequest;
 import com.kamis.financemanager.rest.domain.loans.LoanResponse;
 import com.kamis.financemanager.rest.domain.loans.PagedLoanResponse;
 import com.kamis.financemanager.util.FinanceManagerUtil;
@@ -21,7 +21,7 @@ public class LoanFactory {
 	 * @param userId the user the new loan will belong to
 	 * @return a new Loan object built from the request
 	 */
-	public static Loan buildLoanFromPostRequest(LoanPostRequest request, Integer userId) {
+	public static Loan buildLoanFromPostRequest(LoanRequest request, Integer userId) {
 		Loan loan = new Loan();
 		loan.setName(request.getName());
 		loan.setUserId(userId);

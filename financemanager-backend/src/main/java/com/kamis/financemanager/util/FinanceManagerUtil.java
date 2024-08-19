@@ -31,6 +31,17 @@ public class FinanceManagerUtil {
 		return auditInfo;
 	}
 
+	/**
+	 * Updates an existing AuditInfo object
+	 * @param auditInfo The auditInfo object to update
+	 * @return An updated auditInfo object
+	 */
+	public static AuditInfo updateAuditInfo(AuditInfo auditInfo) {
+		auditInfo.setLastUpdateBy(getLoggedInUserName());
+		auditInfo.setLastUpdateDt(new Date());
+		return auditInfo;
+	}
+
 	public static String getLoggedInUserName() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String currentPrincipalName = authentication.getName();
@@ -86,47 +97,6 @@ public class FinanceManagerUtil {
 		}
 
 		return pageable;
-	}
-
-	/**
-	 * Returns a count of the number of a specific weekDate for a given month
-	 * 
-	 * @param weekDay The weekday to search for
-	 * @param date    A LocalDate containing the month to search in
-	 * @return An int representing the number of occurrences of the specific week
-	 *         date for the given month
-	 */
-	public static int getWeekdayOccurancesForMonth(WeekdayEnum weekDay, LocalDate date) {
-		LocalDate start = getFirstWeekDateInMonth(weekDay, date);
-		LocalDate end = start.plusMonths(1);
-		int count = 0;
-
-		while (start.isBefore(end)) {
-			count++;
-			start.plusWeeks(1);
-		}
-
-		return count;
-	}
-
-	/**
-	 * Gets the first occurrence of a specific week date for a month
-	 * 
-	 * @param weekDay   The weekday to search for
-	 * @param localDate The date containing the month to search
-	 * @return A LocalDate representing the first occurrence of weekDay for the
-	 *         given month
-	 */
-	public static LocalDate getFirstWeekDateInMonth(WeekdayEnum weekDay, LocalDate localDate) {
-		localDate = localDate.withDayOfMonth(1);
-
-		DayOfWeek targetDay = DayOfWeek.of(weekDay.getDayIndex());
-
-		while (localDate.getDayOfWeek() != targetDay) {
-			localDate.plusDays(1);
-		}
-
-		return localDate;
 	}
 
 	/**

@@ -58,6 +58,7 @@ const LoanList = () => {
                 data: [
                     { align: "left", value: l.name },
                     { align: "right", value: Intl.NumberFormat("en-US", numberFormatOptions).format(l.principal)  },
+                    { align: "right", value: Intl.NumberFormat("en-US", numberFormatOptions).format(l.balance)  },
                     { value: format(parseISO(l.firstPaymentDate), 'MMM do yyyy') },
                     { value: formatFmText(l.frequency) },
                     { align: "right", value: Intl.NumberFormat("en-US", numberFormatOptions).format(l.payment) },
@@ -144,6 +145,7 @@ const LoanList = () => {
                     searchParameters={searchParameters}
                     count={loans && loans.count ? loans.count : 0}
                     setSearchParameters={setSearchParameters} />
+                <small>Balances and Payments are estimates and may not be accurate</small>
             </div>
         </section>
     )

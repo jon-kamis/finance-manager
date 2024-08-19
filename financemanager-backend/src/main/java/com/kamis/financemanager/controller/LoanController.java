@@ -1,6 +1,5 @@
 package com.kamis.financemanager.controller;
 
-import com.kamis.financemanager.FinancemanagerApplication;
 import com.kamis.financemanager.rest.domain.loans.UserLoanSummaryResponse;
 import com.kamis.financemanager.util.FinanceManagerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,7 @@ import com.kamis.financemanager.config.YAMLConfig;
 import com.kamis.financemanager.exception.FinanceManagerException;
 import com.kamis.financemanager.rest.domain.error.ErrorResponse;
 import com.kamis.financemanager.rest.domain.generic.SuccessMessageResponse;
-import com.kamis.financemanager.rest.domain.loans.LoanPostRequest;
+import com.kamis.financemanager.rest.domain.loans.LoanRequest;
 import com.kamis.financemanager.rest.domain.loans.LoanResponse;
 import com.kamis.financemanager.rest.domain.loans.PagedLoanResponse;
 
@@ -51,7 +50,7 @@ public class LoanController {
 	@PostMapping("/users/{userId}/loans")
 	public SuccessMessageResponse createLoan(
 			@Parameter(description = "id of the user to create loan for") @PathVariable Integer userId,
-			@RequestBody LoanPostRequest request) {
+			@RequestBody LoanRequest request) {
 		log.info("creating loan for user with id {}", userId);
 
 		if (userId == null) {
@@ -157,6 +156,34 @@ public class LoanController {
 			return new ResponseEntity<>(new SuccessMessageResponse(myConfig.getGenericSuccessMessage()), HttpStatus.OK);
 		} else {
 			throw new FinanceManagerException(myConfig.getGenericInternalServerErrorMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@Operation(summary = "Update loan for a user by its id")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK", content = {
+			@Content(mediaType = "application/json", schema = @Schema(implementation = LoanResponse.class)) }),
+			@ApiResponse(responseCode = "401", description = "UNAUTHORIZED", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
+			@ApiResponse(responseCode = "403", description = "FORBIDDEN", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
+			@ApiResponse(responseCode = "404", description = "NOT_FOUND", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
+			@ApiResponse(responseCode = "500", description = "INTERNAL_SERVER_ERROR", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }) })
+	@PreAuthorize("@securityService.hasAccess(authentication, #userId)")
+	@PutMapping("/users/{userId}/loans/{loanId}")
+	public ResponseEntity<?> updateLoanById(
+			@Parameter(description = "id of the user to update loan for") @PathVariable Integer userId,
+			@Parameter(description = "id of the loan to update") @PathVariable Integer loanId,
+			@RequestBody LoanRequest request) {
+		log.info("user {} requesting to update loan with id {} for user with id {}", FinanceManagerUtil.getLoggedInUserName(), loanId, userId);
+
+		LoanResponse resp = loanBusiness.updateLoanById(userId, loanId, request);
+
+		if (resp != null) {
+			return new ResponseEntity<>(resp, HttpStatus.OK);
+		} else {
+			throw new FinanceManagerException(myConfig.getGenericNotFoundMessage(), HttpStatus.NOT_FOUND);
 		}
 	}
 

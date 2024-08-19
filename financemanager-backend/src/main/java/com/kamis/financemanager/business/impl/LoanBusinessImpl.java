@@ -4,15 +4,13 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import com.kamis.financemanager.business.TransactionBusiness;
+import com.kamis.financemanager.database.domain.AuditInfo;
 import com.kamis.financemanager.database.domain.User;
 import com.kamis.financemanager.database.repository.UserRepository;
+import com.kamis.financemanager.enums.PaymentFrequencyEnum;
 import com.kamis.financemanager.rest.domain.loans.UserLoanSummaryResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +31,7 @@ import com.kamis.financemanager.database.specifications.GenericSpecification;
 import com.kamis.financemanager.database.specifications.QueryOperation;
 import com.kamis.financemanager.exception.FinanceManagerException;
 import com.kamis.financemanager.factory.LoanFactory;
-import com.kamis.financemanager.rest.domain.loans.LoanPostRequest;
+import com.kamis.financemanager.rest.domain.loans.LoanRequest;
 import com.kamis.financemanager.rest.domain.loans.LoanResponse;
 import com.kamis.financemanager.rest.domain.loans.PagedLoanResponse;
 import com.kamis.financemanager.util.FinanceManagerUtil;
@@ -68,7 +66,7 @@ public class LoanBusinessImpl implements LoanBusiness {
 	private YAMLConfig myConfig;
 	
 	@Override
-	public boolean createLoan(LoanPostRequest request, Integer userId) throws FinanceManagerException {
+	public boolean createLoan(LoanRequest request, Integer userId) throws FinanceManagerException {
 		Loan loan = LoanFactory.buildLoanFromPostRequest(request, userId);
 		
 		loan = loanBusiness.calculateLoanPament(loan);
@@ -339,6 +337,96 @@ public class LoanBusinessImpl implements LoanBusiness {
 
 		return response;
 
+	}
+
+	@Override
+	@Transactional
+	public LoanResponse updateLoanById(Integer userId, Integer loanId, LoanRequest request) throws FinanceManagerException {
+		//First validate the request
+		loanValidation.validateLoanRequest(request);
+
+		//Next validate the loan exists
+		Optional<Loan> l = loanRepository.findByIdAndUserId(loanId, userId);
+
+		if(l.isEmpty()) {
+			log.info("requested loan with id {} for user with id {} does not exist", loanId, userId);
+			return null;
+		}
+
+		Loan loan = l.get();
+
+		if(paymentChangesExist(loan, request)) {
+			/* If payment related changes exist, we must recalculate and save the loan's payment details */
+
+			log.info("loan update request contains changes that effect payment details. Loan must be recalculated");
+
+			//Update fields
+			loan.setName(request.getName());
+			loan.setPrincipal(request.getPrincipal());
+			loan.setFrequency(PaymentFrequencyEnum.valueOfLabel(request.getFrequency()));
+			loan.setTerm(request.getTerm());
+			loan.setRate(request.getRate());
+			loan.setFirstPaymentDate(request.getFirstPaymentDate());
+
+			//Recalculate our payment
+			loan = calculateLoanPament(loan);
+
+			//Delete existing payment transactions
+			//Recalculate the payment schedule (This will delete loan payments)
+			transactionBusiness.deleteByLoan(loan);
+			loan = calculatePaymentSchedule(loan);
+
+			//Update audit fields
+			loan.setAuditInfo(FinanceManagerUtil.updateAuditInfo(loan.getAuditInfo()));
+
+			//Save loan
+			loanRepository.saveAndFlush(loan);
+
+			//Build and save Transactions
+			transactionBusiness.buildAndSaveTransactionsForLoanPayments(loan.getPayments(), userId);
+
+		} else if (nonPaymentChangesExist(loan, request)) {
+			/* If changes exist but are not payment related, we must update those fields and save the loan */
+
+			log.info("loan update request contains changes but does not effect payment details");
+
+			//Update all non-payment related fields
+			loan.setName(request.getName());
+
+			//Save changes
+			loanRepository.saveAndFlush(loan);
+		} else {
+			log.info("loan update request contains no changes. Skipping update");
+		}
+
+		//Build and return the response
+		return LoanFactory.buildLoanResponse(loan);
+	}
+
+	/**
+	 * Determines if any change exists between a saved Loan and a LoanRequest that would result in changes
+	 * to the loan's payment details
+	 * @param loan The loan to check changes against
+	 * @param request The request containing the changes to check
+	 * @return true if any payment related changes exists, false otherwise
+	 */
+	private boolean paymentChangesExist(Loan loan, LoanRequest request) {
+        return loan.getFrequency() != PaymentFrequencyEnum.valueOfLabel(request.getFrequency())
+                || !Objects.equals(loan.getRate(), request.getRate())
+                || !Objects.equals(loan.getPrincipal(), request.getPrincipal())
+                || !Objects.equals(loan.getTerm(), request.getTerm())
+                || !loan.getFirstPaymentDate().equals(request.getFirstPaymentDate());
+	}
+
+	/**
+	 * Determines if any change exists between a saved Loan and a LoanRequest that would not result in
+	 * changes to the loan's payment details
+	 * @param loan The loan to check changes against
+	 * @param request The request containing the changes to check
+	 * @return true if any non-payment related change exists, false otherwise
+	 */
+	private boolean nonPaymentChangesExist(Loan loan, LoanRequest request) {
+		return !loan.getName().equals(request.getName());
 	}
 
 }

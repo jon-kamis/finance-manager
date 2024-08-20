@@ -444,6 +444,15 @@ public class LoanBusinessImpl implements LoanBusiness {
 		return LoanFactory.buildCompareLoansResponse(loan, newLoan);
 	}
 
+	@Override
+	public LoanResponse calculateLoan(CalcLoanRequest request) {
+		Loan loan = LoanFactory.buildLoanForCalcLoanRequest(request);
+		loan = calculateLoanPayment(loan);
+		loan = calculatePaymentSchedule(loan);
+
+		return LoanFactory.buildLoanResponse(loan);
+	}
+
 	/**
 	 * Determines if any change exists between a saved Loan and a LoanRequest that would result in changes
 	 * to the loan's payment details

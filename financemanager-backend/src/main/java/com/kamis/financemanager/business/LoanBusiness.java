@@ -110,4 +110,11 @@ public interface LoanBusiness {
 	 * @return A CompareLoansResponse containing all the differences between the existing loan and the new one
 	 */
     CompareLoansResponse compareLoans(CompareLoansRequest request);
+
+	/**
+	 * Calculates payment details for a loan and returns them without saving anything
+	 * @param request A CalcLoanRequest containing details for the loan to calculate
+	 * @return a LoanResponse containing all of the loan and loan payment details for the given request
+	 */
+    LoanResponse calculateLoan(CalcLoanRequest request);
 }

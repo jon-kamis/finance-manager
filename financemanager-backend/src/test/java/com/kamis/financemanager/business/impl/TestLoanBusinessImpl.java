@@ -43,7 +43,7 @@ import com.kamis.financemanager.database.repository.UserRepository;
 import com.kamis.financemanager.database.repository.UserRoleRepository;
 import com.kamis.financemanager.enums.PaymentFrequencyEnum;
 import com.kamis.financemanager.exception.FinanceManagerException;
-import com.kamis.financemanager.rest.domain.loans.LoanPostRequest;
+import com.kamis.financemanager.rest.domain.loans.LoanRequest;
 import com.kamis.financemanager.rest.domain.loans.LoanResponse;
 import com.kamis.financemanager.rest.domain.loans.PagedLoanResponse;
 
@@ -439,7 +439,7 @@ public class TestLoanBusinessImpl {
 		loan.setRate((float)0.045);
 		loan.setTerm(60);
 		
-		loan = loanBusinessActual.calculateLoanPament(loan);
+		loan = loanBusinessActual.calculateLoanPayment(loan);
 		assertEquals((float)1118.59, loan.getPayment());
 
 	}
@@ -453,7 +453,7 @@ public class TestLoanBusinessImpl {
 		loan.setRate((float)0.045);
 		loan.setTerm(60);
 		
-		loan = loanBusinessActual.calculateLoanPament(loan);
+		loan = loanBusinessActual.calculateLoanPayment(loan);
 		assertEquals((float)515.8, loan.getPayment());
 
 	}
@@ -467,7 +467,7 @@ public class TestLoanBusinessImpl {
 		loan.setRate((float)0.045);
 		loan.setTerm(60);
 		
-		loan = loanBusinessActual.calculateLoanPament(loan);
+		loan = loanBusinessActual.calculateLoanPayment(loan);
 		assertEquals((float)257.81, loan.getPayment());
 
 	}
@@ -507,7 +507,7 @@ public class TestLoanBusinessImpl {
 		User user = optUser.get();
 		String loanName = "testLoanFor_testCreateLoan";
 		
-		LoanPostRequest request = new LoanPostRequest();
+		LoanRequest request = new LoanRequest();
 		request.setFirstPaymentDate(new Date());
 		request.setFrequency(PaymentFrequencyEnum.MONTHLY.getFrequency());
 		request.setName(loanName);

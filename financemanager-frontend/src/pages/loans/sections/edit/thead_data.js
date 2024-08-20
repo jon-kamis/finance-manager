@@ -1,10 +1,9 @@
 const data = [
     {
-        id: "name",
+        id: "payDate",
         numeric: false,
         disablePadding: true,
-        label: "Name",
-        align: "left"
+        label: "Date",
     },
     {
         id: "principal",
@@ -14,23 +13,25 @@ const data = [
         align: "right"
     },
     {
-        id: "balance",
+        id: "principalToDate",
         numeric: true,
         disablePadding: true,
-        label: "Balance",
+        label: "Principal to Date",
         align: "right"
     },
     {
-        id: "startDate",
+        id: "interest",
         numeric: false,
         disablePadding: true,
-        label: "First Payment",
+        label: "Interest",
+        align: "right"
     },
     {
-        id: "frequency",
+        id: "interestToDate",
         numeric: false,
         disablePadding: true,
-        label: "Pay Frequency",
+        label: "Interest to Date",
+        align: "right"
     },
     {
         id: "payment",
@@ -40,19 +41,11 @@ const data = [
         align: "right"
     },
     {
-        id: "rate",
+        id: "balance",
         numeric: true,
         disablePadding: true,
-        label: "Rate (%)",
-        align: "right",
-    },
-    {
-        id: "term",
-        numeric: true,
-        disablePadding: true,
-        label: "Term",
+        label: "Balance",
         align: "right",
     }
 ];
-
 export default data;

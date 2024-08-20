@@ -11,6 +11,7 @@ import { formatFmText, formatLoanTerm } from '../../../../functions/textFunction
 import { format, parseISO } from "date-fns";
 import { FaTrashAlt } from "react-icons/fa";
 import { FiEdit3 } from "react-icons/fi";
+import { usePageContext } from '../../../../context/page-context';
 
 const defaultLoanResponse = {
     items: [],
@@ -23,8 +24,9 @@ const LoanList = () => {
     const [loans, setLoans] = useState(defaultLoanResponse);
     const [searchParameters, setSearchParameters] = useState({ filter: "", page: 1, pageSize: 10, sortBy: "", sortType: "asc" })
     const [tableData, setTableData] = useState([]);
-    const { user, jwt, refreshUserData } = useUserContext();
+    const { user, loanHandler, jwt, refreshUserData } = useUserContext();
     const { showModalHandler } = useModalContext();
+    const { setActivePageHandler } = usePageContext();
 
     const genHeadings = () => {
         let headings = [];
@@ -43,6 +45,11 @@ const LoanList = () => {
 
     }
 
+    const editLoan = (id) => {
+        loanHandler(loans.items.find((l) => l.id === id));
+        setActivePageHandler("loans-edit");
+    }
+
     useEffect(() => {
         var data = [];
         loans.items.forEach(l => {
@@ -51,6 +58,7 @@ const LoanList = () => {
                 data: [
                     { align: "left", value: l.name },
                     { align: "right", value: Intl.NumberFormat("en-US", numberFormatOptions).format(l.principal)  },
+                    { align: "right", value: Intl.NumberFormat("en-US", numberFormatOptions).format(l.balance)  },
                     { value: format(parseISO(l.firstPaymentDate), 'MMM do yyyy') },
                     { value: formatFmText(l.frequency) },
                     { align: "right", value: Intl.NumberFormat("en-US", numberFormatOptions).format(l.payment) },
@@ -58,7 +66,7 @@ const LoanList = () => {
                     { align: "right", value: formatLoanTerm(l.term) },
                     {
                         value: <div className="edit__cards">
-                            <span className="edit__card-icon"><FiEdit3 /></span>
+                            <span className="edit__card-icon" onClick={() => editLoan(l.id)}><FiEdit3 /></span>
                             <span className="edit__card-icon edit__card-delete" onClick={() => deleteLoan(l.id)}><FaTrashAlt /></span>
                         </div>
                     }
@@ -137,6 +145,7 @@ const LoanList = () => {
                     searchParameters={searchParameters}
                     count={loans && loans.count ? loans.count : 0}
                     setSearchParameters={setSearchParameters} />
+                <small>Balances and Payments are estimates and may not be accurate</small>
             </div>
         </section>
     )

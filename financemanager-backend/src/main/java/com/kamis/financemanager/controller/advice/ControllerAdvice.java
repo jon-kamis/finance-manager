@@ -19,6 +19,7 @@ import com.kamis.financemanager.rest.domain.error.ErrorResponse;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @Slf4j
 @RestControllerAdvice
@@ -47,6 +48,14 @@ public class ControllerAdvice extends LoggingConstants {
 		log.info(e.getMessage());
         return new ErrorResponse(myConfig.getGenericMethodNotAllowedErrorMsg());
 	}
+
+	@ExceptionHandler(NoResourceFoundException.class)
+	@ResponseBody
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	public ErrorResponse handleNoResourceFoundException(Exception e) {
+		log.info(e.getMessage());
+		return new ErrorResponse(myConfig.getGenericNotFoundMessage());
+	}
 	
 	@ExceptionHandler(AuthorizationDeniedException.class)
 	@ResponseBody
@@ -69,6 +78,7 @@ public class ControllerAdvice extends LoggingConstants {
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	public ErrorResponse handleGenericException(Exception e) {
 		log.info(e.getMessage());
+		log.error("Stack Trace: ", e);
         return new ErrorResponse(myConfig.getGenericInternalServerErrorMessage());
 	}
 }

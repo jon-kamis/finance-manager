@@ -1,5 +1,8 @@
 package com.kamis.financemanager.validation.impl;
 
+import com.kamis.financemanager.enums.PaymentFrequencyEnum;
+import com.kamis.financemanager.rest.domain.loans.CompareLoansRequest;
+import com.kamis.financemanager.rest.domain.loans.LoanRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -39,6 +42,78 @@ public class LoanValidationImpl implements LoanValidation {
 		
 		financeManagerValidation.validateSortType(sortType);
 		
+	}
+
+	@Override
+	public void validateLoanRequest(LoanRequest request) throws FinanceManagerException {
+
+		boolean isValid = true;
+
+		if (request == null) {
+			throw new FinanceManagerException(myConfig.getGenericBadRequestMessage(), HttpStatus.BAD_REQUEST);
+		}
+
+		if (request.getName() == null || request.getName().isBlank()) {
+			log.info("invalid request. name is required");
+			isValid = false;
+		}
+
+		if (request.getTerm() == null || request.getTerm() < 1 ) {
+			log.info("invalid request. term is required");
+			isValid = false;
+		}
+
+		if (request.getRate() == null || request.getRate() < 0) {
+			log.info("invalid request. rate is required");
+			isValid = false;
+		}
+
+		if (request.getFrequency() == null ||
+				PaymentFrequencyEnum.valueOfLabel(request.getFrequency()) == null) {
+			log.info("invalid request. frequency is required");
+			isValid = false;
+		}
+
+		if (request.getPrincipal() == null || request.getPrincipal() < 1) {
+			log.info("invalid request. principal is required");
+			isValid = false;
+		}
+
+		if (request.getFirstPaymentDate() == null) {
+			log.info("invalid request. first payment date is required");
+			isValid = false;
+		}
+
+		if (!isValid) {
+			throw new FinanceManagerException(myConfig.getGenericUnprocessableError(), HttpStatus.UNPROCESSABLE_ENTITY);
+		}
+	}
+
+	@Override
+	public void validateCompareLoanRequest(CompareLoansRequest request) throws FinanceManagerException {
+
+		if (request.getNewLoan() == null || request.getOriginalLoan() == null) {
+			log.debug("new and original loans are required");
+			throw new FinanceManagerException(myConfig.getGenericUnprocessableError(), HttpStatus.UNPROCESSABLE_ENTITY);
+		}
+
+		if (request.getOriginalLoan().getPrincipal() == null || request.getOriginalLoan().getPrincipal() <= 0
+			|| request.getNewLoan().getPrincipal() == null || request.getNewLoan().getPrincipal() <= 0) {
+			log.debug("principal must be greater than 0");
+			throw new FinanceManagerException(myConfig.getGenericUnprocessableError(), HttpStatus.UNPROCESSABLE_ENTITY);
+		}
+
+		if (request.getOriginalLoan().getRate() == null || request.getOriginalLoan().getRate() < 0
+			|| request.getNewLoan().getRate() == null || request.getNewLoan().getRate() < 0) {
+			log.debug("rate must be at least 0");
+			throw new FinanceManagerException(myConfig.getGenericUnprocessableError(), HttpStatus.UNPROCESSABLE_ENTITY);
+		}
+
+		if (request.getOriginalLoan().getTerm() == null || request.getOriginalLoan().getTerm() <= 0
+			|| request.getNewLoan().getTerm() == null || request.getNewLoan().getTerm() <= 0) {
+			log.debug("term must be at least 1");
+			throw new FinanceManagerException(myConfig.getGenericUnprocessableError(), HttpStatus.UNPROCESSABLE_ENTITY);
+		}
 	}
 
 }

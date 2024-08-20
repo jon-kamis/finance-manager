@@ -208,6 +208,26 @@ public class LoanController {
 		}
 	}
 
+	@Operation(summary = "Calculates Payment details for a loan and returns them without saving")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK", content = {
+			@Content(mediaType = "application/json", schema = @Schema(implementation = LoanResponse.class)) }),
+			@ApiResponse(responseCode = "401", description = "UNAUTHORIZED", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
+			@ApiResponse(responseCode = "403", description = "FORBIDDEN", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
+			@ApiResponse(responseCode = "404", description = "NOT_FOUND", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
+			@ApiResponse(responseCode = "500", description = "INTERNAL_SERVER_ERROR", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }) })
+	@PostMapping("/loans/calculate")
+	public ResponseEntity<?> calculateLoan(
+			@RequestBody CalcLoanRequest request) {
+
+		LoanResponse response = loanBusiness.calculateLoan(request);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+
+	}
+
 	@Operation(summary = "Get user loan summary")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK", content = {
 			@Content(mediaType = "application/json", schema = @Schema(implementation = UserLoanSummaryResponse.class)) }),

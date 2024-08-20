@@ -298,4 +298,19 @@ public class LoanFactory {
 		return response;
 	}
 
+	/**
+	 * Creates a Loan from a CalcLoanRequest
+	 * @param request The request to build the loan from
+	 * @return A Loan object containing details from the request
+	 */
+	public static Loan buildLoanForCalcLoanRequest(CalcLoanRequest request) {
+		Loan l = new Loan();
+		l.setRate(request.getRate());
+		l.setTerm(request.getTerm());
+		l.setFirstPaymentDate(request.getFirstPaymentDate());
+		l.setFrequency(PaymentFrequencyEnum.valueOfLabel(request.getFrequency()));
+		l.setPrincipal(request.getPrincipal());
+
+		return l;
+	}
 }

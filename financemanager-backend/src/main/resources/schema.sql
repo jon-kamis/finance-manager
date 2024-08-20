@@ -66,6 +66,7 @@ CREATE TABLE IF NOT EXISTS FMDB.loans (
     account_name character varying(255) NOT NULL,
     principal NUMERIC(10,2) NOT NULL,
     balance NUMERIC(10,2),
+    current_payment_number integer NOT NULL default 0,
     first_payment_dt timestamp NOT NULL,
     frequency character varying(255) NOT NULL,
     interest NUMERIC(10,2),

@@ -439,7 +439,7 @@ public class TestLoanBusinessImpl {
 		loan.setRate((float)0.045);
 		loan.setTerm(60);
 		
-		loan = loanBusinessActual.calculateLoanPament(loan);
+		loan = loanBusinessActual.calculateLoanPayment(loan);
 		assertEquals((float)1118.59, loan.getPayment());
 
 	}
@@ -453,7 +453,7 @@ public class TestLoanBusinessImpl {
 		loan.setRate((float)0.045);
 		loan.setTerm(60);
 		
-		loan = loanBusinessActual.calculateLoanPament(loan);
+		loan = loanBusinessActual.calculateLoanPayment(loan);
 		assertEquals((float)515.8, loan.getPayment());
 
 	}
@@ -467,7 +467,7 @@ public class TestLoanBusinessImpl {
 		loan.setRate((float)0.045);
 		loan.setTerm(60);
 		
-		loan = loanBusinessActual.calculateLoanPament(loan);
+		loan = loanBusinessActual.calculateLoanPayment(loan);
 		assertEquals((float)257.81, loan.getPayment());
 
 	}

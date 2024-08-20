@@ -91,7 +91,12 @@ export const UserProvider = ({ children }) => {
         setJwt(jwt)
     }
 
-    return <UserContext.Provider value={{ user, jwt, updateUserTokens, logoutUser, refreshUserData, loan, setLoan, income, setIncome }}>{children}</UserContext.Provider>
+    const loanHandler = (newLoan) => {
+        console.log(`setting active loan to ${newLoan && newLoan.name}`);
+        setLoan(newLoan);
+    }
+
+    return <UserContext.Provider value={{ user, jwt, updateUserTokens, logoutUser, refreshUserData, loan, loanHandler, income, setIncome }}>{children}</UserContext.Provider>
 }
 
 // Custom hook to consume the modal context anywhere in the app

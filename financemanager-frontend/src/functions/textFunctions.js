@@ -1,4 +1,4 @@
-import { leastDigitsFormatOptions } from "../app-properties";
+import { intFormatOptions, leastDigitsFormatOptions, numberFormatOptions, rateFormatOptions } from "../app-properties";
 
 export function formatFmText(text) {
     switch (text) {
@@ -37,4 +37,12 @@ export function formatLoanTerm(term) {
     } else {
         return `${Intl.NumberFormat("en-US", leastDigitsFormatOptions).format(term / 12)} years`
     }
+}
+
+export const formatNumber = (val) => {
+    return `${Intl.NumberFormat("en-US", numberFormatOptions).format(val)}`
+}
+
+export const formatInt = (val) => {
+    return `${Intl.NumberFormat("en-US", intFormatOptions).format(val)}`
 }

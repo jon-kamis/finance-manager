@@ -1,11 +1,9 @@
 import React, { useState } from 'react'
-import { useModalContext } from '../../context/modal-context';
-import { useUserContext } from '../../context/user-context';
 import './sections/edit/edit-compare.css'
 import EditLoan from './sections/edit/EditLoan';
-import CompareLoan from './sections/edit/CompareLoan';
 import Card from '../../components/Card';
 import Navbar from '../../components/Navbar';
+import SimulateLoanChanges from './sections/edit/SimChanges';
 
 const EditCompareLoan = () => {
     const [tool, setTool] = useState("edit");
@@ -14,7 +12,7 @@ const EditCompareLoan = () => {
         if (tool === "edit") {
             return (<EditLoan />);
         } else {
-            return (<CompareLoan />);
+            return (<SimulateLoanChanges />);
         }
     }
 
@@ -31,23 +29,17 @@ const EditCompareLoan = () => {
                     <h1>Edit and Compare Loans</h1>
 
                     <div className="editLoan__btns">
-                        <button id="loans-edit__btn" className="btn primary" onClick={() => updateTool("edit")}>Edit</button>
-                        <button id="loans-edit__btn" className="btn primary" onClick={() => updateTool("compare")}>Compare</button>
+                        <button id="loans-edit__btn" className="btn primary" onClick={() => updateTool("edit")}>Edit Details</button>
+                        <button id="loans-edit__btn" className="btn primary" onClick={() => updateTool("edit-payment")}>Edit Payment</button>
+                        <button id="loans-edit__btn" className="btn primary" onClick={() => updateTool("compare")}>Simulate Changes</button>
                     </div>
                 </div>
             </header>
-            <section key="editCompareLoan">
-                <div className="container editLoan__container">
-                    <div className="editLoan__tool-page">
-                        <Card className="editLoan__form-container">
-                            {
-                                getToolPage()
-                            }
-                        </Card>
-                    </div>
 
-                </div>
-            </section>
+            {
+                getToolPage()
+            }
+
         </div>
     )
 }

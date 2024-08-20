@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useUserContext } from '../../../../context/user-context'
-import { payFrequencies, UserApi } from '../../../../app-properties';
+import { payFrequencies, rateFormatOptions, UserApi } from '../../../../app-properties';
 import Toast from '../../../../components/alerting/Toast';
 import Input from '../../../../components/form/Input';
 import Select from '../../../../components/form/Select';
+import Card from '../../../../components/Card';
 
 const emptyLoanReq = {
     name: "",
@@ -15,7 +16,7 @@ const emptyLoanReq = {
 }
 
 const EditLoan = () => {
-    const { loan, setLoan, jwt, user } = useUserContext();
+    const { loan, loanHandler, jwt, user } = useUserContext();
     const [loanRequest, setLoanRequest] = useState(emptyLoanReq);
 
     useEffect(() => {
@@ -25,7 +26,7 @@ const EditLoan = () => {
     const handleReset = () => {
         setLoanRequest({
             ...loan,
-            rate: (loan.rate * 100),
+            rate: Intl.NumberFormat("en-US", rateFormatOptions).format(loan.rate * 100),
             firstPaymentDate: (loan.firstPaymentDate.split('T')[0])
         });
     }
@@ -65,7 +66,7 @@ const EditLoan = () => {
                     Toast(data.message, "error");
                 } else {
                     Toast(`Updated Loan ${loanRequest.name}`, "success");
-                    setLoan(data)
+                    loanHandler(data)
                     setLoanRequest(emptyLoanReq)
                 }
             })
@@ -75,69 +76,74 @@ const EditLoan = () => {
     }
 
     return (
-        <>
-            <h2>Edit {loan.name}</h2>
-            <div className="editLoan__form">
-                <form onSubmit={handleSubmit}>
-                    <Input
-                        title={"Name"}
-                        type={"text"}
-                        className={"editCompare-form"}
-                        name={"name"}
-                        value={loanRequest.name}
-                        onChange={handleChange("")}
-                    />
-                    <Input
-                        title={"Principal"}
-                        type={"number"}
-                        className={"editCompare-form"}
-                        name={"principal"}
-                        value={loanRequest.principal}
-                        onChange={handleChange("")}
-                    />
-                    <Input
-                        title={"Term (Months)"}
-                        type={"number"}
-                        className={"editCompare-form"}
-                        name={"term"}
-                        value={loanRequest.term}
-                        onChange={handleChange("")}
-                    />
-                    <Input
-                        title={"Rate (%)"}
-                        type={"number"}
-                        className={"editCompare-form"}
-                        name={"rate"}
-                        value={loanRequest.rate}
-                        onChange={handleChange("")}
-                    />
-                    <Input
-                        title={"First Payment Due"}
-                        type={"date"}
-                        className={"editCompare-form"}
-                        name={"firstPaymentDate"}
-                        value={loanRequest.firstPaymentDate}
-                        onChange={handleChange("")}
-                    />
+        <section key="editCompareLoan">
+            <div className="container editLoan__container">
+                <div className="editLoan__tool-page">
+                <Card className="editLoan__form-container">
+                    <h2>Edit {loan.name}</h2>
+                    <div className="editLoan__form">
+                        <form onSubmit={handleSubmit}>
+                            <Input
+                                title={"Name"}
+                                type={"text"}
+                                className={"editCompare-form"}
+                                name={"name"}
+                                value={loanRequest.name}
+                                onChange={handleChange("")}
+                            />
+                            <Input
+                                title={"Principal"}
+                                type={"number"}
+                                className={"editCompare-form"}
+                                name={"principal"}
+                                value={loanRequest.principal}
+                                onChange={handleChange("")}
+                            />
+                            <Input
+                                title={"Term (Months)"}
+                                type={"number"}
+                                className={"editCompare-form"}
+                                name={"term"}
+                                value={loanRequest.term}
+                                onChange={handleChange("")}
+                            />
+                            <Input
+                                title={"Rate (%)"}
+                                type={"number"}
+                                className={"editCompare-form"}
+                                name={"rate"}
+                                value={loanRequest.rate}
+                                onChange={handleChange("")}
+                            />
+                            <Input
+                                title={"First Payment Due"}
+                                type={"date"}
+                                className={"editCompare-form"}
+                                name={"firstPaymentDate"}
+                                value={loanRequest.firstPaymentDate}
+                                onChange={handleChange("")}
+                            />
 
-                    <Select
-                        title={"Payment Frequency"}
-                        className={"editCompare-form"}
-                        name={"frequency"}
-                        value={loanRequest.frequency}
-                        onChange={handleChange("")}
-                        options={payFrequencies.map(f => ({ id: f.id, value: f.value }))}
-                        placeHolder={"Select"}
-                    />
+                            <Select
+                                title={"Payment Frequency"}
+                                className={"editCompare-form"}
+                                name={"frequency"}
+                                value={loanRequest.frequency}
+                                onChange={handleChange("")}
+                                options={payFrequencies.map(f => ({ id: f.id, value: f.value }))}
+                                placeHolder={"Select"}
+                            />
 
-                </form>
-                <div className="editLoan__inputBtns">
-                    <button id="editLoan__saveBtn" className="btn primary" onClick={() => handleSubmit()}>Save</button>
-                    <button id="editLoan__restBtn" className="btn primary" onClick={() => handleReset()}>Reset</button>
-                </div>
+                        </form>
+                        <div className="editLoan__inputBtns">
+                            <button id="editLoan__saveBtn" className="btn primary" onClick={() => handleSubmit()}>Save</button>
+                            <button id="editLoan__restBtn" className="btn primary" onClick={() => handleReset()}>Reset</button>
+                        </div>
+                    </div>
+                </Card>
             </div>
-
-        </>
+        </div>
+            </section >
     )
 }
 

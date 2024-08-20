@@ -24,7 +24,7 @@ const LoanList = () => {
     const [loans, setLoans] = useState(defaultLoanResponse);
     const [searchParameters, setSearchParameters] = useState({ filter: "", page: 1, pageSize: 10, sortBy: "", sortType: "asc" })
     const [tableData, setTableData] = useState([]);
-    const { user, setLoan, jwt, refreshUserData } = useUserContext();
+    const { user, loanHandler, jwt, refreshUserData } = useUserContext();
     const { showModalHandler } = useModalContext();
     const { setActivePageHandler } = usePageContext();
 
@@ -46,7 +46,7 @@ const LoanList = () => {
     }
 
     const editLoan = (id) => {
-        setLoan(loans.items.find((l) => l.id = id));
+        loanHandler(loans.items.find((l) => l.id === id));
         setActivePageHandler("loans-edit");
     }
 

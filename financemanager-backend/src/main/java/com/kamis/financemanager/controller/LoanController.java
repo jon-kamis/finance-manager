@@ -1,6 +1,6 @@
 package com.kamis.financemanager.controller;
 
-import com.kamis.financemanager.rest.domain.loans.UserLoanSummaryResponse;
+import com.kamis.financemanager.rest.domain.loans.*;
 import com.kamis.financemanager.util.FinanceManagerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,9 +13,6 @@ import com.kamis.financemanager.config.YAMLConfig;
 import com.kamis.financemanager.exception.FinanceManagerException;
 import com.kamis.financemanager.rest.domain.error.ErrorResponse;
 import com.kamis.financemanager.rest.domain.generic.SuccessMessageResponse;
-import com.kamis.financemanager.rest.domain.loans.LoanRequest;
-import com.kamis.financemanager.rest.domain.loans.LoanResponse;
-import com.kamis.financemanager.rest.domain.loans.PagedLoanResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -182,6 +179,30 @@ public class LoanController {
 
 		if (resp != null) {
 			return new ResponseEntity<>(resp, HttpStatus.OK);
+		} else {
+			throw new FinanceManagerException(myConfig.getGenericNotFoundMessage(), HttpStatus.NOT_FOUND);
+		}
+	}
+
+	@Operation(summary = "Allows the user to simulate what changes to their loan would do to their payment schedule")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK", content = {
+			@Content(mediaType = "application/json", schema = @Schema(implementation = CompareLoansResponse.class)) }),
+			@ApiResponse(responseCode = "401", description = "UNAUTHORIZED", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
+			@ApiResponse(responseCode = "403", description = "FORBIDDEN", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
+			@ApiResponse(responseCode = "404", description = "NOT_FOUND", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
+			@ApiResponse(responseCode = "500", description = "INTERNAL_SERVER_ERROR", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }) })
+	@PostMapping("/loans/compare")
+	public ResponseEntity<?> compareLoanById(
+			@RequestBody CompareLoansRequest request) {
+
+		CompareLoansResponse response = loanBusiness.compareLoans(request);
+
+		if (response != null) {
+			return new ResponseEntity<>(response, HttpStatus.OK);
 		} else {
 			throw new FinanceManagerException(myConfig.getGenericNotFoundMessage(), HttpStatus.NOT_FOUND);
 		}

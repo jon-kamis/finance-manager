@@ -22,6 +22,6 @@ public class LoanRequest {
 	
 	private Float rate;
 
-	@Schema(allowableValues= {"monthly", "bi-weekly", "weekly"})
+	@Schema(allowableValues= {"monthly", "semi-monthly", "bi-weekly", "weekly"})
 	private String frequency;
 }

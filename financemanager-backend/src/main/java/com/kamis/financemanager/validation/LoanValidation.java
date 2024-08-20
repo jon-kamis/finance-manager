@@ -1,6 +1,7 @@
 package com.kamis.financemanager.validation;
 
 import com.kamis.financemanager.exception.FinanceManagerException;
+import com.kamis.financemanager.rest.domain.loans.CompareLoansRequest;
 import com.kamis.financemanager.rest.domain.loans.LoanRequest;
 
 public interface LoanValidation {
@@ -21,4 +22,11 @@ public interface LoanValidation {
 	 * @throws FinanceManagerException
 	 */
     void validateLoanRequest(LoanRequest request) throws FinanceManagerException;
+
+	/**
+	 * Validates a CompareLoanRequest
+	 * @param request the request to validate
+	 * @throws FinanceManagerException
+	 */
+	void validateCompareLoanRequest(CompareLoansRequest request) throws FinanceManagerException;
 }

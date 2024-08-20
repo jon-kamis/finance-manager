@@ -19,5 +19,6 @@ public class LoanResponse {
     private Float rate;
     private Integer term;
     private Float balance;
+    private Integer currentPaymentNumber;
 	private List<LoanPaymentItemResponse> paymentSchedule;
 }

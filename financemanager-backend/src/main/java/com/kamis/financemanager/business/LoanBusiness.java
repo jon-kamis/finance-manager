@@ -2,10 +2,7 @@ package com.kamis.financemanager.business;
 
 import com.kamis.financemanager.database.domain.Loan;
 import com.kamis.financemanager.exception.FinanceManagerException;
-import com.kamis.financemanager.rest.domain.loans.LoanRequest;
-import com.kamis.financemanager.rest.domain.loans.LoanResponse;
-import com.kamis.financemanager.rest.domain.loans.PagedLoanResponse;
-import com.kamis.financemanager.rest.domain.loans.UserLoanSummaryResponse;
+import com.kamis.financemanager.rest.domain.loans.*;
 
 public interface LoanBusiness {
 
@@ -13,7 +10,7 @@ public interface LoanBusiness {
 	 * Attempts to create a new Loan for a user
 	 * @param request A request containing the loan information
 	 * @param userId The id of the user to create the loan for
-	 * @return true if the loan was created succesfully
+	 * @return true if the loan was created successfully
 	 * @throws FinanceManagerException
 	 */
 	public boolean createLoan(LoanRequest request, Integer userId) throws FinanceManagerException;
@@ -24,7 +21,7 @@ public interface LoanBusiness {
 	 * @return The loan with payment fields populated
 	 * @throws FinanceManagerException
 	 */
-	public Loan calculateLoanPament(Loan loan) throws FinanceManagerException;
+	public Loan calculateLoanPayment(Loan loan) throws FinanceManagerException;
 	
 	/**
 	 * Calculates the payment schedule for a loan
@@ -55,6 +52,13 @@ public interface LoanBusiness {
 	 * @return A float representing the current balance of a loan based on its payments.
 	 */
 	public float getLoanBalance(Loan loan);
+
+	/**
+	 * Returns the current Loan Payment number
+	 * @param loan The loan to get the payment number for
+	 * @return an int representing the number of the last payment from the payment schedule
+	 */
+	int getCurrentLoanPaymentNumber(Loan loan);
 
 	/**
 	 * Returns a specific loan by its id and userId if one exists
@@ -99,4 +103,11 @@ public interface LoanBusiness {
 	 * @throws FinanceManagerException
 	 */
 	LoanResponse updateLoanById(Integer userId, Integer loanId, LoanRequest request) throws FinanceManagerException;
+
+	/**
+	 * Compares two loans generated from requests
+	 * @param request The request containing the new loan details to compare with
+	 * @return A CompareLoansResponse containing all the differences between the existing loan and the new one
+	 */
+    CompareLoansResponse compareLoans(CompareLoansRequest request);
 }

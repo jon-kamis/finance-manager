@@ -8,12 +8,6 @@ import java.util.Date;
 @Data
 public class CompareLoanRequest {
 
-    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, allowableValues = {"monthly", "semi-monthly", "weekly", "bi-weekly"})
-    private String frequency;
-
-    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "YYYY-MM-DD")
-    private Date firstPaymentDate;
-
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     private Integer term;
 
@@ -22,4 +16,7 @@ public class CompareLoanRequest {
 
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     private Float rate;
+
+    @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    private Float payment;
 }

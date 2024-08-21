@@ -5,7 +5,7 @@ import Toast from '../../../../components/alerting/Toast';
 import Input from '../../../../components/form/Input';
 import Card from '../../../../components/Card';
 import './edit-compare.css'
-import { formatInt, formatNumber } from '../../../../functions/textFunctions';
+import { formatInt, formatLoanTerm, formatNumber } from '../../../../functions/textFunctions';
 import { format, parseISO } from "date-fns";
 import UnpagedTable from '../../../../components/UnpagedTable';
 import tableHeadings from './thead_data'
@@ -35,7 +35,7 @@ const SimulateLoanChanges = () => {
 
         console.log("Checking for loan changes")
 
-        if ((loan.rate * 100) != loanRequest.rate) {
+        if (Intl.NumberFormat("en-US", rateFormatOptions).format(loan.rate * 100) != loanRequest.rate) {
             console.log("loan rate has changed")
             changeArr.push(`Rate: ${Intl.NumberFormat("en-US", rateFormatOptions).format(loan.rate * 100)}% -> ${loanRequest.rate}%`)
         }
@@ -48,6 +48,11 @@ const SimulateLoanChanges = () => {
         if (loan.balance != loanRequest.balance) {
             console.log("principal has changed")
             changeArr.push(`Principal: $${loan.balance} -> $${loanRequest.balance}`)
+        }
+
+        if (loan.payment != loanRequest.payment) {
+            console.log("payment has changed")
+            changeArr.push(`Payment: $${loan.payment} -> $${loanRequest.payment}`)
         }
 
         setChanges(changeArr);
@@ -68,7 +73,7 @@ const SimulateLoanChanges = () => {
         if (type === "rate") {
             return (<h2 className={val < 0 ? "simChanges__card-green" : val > 0 ? "simChanges__card-red" : ""}>{`${val < 0 ? "- " : val > 0 ? "+ " : ""}${Intl.NumberFormat("en-US", rateFormatOptions).format(Math.abs(val))}`}</h2>);
         } else if (type === "term") {
-            return (<h2 className={val < 0 ? "simChanges__card-green" : val > 0 ? "simChanges__card-red" : ""}>{`${val < 0 ? "- " : val > 0 ? "+ " : ""}${Intl.NumberFormat("en-US", intFormatOptions).format(Math.abs(val))}`}</h2>);
+            return (<h2 className={val < 0 ? "simChanges__card-green" : val > 0 ? "simChanges__card-red" : ""}>{`${val < 0 ? "- " : val > 0 ? "+ " : ""}${formatLoanTerm(Math.abs(val))}`}</h2>);
         } else {
             return (<h2 className={val < 0 ? "simChanges__card-green" : val > 0 ? "simChanges__card-red" : ""}>{`${val < 0 ? "- " : val > 0 ? "+ " : ""}$${Intl.NumberFormat("en-US", numberFormatOptions).format(Math.abs(val))}`}</h2>);
         }
@@ -104,19 +109,18 @@ const SimulateLoanChanges = () => {
     const handleSubmit = () => {
 
         let req = {
-            originalLoan: {
-                frequency: loan.frequency,
-                firstPaymentDate: loan.paymentSchedule[loan.currentPaymentNumber -1].paymentDate,
+            frequency: loan.frequency,
+            firstPaymentDate: loan.paymentSchedule[loan.currentPaymentNumber -1].paymentDate,
+            originalLoan: {  
                 term: loan.term - loan.currentPaymentNumber,
                 principal: loan.balance,
                 rate: loan.rate
             },
             newLoan: {
-                frequency: loan.frequency,
-                firstPaymentDate: loan.paymentSchedule[loan.currentPaymentNumber -1].paymentDate,
                 term: (loanRequest.term),
                 principal: loanRequest.principal,
-                rate: loanRequest.rate / 100
+                rate: loanRequest.rate / 100,
+                payment: loanRequest.payment != loan.payment ? loanRequest.payment : ""
             }
         }
 
@@ -209,6 +213,14 @@ const SimulateLoanChanges = () => {
                                             value={loanRequest.rate}
                                             onChange={handleChange("")}
                                         />
+                                        <Input
+                                            title={"Payment"}
+                                            type={"number"}
+                                            className={"editCompare-form"}
+                                            name={"payment"}
+                                            value={loanRequest.payment}
+                                            onChange={handleChange("")}
+                                        />
 
                                     </form>
                                     <div className="editLoan__inputBtns">
@@ -241,25 +253,25 @@ const SimulateLoanChanges = () => {
                         <div className="simChanges__cards">
                             <Card className="simChanges__card">
                                 <h3>Original Loan</h3>
-                                <h5>Payment</h5>
+                                <h5>Minimum Payment</h5>
                                 <h2>${formatNumber(loanComparison.originalSummary.payment)}</h2>
                                 <h5>Interest</h5>
                                 <h2>${formatNumber(loanComparison.originalSummary.interest)}</h2>
                                 <h5>Term</h5>
-                                <h2>{formatInt(loanComparison.originalSummary.term)}</h2>
+                                <h2>{formatLoanTerm(loanComparison.originalSummary.term)}</h2>
                             </Card>
                             <Card className="simChanges__card">
                                 <h3>New Loan</h3>
-                                <h5>Payment</h5>
+                                <h5>Minimum Payment</h5>
                                 <h2>${formatNumber(loanComparison.compareSummary.payment)}</h2>
                                 <h5>Interest</h5>
                                 <h2>${formatNumber(loanComparison.compareSummary.interest)}</h2>
                                 <h5>Term</h5>
-                                <h2>{formatInt(loanComparison.compareSummary.term)}</h2>
+                                <h2>{formatLoanTerm(loanComparison.compareSummary.term)}</h2>
                             </Card>
                             <Card className="simChanges__card">
                                 <h3>Net Changes</h3>
-                                <h5>Payment</h5>
+                                <h5>Minimum Payment</h5>
                                 <h2>{getNetHeading(loanComparison.netSummary.payment, "number")}</h2>
                                 <h5>Interest</h5>
                                 <h2>{getNetHeading(loanComparison.netSummary.interest)}</h2>

@@ -7,6 +7,7 @@ import java.time.ZoneId;
 import java.util.*;
 
 import com.kamis.financemanager.business.TransactionBusiness;
+import com.kamis.financemanager.database.domain.LoanManualPayment;
 import com.kamis.financemanager.database.domain.User;
 import com.kamis.financemanager.database.repository.UserRepository;
 import com.kamis.financemanager.enums.PaymentFrequencyEnum;
@@ -135,9 +136,21 @@ public class LoanBusinessImpl implements LoanBusiness {
         };
 		
 		while (total > 0) {
-			amount = loan.getPayment();
+
+			//Check if we need to break infinite loop. 2000 payments is a minimum of 38.46 years on weekly frequency
+			if (loan.getPayments().size() > myConfig.getMaxLoanPayments()) {
+				throw new FinanceManagerException(myConfig.getTooManyPaymentsError(), HttpStatus.UNPROCESSABLE_ENTITY);
+			}
+
+			//Check for manual payments
+			Date finalPayDate = Date.from(payDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+			LoanManualPayment manualPayment = loan.getManualPayments() != null && !loan.getManualPayments().isEmpty() ?
+					loan.getManualPayments().stream().filter(p -> !p.getEffectiveDate().after(finalPayDate) && (p.getExpirationDate() == null ||
+							!p.getExpirationDate().before(finalPayDate))).findFirst().orElse(null): null;
+
+			amount = manualPayment != null ? manualPayment.getAmount() : loan.getPayment();
 			interest = ((float)Math.round(((total * loan.getRate()) / paysPerYear) * 100)) / 100;
-			principal = loan.getPayment() - interest;
+			principal = amount - interest;
 						
 			if (total - principal > 0) {
 				total -= principal;
@@ -176,7 +189,7 @@ public class LoanBusinessImpl implements LoanBusiness {
                         throw new FinanceManagerException(myConfig.getInvalidLoanPaymentFrequencyError(), HttpStatus.UNPROCESSABLE_ENTITY);
             };
 						
-			loan.AddLoanPayment(payItem);
+			loan.addLoanPayment(payItem);
 
 		}
 
@@ -426,8 +439,10 @@ public class LoanBusinessImpl implements LoanBusiness {
 		//First validate the request
 		loanValidation.validateCompareLoanRequest(request);
 
-		Loan loan = LoanFactory.buildLoanForCompareRequest(request.getOriginalLoan());
-		Loan newLoan = LoanFactory.buildLoanForCompareRequest(request.getNewLoan());
+		PaymentFrequencyEnum frequency = PaymentFrequencyEnum.valueOfLabel(request.getFrequency());
+
+		Loan loan = LoanFactory.buildLoanForCompareRequest(request.getOriginalLoan(), frequency, request.getFirstPaymentDate());
+		Loan newLoan = LoanFactory.buildLoanForCompareRequest(request.getNewLoan(), frequency, request.getFirstPaymentDate());
 
 		//Calculate Payment
 		loan = calculateLoanPayment(loan);

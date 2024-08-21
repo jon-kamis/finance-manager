@@ -71,6 +71,9 @@ public class Loan {
 	
 	@OneToMany(mappedBy = "loan", fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REMOVE})
 	private List<LoanPayment> payments;
+
+	@OneToMany(mappedBy = "loan", fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REMOVE})
+	private List<LoanManualPayment> manualPayments;
 	
 	@Embedded
 	private AuditInfo auditInfo;
@@ -79,7 +82,7 @@ public class Loan {
 	 * Adds a LoanPayment to this loan
 	 * @param payment The LoanPayment to add
 	 */
-	public void AddLoanPayment(LoanPayment payment) {
+	public void addLoanPayment(LoanPayment payment) {
 		
 		if (this.payments == null) {
 			this.payments = new ArrayList<>();
@@ -87,5 +90,19 @@ public class Loan {
 		
 		payment.setLoan(this);
 		this.payments.add(payment);
+	}
+
+	/**
+	 * Adds a LoanManualPayment to this loan
+	 * @param payment The LoanManualPayment to add
+	 */
+	public void addManualLoanPayment(LoanManualPayment payment) {
+
+		if (this.manualPayments == null) {
+			this.manualPayments = new ArrayList<>();
+		}
+
+		payment.setLoan(this);
+		this.manualPayments.add(payment);
 	}
 }

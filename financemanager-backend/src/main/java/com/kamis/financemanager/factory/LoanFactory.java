@@ -2,9 +2,11 @@ package com.kamis.financemanager.factory;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import com.kamis.financemanager.database.domain.Loan;
+import com.kamis.financemanager.database.domain.LoanManualPayment;
 import com.kamis.financemanager.database.domain.LoanPayment;
 import com.kamis.financemanager.enums.PaymentFrequencyEnum;
 import com.kamis.financemanager.rest.domain.loans.*;
@@ -138,19 +140,40 @@ public class LoanFactory {
 	/**
 	 * Creates a new loan from a compare request
 	 * @param request The request to create a loan from
+	 * @param frequency The payment frequency of the loan to build
+	 * @param firstPaymentDate The first payment date for the loan
 	 * @return A new Loan object built from the request
 	 */
-    public static Loan buildLoanForCompareRequest(CompareLoanRequest request) {
+    public static Loan buildLoanForCompareRequest(CompareLoanRequest request, PaymentFrequencyEnum frequency, Date firstPaymentDate) {
 		Loan l = new Loan();
 
-		l.setFrequency(PaymentFrequencyEnum.valueOfLabel(request.getFrequency()));
+		l.setFrequency(frequency);
 		l.setPrincipal(request.getPrincipal());
-		l.setFirstPaymentDate(request.getFirstPaymentDate());
+		l.setFirstPaymentDate(firstPaymentDate);
 		l.setTerm(request.getTerm());
 		l.setRate(request.getRate());
 
+		if (request.getPayment() != null && request.getPayment() > 0) {
+			l.addManualLoanPayment(buildManualPaymentForCompareRequest(request.getPayment(), firstPaymentDate));
+		}
+
 		return l;
     }
+
+	/**
+	 * Builds a LoanManualPayment for a compare loans request
+	 * @param payment The payment amount
+	 * @param firstPaymentDate The first day of the loan payments
+	 * @return A new LoanManualPayment containing the passed values
+	 */
+	private static LoanManualPayment buildManualPaymentForCompareRequest(Float payment, Date firstPaymentDate) {
+		LoanManualPayment manualPayment = new LoanManualPayment();
+
+		manualPayment.setAmount(payment);
+		manualPayment.setEffectiveDate(firstPaymentDate);
+
+		return manualPayment;
+	}
 
 	/**
 	 * Builds a new CompareLoansResponse from two loans
@@ -278,7 +301,7 @@ public class LoanFactory {
 	private static LoanSummaryResponse buildNetLoanSummary(Loan loan, Loan newLoan) {
 		LoanSummaryResponse response = new LoanSummaryResponse();
 		response.setInterest(newLoan.getInterest() - loan.getInterest());
-		response.setTerm(newLoan.getTerm() - loan.getTerm());
+		response.setTerm(newLoan.getPayments().size() - loan.getPayments().size());
 		response.setPayment(newLoan.getPayment() - loan.getPayment());
 
 		return response;
@@ -292,7 +315,7 @@ public class LoanFactory {
 	public static LoanSummaryResponse buildLoanSummary(Loan loan) {
 		LoanSummaryResponse response = new LoanSummaryResponse();
 		response.setInterest(loan.getInterest());
-		response.setTerm(loan.getTerm());
+		response.setTerm(loan.getPayments().size());
 		response.setPayment(loan.getPayment());
 
 		return response;

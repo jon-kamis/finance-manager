@@ -34,6 +34,8 @@ public class YAMLConfig {
 
 	// Loan messages
 	private String invalidLoanPaymentFrequencyError;
+	private int maxLoanPayments;
+	private String tooManyPaymentsError;
 
 	// Income Messages
 	private String unableToBuildTransactionDaysErrorMsg;

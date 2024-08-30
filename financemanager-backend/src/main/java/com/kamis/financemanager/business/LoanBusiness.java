@@ -13,7 +13,21 @@ public interface LoanBusiness {
 	 * @return true if the loan was created successfully
 	 * @throws FinanceManagerException
 	 */
-	public boolean createLoan(LoanRequest request, Integer userId) throws FinanceManagerException;
+	boolean createLoan(LoanRequest request, Integer userId) throws FinanceManagerException;
+
+	/**
+	 * Attempts to calculate all values for a Loan
+	 * @param l The loan to calculate values for
+	 * @return l with all calculation values populated
+	 */
+	Loan calculateLoanValues(Loan l);
+
+	/**
+	 * Attempts to update a Loan's details with the latest paymentNumber and balance
+	 * @param l The loan to update
+	 * @return l with its values updated
+	 */
+	Loan updateLatestDetails(Loan l);
 
 	/**
 	 * Attempts to perform payment calculations on a new Loan object
@@ -21,7 +35,7 @@ public interface LoanBusiness {
 	 * @return The loan with payment fields populated
 	 * @throws FinanceManagerException
 	 */
-	public Loan calculateLoanPayment(Loan loan) throws FinanceManagerException;
+	Loan calculateLoanPayment(Loan loan) throws FinanceManagerException;
 	
 	/**
 	 * Calculates the payment schedule for a loan
@@ -30,7 +44,7 @@ public interface LoanBusiness {
 	 * @return The loan with payment schedule list filled
 	 * @throws FinanceManagerException
 	 */
-	public Loan calculatePaymentSchedule(Loan loan) throws FinanceManagerException;
+	Loan calculatePaymentSchedule(Loan loan) throws FinanceManagerException;
 
 	/**
 	 * Retrieves all loans for a given user
@@ -42,7 +56,7 @@ public interface LoanBusiness {
 	 * @param pageSize the pageSize of results to return
 	 * @return A PagedLoanResponse of all loans matching the given criteria
 	 */
-	public PagedLoanResponse getUserLoans(Integer userId, String name,
+	PagedLoanResponse getUserLoans(Integer userId, String name,
 			String sortBy, String sortType, Integer page,
 			Integer pageSize) throws FinanceManagerException;
 
@@ -51,7 +65,7 @@ public interface LoanBusiness {
 	 * @param loan The loan to calculate the current balance for
 	 * @return A float representing the current balance of a loan based on its payments.
 	 */
-	public float getLoanBalance(Loan loan);
+	float getLoanBalance(Loan loan);
 
 	/**
 	 * Returns the current Loan Payment number
@@ -66,17 +80,17 @@ public interface LoanBusiness {
 	 * @param loanId The id of the loan to fetch
 	 * @return A Loan object matching the given criteria or null if one is not found
 	 */
-	public LoanResponse getLoanById(Integer userId, Integer loanId);
+	LoanResponse getLoanById(Integer userId, Integer loanId);
 
 	/**
 	 * Updates balances for all loans
 	 */
-	public void updateLoanBalances();
+	void updateLoanBalances();
 
 	/**
 	 * Updates balances for all loans in the background
 	 */
-	public void updateLoanBalancesAsync();
+	void updateLoanBalancesAsync();
 
 	/**
 	 * Attempts to delete a loan for a given user by its id
@@ -85,14 +99,14 @@ public interface LoanBusiness {
 	 * @return true if the loan is deleted
 	 * @throws FinanceManagerException
 	 */
-	public boolean deleteLoanById(Integer userId, Integer loanId) throws FinanceManagerException;
+	boolean deleteLoanById(Integer userId, Integer loanId) throws FinanceManagerException;
 
 	/**
 	 * Attempts to get a loan summary for a user
 	 * @param userId The id of the user to get the summary for
 	 * @return A UserLoanSummary for the given user
 	 */
-	public UserLoanSummaryResponse getUserLoanSummary(Integer userId);
+	UserLoanSummaryResponse getUserLoanSummary(Integer userId);
 
 	/**
 	 * Attempts to update a loan by its id for a given user
@@ -116,5 +130,29 @@ public interface LoanBusiness {
 	 * @param request A CalcLoanRequest containing details for the loan to calculate
 	 * @return a LoanResponse containing all of the loan and loan payment details for the given request
 	 */
-    LoanResponse calculateLoan(CalcLoanRequest request);
+    LoanResponse calculateLoanValues(CalcLoanRequest request);
+
+	/**
+	 * Attempts to create a new Manual Loan Payment for a Loan and save it before recalculating the loan
+	 * @param loanId The loanId of the loan to update
+	 * @param request A request containing information for the new manual payment
+	 * @return true if the loan was created successfully
+	 * @throws FinanceManagerException
+	 */
+    boolean addLoanPayment(Integer loanId, ManualLoanPaymentRequest request) throws FinanceManagerException;
+
+	/**
+	 * Syncs Loan transactions by deleting all existing transactions for the given user's loans and regenerating them all
+	 * @param userId The userId of the user to sync transactions for
+	 */
+	void syncLoanTransactions(Integer userId);
+
+	/**
+	 * Attempts to delete a loan manual payment by its id
+	 * @param loanId The id of the loan the payment belongs to
+	 * @param paymentId The id of the payment to delete
+	 * @return true if the loanPayment is deleted successfully
+	 * @throws FinanceManagerException
+	 */
+	boolean deleteLoanPayment(Integer loanId, Integer paymentId) throws FinanceManagerException;
 }

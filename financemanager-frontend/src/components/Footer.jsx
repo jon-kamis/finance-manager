@@ -15,7 +15,7 @@ const Footer = () => {
                 </div>
             </div>
             <div className="footer__copyright">
-                <small>2024 JONATHAN KAMIS &copy; All Rights Reserved</small>
+                <small>Finance Manager &copy; 2024 by Jon Kamis is licensed under CC BY-NC-ND 4.0</small>
             </div>
         </footer>
     )

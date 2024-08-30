@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,7 +34,7 @@ public class AdminController {
     @Operation(summary = "Trigger loan balance recalculation")
     @ApiResponses( value = {
             @ApiResponse(
-                    responseCode = "200", description = "OK",
+                    responseCode = "202", description = "ACCEPTED",
                     content = { @Content(mediaType = "application/json", schema = @Schema(implementation = JwtResponse.class)) }),
             @ApiResponse(
                     responseCode = "401", description = "UNAUTHORIZED",
@@ -54,6 +55,32 @@ public class AdminController {
 
         loanBusiness.updateLoanBalancesAsync();
 
+        return new ResponseEntity<>(new SuccessMessageResponse(myConfig.getGenericSuccessMessage()), HttpStatus.ACCEPTED);
+    }
+
+    @Operation(summary = "Trigger transaction recalculation for all user loans")
+    @ApiResponses( value = {
+            @ApiResponse(
+                    responseCode = "202", description = "ACCEPTED",
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = JwtResponse.class)) }),
+            @ApiResponse(
+                    responseCode = "401", description = "UNAUTHORIZED",
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
+            @ApiResponse(
+                    responseCode = "403", description = "FORBIDDEN",
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
+            @ApiResponse(
+                    responseCode = "404", description = "NOT_FOUND",
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
+            @ApiResponse(
+                    responseCode = "500", description = "INTERNAL_SERVER_ERROR",
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) })
+    })
+    @PostMapping("/users/{userId}/sync-loans")
+    @PreAuthorize("@securityService.isAdmin(authentication)")
+    public ResponseEntity<?> syncLoanTransactions(@PathVariable Integer userId) {
+
+        loanBusiness.syncLoanTransactions(userId);
         return new ResponseEntity<>(new SuccessMessageResponse(myConfig.getGenericSuccessMessage()), HttpStatus.ACCEPTED);
     }
 }

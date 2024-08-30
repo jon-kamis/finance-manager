@@ -223,7 +223,7 @@ public class LoanController {
 	public ResponseEntity<?> calculateLoan(
 			@RequestBody CalcLoanRequest request) {
 
-		LoanResponse response = loanBusiness.calculateLoan(request);
+		LoanResponse response = loanBusiness.calculateLoanValues(request);
 		return new ResponseEntity<>(response, HttpStatus.OK);
 
 	}
@@ -251,6 +251,60 @@ public class LoanController {
 			return new ResponseEntity<>(response, HttpStatus.OK);
 		} else {
 			throw new FinanceManagerException(myConfig.getGenericNotFoundMessage(), HttpStatus.NOT_FOUND);
+		}
+	}
+
+	@Operation(summary = "Creates a new manual loan payment")
+	@ApiResponses(value = { @ApiResponse(responseCode = "201", description = "CREATED", content = {
+			@Content(mediaType = "application/json", schema = @Schema(implementation = LoanResponse.class)) }),
+			@ApiResponse(responseCode = "401", description = "UNAUTHORIZED", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
+			@ApiResponse(responseCode = "403", description = "FORBIDDEN", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
+			@ApiResponse(responseCode = "404", description = "NOT_FOUND", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
+			@ApiResponse(responseCode = "500", description = "INTERNAL_SERVER_ERROR", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }) })
+	@PreAuthorize("@securityService.hasAccess(authentication, #userId)")
+	@PostMapping("/loans/{loanId}/payments")
+	public ResponseEntity<?> addManualLoanPayment(
+			@Parameter(description = "id of the loan to fetch") @PathVariable Integer loanId,
+			@RequestBody ManualLoanPaymentRequest request) {
+
+		log.info("User {} attempting to add manual payment for loan {}", FinanceManagerUtil.getLoggedInUserName(), loanId);
+		boolean success = loanBusiness.addLoanPayment(loanId, request);
+
+		if (success) {
+			return new ResponseEntity<>(new SuccessMessageResponse(myConfig.getGenericSuccessMessage()), HttpStatus.OK);
+		} else {
+			throw new FinanceManagerException(myConfig.getGenericInternalServerErrorMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@Operation(summary = "Deletes a manual loan payment")
+	@ApiResponses(value = { @ApiResponse(responseCode = "201", description = "CREATED", content = {
+			@Content(mediaType = "application/json", schema = @Schema(implementation = LoanResponse.class)) }),
+			@ApiResponse(responseCode = "401", description = "UNAUTHORIZED", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
+			@ApiResponse(responseCode = "403", description = "FORBIDDEN", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
+			@ApiResponse(responseCode = "404", description = "NOT_FOUND", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
+			@ApiResponse(responseCode = "500", description = "INTERNAL_SERVER_ERROR", content = {
+					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }) })
+	@DeleteMapping("/loans/{loanId}/payments/{paymentId}")
+	@PreAuthorize("@securityService.hasAccessToLoan(authentication, #loanId)")
+	public ResponseEntity<?> deleteManualLoanPayment(
+			@Parameter(description = "id of the loan to fetch") @PathVariable Integer loanId,
+			@PathVariable Integer paymentId) {
+
+		log.info("User {} attempting to delete manual payment with id {}", FinanceManagerUtil.getLoggedInUserName(), paymentId);
+		boolean success = loanBusiness.deleteLoanPayment(loanId, paymentId);
+
+		if (success) {
+			return new ResponseEntity<>(new SuccessMessageResponse(myConfig.getGenericSuccessMessage()), HttpStatus.OK);
+		} else {
+			throw new FinanceManagerException(myConfig.getGenericInternalServerErrorMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 }

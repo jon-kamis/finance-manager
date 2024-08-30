@@ -95,4 +95,10 @@ public interface TransactionBusiness {
 	 * @param l The loan to delete transactions for
 	 */
 	public void deleteByLoan(Loan l);
+
+	/**
+	 * Deletes all Loan transactions for the given user
+	 * @param userId The id of the user to clear loan transactions for
+	 */
+	void deleteAllLoanTransactionsForUser(Integer userId);
 }

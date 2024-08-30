@@ -4,6 +4,7 @@ import EditLoan from './sections/edit/EditLoan';
 import Card from '../../components/Card';
 import Navbar from '../../components/Navbar';
 import SimulateLoanChanges from './sections/edit/SimChanges';
+import EditPayments from './sections/edit/EditPayments';
 
 const EditCompareLoan = () => {
     const [tool, setTool] = useState("edit");
@@ -11,6 +12,8 @@ const EditCompareLoan = () => {
     const getToolPage = () => {
         if (tool === "edit") {
             return (<EditLoan />);
+        } else if (tool === "edit-payment") {
+            return (<EditPayments />);
         } else {
             return (<SimulateLoanChanges />);
         }

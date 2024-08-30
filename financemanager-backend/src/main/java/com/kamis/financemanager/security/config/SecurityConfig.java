@@ -1,5 +1,6 @@
 package com.kamis.financemanager.security.config;
 
+import com.kamis.financemanager.database.repository.LoanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,7 +42,10 @@ public class SecurityConfig {
 
 	@Autowired
 	private UserRepository userRepository;
-	
+
+	@Autowired
+	private LoanRepository loanRepository;
+
 	@Autowired
 	private UserRoleRepository userRoleRepository;
 
@@ -52,7 +56,7 @@ public class SecurityConfig {
 	
 	@Bean 
 	public SecurityService securityService() {
-		return new SecurityService(userRepository, myConfig);
+		return new SecurityService(userRepository, loanRepository, myConfig);
 	}
 
 	@Bean

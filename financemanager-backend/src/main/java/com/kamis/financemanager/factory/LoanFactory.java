@@ -90,9 +90,40 @@ public class LoanFactory {
 		response.setTerm(loan.getTerm());
 		response.setCurrentPaymentNumber(loan.getCurrentPaymentNumber());
 		response.setPaymentSchedule(buildPaymentScheduleResponseList(loan.getPayments()));
+		response.setManualPayments(buildManualPaymentResponseList(loan.getManualPayments()));
 		
 		return response;
 		
+	}
+
+	/**
+	 * Generates a list of LoanManualPayment responses
+	 * @param manualPayments The manual payments to build responses for
+	 * @return A List of LoanManualPaymentResponse items
+	 */
+	public static List<LoanManualPaymentResponse> buildManualPaymentResponseList(List<LoanManualPayment> manualPayments) {
+		List<LoanManualPaymentResponse> responseList = new ArrayList<>();
+
+		for (LoanManualPayment p : manualPayments) {
+			responseList.add(buildManualPaymentResponse(p));
+		}
+
+		return responseList;
+	}
+
+	/**
+	 * Builds a LoanManualPaymentResponse for a single LoanManualPayment
+	 * @param payment the Payment to build the response for
+	 * @return A LoanManualPaymentResponse containing data from payment
+	 */
+	public static LoanManualPaymentResponse buildManualPaymentResponse(LoanManualPayment payment) {
+		LoanManualPaymentResponse response = new LoanManualPaymentResponse();
+		response.setExpirationDate(payment.getExpirationDate());
+		response.setEffectiveDate(payment.getEffectiveDate());
+		response.setAmount(payment.getAmount());
+		response.setId(payment.getId());
+
+		return response;
 	}
 
 	/**
@@ -335,5 +366,35 @@ public class LoanFactory {
 		l.setPrincipal(request.getPrincipal());
 
 		return l;
+	}
+
+	/**
+	 * Duplicates a LoanManualPayment's values into a new object
+	 * @param loanManualPayment The LoanManualPayment to duplicate
+	 * @return A LoanManualPayment with the same functional values as loanManualPayment
+	 */
+    public static LoanManualPayment duplicateLoanManualPayment(LoanManualPayment loanManualPayment) {
+    	LoanManualPayment dupe = new LoanManualPayment();
+		dupe.setEffectiveDate(loanManualPayment.getEffectiveDate());
+		dupe.setExpirationDate(loanManualPayment.getExpirationDate());
+		dupe.setAmount(loanManualPayment.getAmount());
+		dupe.setAuditInfo(FinanceManagerUtil.getAuditInfo());
+
+		return dupe;
+	}
+
+	/**
+	 * Builds a LoanManualPayment from a request
+	 * @param request The request to build the payment from
+	 * @return A new LoanManualPayment built from the request
+	 */
+	public static LoanManualPayment buildManualLoanPayment(ManualLoanPaymentRequest request) {
+		LoanManualPayment manualPayment = new LoanManualPayment();
+		manualPayment.setEffectiveDate(request.getEffectiveDate());
+		manualPayment.setExpirationDate(request.getExpirationDate());
+		manualPayment.setAmount(request.getAmount());
+		manualPayment.setAuditInfo(FinanceManagerUtil.getAuditInfo());
+
+		return manualPayment;
 	}
 }

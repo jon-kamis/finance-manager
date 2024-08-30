@@ -44,7 +44,11 @@ public class FinanceManagerUtil {
 
 	public static String getLoggedInUserName() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String currentPrincipalName = authentication.getName();
+		String currentPrincipalName = FinanceManagerConstants.DEFAULT_USERNAME;
+
+		if (authentication != null) {
+			currentPrincipalName = authentication.getName();
+		}
 		return currentPrincipalName;
 	}
 

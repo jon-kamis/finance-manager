@@ -37,6 +37,11 @@ public class YAMLConfig {
 	private int maxLoanPayments;
 	private String tooManyPaymentsError;
 
+	//Loan Payment Messages
+	private String paymentAmountRequiredError;
+	private String paymentEffectiveDateRequiredError;
+	private String paymentExistsError;
+
 	// Income Messages
 	private String unableToBuildTransactionDaysErrorMsg;
 	private String filingTypeRequiredForTaxesError;

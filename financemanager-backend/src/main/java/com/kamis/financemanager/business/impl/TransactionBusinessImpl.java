@@ -17,7 +17,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 
 import com.kamis.financemanager.business.TransactionBusiness;
@@ -311,18 +310,11 @@ public class TransactionBusinessImpl implements TransactionBusiness {
 	}
 
 	@Override
-	@Transactional
 	public void deleteByLoan(Loan loan) {
-
-		List<Integer> payIds = new ArrayList<>();
-
-		for (LoanPayment p : loan.getPayments()) {
-			payIds.add(p.getId());
-		}
 
 		GenericSpecification<Transaction> spec = new GenericSpecification<>();
 		spec = spec.where("parentTableName", TableNameEnum.LOANS, QueryOperation.EQUALS_OBJECT)
-						.and("parentId", payIds, QueryOperation.IN);
+						.and("parentId", loan.getId(), QueryOperation.EQUALS);
 
 		log.info("Attempting to delete all transactions associated with loan {}", loan.getId());
 		List<Transaction> transactions = transactionRepository.findAll(spec.build());
@@ -331,6 +323,20 @@ public class TransactionBusinessImpl implements TransactionBusiness {
 		if(!transactions.isEmpty()) {
 			transactionRepository.deleteAll(transactions);
 			log.info("Deleted {} records", transactions.size());
+		}
+	}
+
+	@Override
+	public void deleteAllLoanTransactionsForUser(Integer userId) {
+		GenericSpecification<Transaction> spec = new GenericSpecification<>();
+		spec = spec.where("userId", userId, QueryOperation.EQUALS)
+				.and("parentTableName", TableNameEnum.LOANS, QueryOperation.EQUALS_OBJECT);
+
+		List<Transaction> allTransactions = transactionRepository.findAll(spec.build());
+
+		if (!allTransactions.isEmpty()) {
+			log.info("Deleting {} transactions for user {}", allTransactions.size(), userId);
+			transactionRepository.deleteAll(allTransactions);
 		}
 	}
 

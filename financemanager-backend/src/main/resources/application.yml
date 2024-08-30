@@ -46,6 +46,11 @@ invalidLoanPaymentFrequencyError: Valid frequencies for loan payments are monthl
 filingTypeRequiredForTaxesError: Filing type is required to calculate taxes on an income
 tooManyPaymentsError: Maximum number of loan payments exceeded
 
+# Loan Payment Messages
+paymentAmountRequiredError: payment amount is required and must be at least 0
+paymentEffectiveDateRequiredError: payment effective date is required
+paymentExistsError: one or more days overlaps an existing payment
+
 # Income messages
 unableToBuildTransactionDaysErrorMsg: Unable to generate transaction days. For bi-weekly frequencies, 'startDate' must be valid. For Monthly or Semi-Monthly frequencies, daysOfMonth must be valid. For Weekly frequencies, 'dayOfWeek'' must be valid. 
 unableToFindStandardWithholdingErrorMsg: Unable to locate standard tax withholding information for income

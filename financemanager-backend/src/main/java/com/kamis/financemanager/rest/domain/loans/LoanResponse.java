@@ -21,4 +21,5 @@ public class LoanResponse {
     private Float balance;
     private Integer currentPaymentNumber;
 	private List<LoanPaymentItemResponse> paymentSchedule;
+    private List<LoanManualPaymentResponse> manualPayments;
 }

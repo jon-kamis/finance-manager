@@ -61,7 +61,7 @@ public class Transaction {
 	@Column(name="amount")
 	private Float amount;
 	
-	@OneToMany(mappedBy = "transaction", fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+	@OneToMany(mappedBy = "transaction", fetch = FetchType.LAZY, orphanRemoval = true, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
 	private List<TransactionDay> transactionDays;
 	
 	@Column(name="parent_table_name")

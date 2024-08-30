@@ -3,6 +3,7 @@ package com.kamis.financemanager.database.domain;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import com.kamis.financemanager.enums.PaymentFrequencyEnum;
 
@@ -69,10 +70,10 @@ public class Loan {
     @Column(name="frequency")
 	private PaymentFrequencyEnum frequency;
 	
-	@OneToMany(mappedBy = "loan", fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REMOVE})
+	@OneToMany(mappedBy = "loan", fetch = FetchType.EAGER, orphanRemoval = true, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REMOVE})
 	private List<LoanPayment> payments;
 
-	@OneToMany(mappedBy = "loan", fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REMOVE})
+	@OneToMany(mappedBy = "loan", fetch = FetchType.EAGER, orphanRemoval = true, cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REMOVE})
 	private List<LoanManualPayment> manualPayments;
 	
 	@Embedded
@@ -104,5 +105,75 @@ public class Loan {
 
 		payment.setLoan(this);
 		this.manualPayments.add(payment);
+	}
+
+	/**
+	 * Adds a list of LoanManualPayments to this loan
+	 * @param newPayments The list of manual payments to add
+	 */
+	public void addAllLoanManualPayments(List<LoanManualPayment> newPayments) {
+		for (LoanManualPayment p : newPayments) {
+			addManualLoanPayment(p);
+		}
+	}
+
+	/**
+	 * Adds a list of LoanPayments to this loan
+	 * @param newPayments The list of payments to add
+	 */
+	public void addAllLoanPayments(List<LoanPayment> newPayments) {
+		for (LoanPayment p : newPayments) {
+			addLoanPayment(p);
+		}
+	}
+
+	/**
+	 * Removes a manual payment
+	 * @param payment The manual payment to remove
+	 */
+	public void removeManualPayment(LoanManualPayment payment) {
+		this.getManualPayments().removeIf(p -> Objects.equals(p.getId(), payment.getId()));
+	}
+
+	/**
+	 * Removes a payment
+	 * @param payment The payment to remove
+	 */
+	public void removePayment(LoanPayment payment) {
+		this.getPayments().removeIf(p -> Objects.equals(p.getId(), payment.getId()));
+	}
+
+	/**
+	 * Clears all payments
+	 */
+	public void clearPayments() {
+		this.payments.clear();
+	}
+
+	/**
+	 * Clears all manual payments
+	 */
+	public void clearManualPayments() {
+		this.manualPayments.clear();
+	}
+
+	/**
+	 * Removes all manual Payments in the list
+	 * @param payments The payments to remove
+	 */
+	public void removeAllManualPayments(List<LoanManualPayment> payments) {
+		for(LoanManualPayment p : payments) {
+			this.removeManualPayment(p);
+		}
+	}
+
+	/**
+	 * Removes all Payments in the list
+	 * @param payments The payments to remove
+	 */
+	public void removeAllPayments(List<LoanPayment> payments) {
+		for(LoanPayment p : payments) {
+			this.removePayment(p);
+		}
 	}
 }

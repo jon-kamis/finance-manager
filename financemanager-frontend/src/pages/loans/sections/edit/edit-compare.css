@@ -125,3 +125,11 @@
 .simChanges__table {
     margin-top: 3rem;
 }
+
+.container__editPaymentList {
+    text-align: center;
+}
+
+.container__editPaymentList h1 {
+    margin-bottom: 3rem;
+}

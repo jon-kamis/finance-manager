@@ -245,7 +245,7 @@ public class TransactionFactory {
 		t.setAuditInfo(FinanceManagerUtil.getAuditInfo());
 		t.setFrequency(loanPayment.isManualPayment() ? PaymentFrequencyEnum.ONE_TIME_ONLY : loanPayment.getLoan().getFrequency());
 		t.setUserId(loanPayment.getLoan().getUserId());
-		t.setParentId(loanPayment.getId());
+		t.setParentId(loanPayment.getLoan().getId());
 		t.setParentTableName(TableNameEnum.LOANS);
 
 		return t;

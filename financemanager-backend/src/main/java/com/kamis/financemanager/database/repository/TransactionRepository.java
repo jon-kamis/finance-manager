@@ -21,21 +21,13 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
 	 * @param name The name to search for
 	 * @return A List of transactions matching the given criteria
 	 */
-	public List<Transaction> findByUserIdAndName(int userId, String name);
-	
-	/**
-	 * Find all by specification and page results
-	 * @param spec The search specification
-	 * @param sort Sorting details
-	 * @return A list of Transactions matching the specification
-	 */
-	public List<Transaction> findAll(Specification<Transaction> spec, Sort sort);
+	List<Transaction> findByUserIdAndName(int userId, String name);
 
 	/**
 	 * Retrieves all transactions by a user's id
 	 * @param userId
 	 * @return A list of transactions belonging to the given userId
 	 */
-	public List<Transaction> findByUserId(Integer userId);
+	List<Transaction> findByUserId(Integer userId);
 
 }

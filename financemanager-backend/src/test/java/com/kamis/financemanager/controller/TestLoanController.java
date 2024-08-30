@@ -101,6 +101,12 @@ public class TestLoanController {
 		Loan loan1 = AppTestUtils.buildLoan(user, user.getUsername() + "_loan", 100, 10, LocalDate.now());
 		Loan loan2 = AppTestUtils.buildLoan(admin, admin.getUsername() + "_loan", 100, 10, LocalDate.now());
 
+		loan1.setCurrentPaymentNumber(1);
+		loan1.setBalance((float)10);
+
+		loan2.setCurrentPaymentNumber(1);
+		loan2.setBalance((float)10);
+
 		loanRepository.save(loan1);
 		loanRepository.save(loan2);
 	}

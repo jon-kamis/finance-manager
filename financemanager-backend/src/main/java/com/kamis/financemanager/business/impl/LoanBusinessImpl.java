@@ -9,9 +9,11 @@ import java.util.*;
 import com.kamis.financemanager.business.TransactionBusiness;
 import com.kamis.financemanager.database.domain.LoanManualPayment;
 import com.kamis.financemanager.database.domain.User;
+import com.kamis.financemanager.database.repository.LoanManualPaymentRepository;
 import com.kamis.financemanager.database.repository.UserRepository;
 import com.kamis.financemanager.enums.PaymentFrequencyEnum;
 import com.kamis.financemanager.rest.domain.loans.*;
+import com.kamis.financemanager.util.DateUtil;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -25,7 +27,6 @@ import com.kamis.financemanager.business.LoanBusiness;
 import com.kamis.financemanager.config.YAMLConfig;
 import com.kamis.financemanager.database.domain.Loan;
 import com.kamis.financemanager.database.domain.LoanPayment;
-import com.kamis.financemanager.database.repository.LoanPaymentRepository;
 import com.kamis.financemanager.database.repository.LoanRepository;
 import com.kamis.financemanager.database.specifications.GenericSpecification;
 import com.kamis.financemanager.database.specifications.QueryOperation;
@@ -42,9 +43,9 @@ public class LoanBusinessImpl implements LoanBusiness {
 
 	@Autowired
 	private LoanRepository loanRepository;
-	
+
 	@Autowired
-	private LoanPaymentRepository loanPaymentRepository;
+	private LoanManualPaymentRepository loanManualPaymentRepository;
 
 	@Autowired
 	private UserRepository userRepository;
@@ -66,14 +67,31 @@ public class LoanBusinessImpl implements LoanBusiness {
 	public boolean createLoan(LoanRequest request, Integer userId) throws FinanceManagerException {
 		Loan loan = LoanFactory.buildLoanFromPostRequest(request, userId);
 		
-		loan = loanBusiness.calculateLoanPayment(loan);
-		loan = loanBusiness.calculatePaymentSchedule(loan);
-		loan.setBalance(getLoanBalance(loan));
-		loan.setCurrentPaymentNumber(getCurrentLoanPaymentNumber(loan));
+		loan = loanBusiness.calculateLoanValues(loan);
 
         loanRepository.saveAndFlush(loan);
 		transactionBusiness.buildAndSaveTransactionsForLoanPayments(loan.getPayments(), userId);
         return true;
+	}
+
+	@Override
+	public Loan calculateLoanValues(Loan l) {
+		l = loanBusiness.calculateLoanPayment(l);
+		l = loanBusiness.calculatePaymentSchedule(l);
+		l = loanBusiness.updateLatestDetails(l);
+
+		return l;
+	}
+
+	@Override
+	public Loan updateLatestDetails(Loan l) {
+
+		if (l.getPayments() != null && !l.getPayments().isEmpty()) {
+			l.setBalance(getLoanBalance(l));
+			l.setCurrentPaymentNumber(getCurrentLoanPaymentNumber(l));
+		}
+
+		return l;
 	}
 
 	@Override
@@ -106,14 +124,13 @@ public class LoanBusinessImpl implements LoanBusiness {
 
 	@Override
 	public Loan calculatePaymentSchedule(Loan loan) throws FinanceManagerException {
-		
+
+		//Initialize/clear loan payments list
 		if(loan.getPayments() != null && loan.getId() != null) {
-			loanPaymentRepository.deleteByLoanId(loan.getId());
+			loan.clearPayments();
+		} else {
 			loan.setPayments(new ArrayList<>());
 		}
-		
-		//Initialize/clear loan payments list
-		loan.setPayments(new ArrayList<>());
 		
 		float amount = 0;
 		float total = loan.getPrincipal();
@@ -173,7 +190,7 @@ public class LoanBusinessImpl implements LoanBusiness {
 			payItem.setBalance(total);
 			payItem.setAmount(amount);
 			payItem.setPaymentDate(Date.from(payDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-			
+
 			//Increment pay date
              switch (loan.getFrequency()) {
                 case MONTHLY -> {
@@ -460,12 +477,100 @@ public class LoanBusinessImpl implements LoanBusiness {
 	}
 
 	@Override
-	public LoanResponse calculateLoan(CalcLoanRequest request) {
+	public LoanResponse calculateLoanValues(CalcLoanRequest request) {
 		Loan loan = LoanFactory.buildLoanForCalcLoanRequest(request);
 		loan = calculateLoanPayment(loan);
 		loan = calculatePaymentSchedule(loan);
 
 		return LoanFactory.buildLoanResponse(loan);
+	}
+
+	@Override
+	@Transactional
+	public boolean addLoanPayment(Integer loanId, ManualLoanPaymentRequest request) throws FinanceManagerException {
+
+		//Validate Payment request
+		loanValidation.validateCreatePaymentRequest(loanId, request);
+
+		//Load in the loan
+		Optional<Loan> optLoan = loanRepository.findById(loanId);
+
+		if (optLoan.isEmpty()) {
+			throw new FinanceManagerException(myConfig.getGenericNotFoundMessage(), HttpStatus.NOT_FOUND);
+		}
+
+		Loan l = optLoan.get();
+
+		//Update Expiration date to end of day if present
+		if( request.getExpirationDate() != null) {
+			request.setExpirationDate(DateUtil.getEndOfDay(request.getExpirationDate()));
+		}
+
+		//Find out if other loan manual payments need updated or if this one does
+		if(l.getManualPayments() != null && !l.getManualPayments().isEmpty()) {
+
+			//First check for previous unexpiring payments
+			Optional<LoanManualPayment> prevPayment = l.getManualPayments()
+                    .stream()
+                    .filter(p -> p.getExpirationDate() == null && p.getEffectiveDate().before(request.getEffectiveDate()))
+					.max(Comparator.comparing(LoanManualPayment::getEffectiveDate));
+
+            prevPayment.ifPresent(loanManualPayment -> loanManualPayment.setExpirationDate(DateUtil.getEndOfPreviousDay(request.getEffectiveDate())));
+
+			//Next check if request needs expiration date set
+			if (request.getExpirationDate() == null) {
+				Optional<LoanManualPayment> nextPayment = l.getManualPayments()
+						.stream()
+						.filter(p -> p.getEffectiveDate().after(request.getEffectiveDate()))
+						.min(Comparator.comparing(LoanManualPayment::getEffectiveDate));
+
+                nextPayment.ifPresent(loanManualPayment -> request.setExpirationDate(DateUtil.getEndOfPreviousDay(loanManualPayment.getEffectiveDate())));
+			}
+		}
+
+		//Build new Loan Payment
+		LoanManualPayment newPayment = LoanFactory.buildManualLoanPayment(request);
+
+		l.addManualLoanPayment(newPayment);
+
+		//Delete transactions prior to deleting payments
+		transactionBusiness.deleteByLoan(l);
+
+		//Recalculate Loan payment schedule
+		l = calculatePaymentSchedule(l);
+		l = updateLatestDetails(l);
+		transactionBusiness.buildAndSaveTransactionsForLoanPayments(l.getPayments(), l.getUserId());
+		loanRepository.save(l);
+
+		return true;
+	}
+
+	@Async
+	@Override
+	public void syncLoanTransactions(Integer userId) {
+		List<Loan> loans = loanRepository.findByUserId(userId);
+
+		transactionBusiness.deleteAllLoanTransactionsForUser(userId);
+
+		for (Loan l : loans) {
+			transactionBusiness.buildAndSaveTransactionsForLoanPayments(l.getPayments(), userId);
+		}
+	}
+
+	@Override
+	public boolean deleteLoanPayment(Integer loanId, Integer paymentId) throws FinanceManagerException {
+		Optional<LoanManualPayment> payment = loanManualPaymentRepository.findById(paymentId);
+
+		if (payment.isEmpty() || !Objects.equals(payment.get().getLoan().getId(), loanId)) {
+			throw new FinanceManagerException(myConfig.getGenericNotFoundMessage(), HttpStatus.NOT_FOUND);
+		}
+
+		Loan loan = payment.get().getLoan();
+		loan.removeManualPayment(payment.get());
+		loan = calculateLoanValues(loan);
+		loanRepository.save(loan);
+
+		return true;
 	}
 
 	/**

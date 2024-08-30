@@ -1,5 +1,7 @@
 package com.kamis.financemanager.util;
 
+import org.hibernate.query.sqm.TemporalUnit;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -23,5 +25,32 @@ public class DateUtil {
      */
     public static Date getDateTime(String dateTimeString) {
         return Date.from(LocalDateTime.parse(dateTimeString).atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+    /**
+     * Returns the last moment of the previous day
+     * @param date The starting date
+     * @return The last moment of the previous day prior to date
+     */
+    public static Date getEndOfPreviousDay(Date date) {
+        return Date.from(LocalDate.ofInstant(date.toInstant(), ZoneId.systemDefault()).atStartOfDay(ZoneId.systemDefault()).minusNanos(1).toInstant());
+    }
+
+    /**
+     * Returns the last moment of the given date
+     * @param date The date to get the last moment of
+     * @return A date representing the last moment of the passed date
+     */
+    public static Date getEndOfDay(Date date) {
+        return Date.from(LocalDate.ofInstant(date.toInstant(), ZoneId.systemDefault()).atStartOfDay(ZoneId.systemDefault()).plusDays(1).minusNanos(1).toInstant());
+    }
+
+    /**
+     * Returns the first moment of the next date
+     * @param date the starting date
+     * @return A date that is the first moment of the day directly following date
+     */
+    public static Date getStartOfNextDay(Date date) {
+        return Date.from(LocalDate.ofInstant(date.toInstant(), ZoneId.systemDefault()).plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 }

@@ -32,6 +32,17 @@ header {
     margin: 0.6rem 0 2rem;
 }
 
+.expandedCard__heading {
+    margin-top: 1rem;
+}
+
+.expandingCard__icon {
+    margin-top: 2rem;
+    font-size: 1.2rem;
+    color: var(--color-black);
+    background: transparent;
+}
+
 .header__container {
     display: flex;
     margin-top: 5rem;
@@ -43,7 +54,8 @@ header {
 
 .home__cards {
     margin: 3rem 3rem 1.5rem;
-    display: grid;
+    display: flex;
+    flex-direction: row;
     grid-template-rows: 1fr 1fr 1fr;
     gap: 1.5rem
 }
@@ -52,6 +64,7 @@ header {
     text-align: center;
     width: 95%;
     min-height: 10rem;
+    height: fit-content;
     background: var(--color-light);
     display: flex;
     flex-direction: column;
@@ -83,6 +96,6 @@ header {
 
 .home__data {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     justify-content: space-around;
 }

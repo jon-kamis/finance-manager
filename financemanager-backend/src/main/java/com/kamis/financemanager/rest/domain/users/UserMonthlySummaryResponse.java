@@ -1,7 +1,8 @@
 package com.kamis.financemanager.rest.domain.users;
 
+import com.kamis.financemanager.rest.domain.transactions.TransactionExpenseTotals;
+import com.kamis.financemanager.rest.domain.transactions.TransactionIncomeTotals;
 import com.kamis.financemanager.rest.domain.transactions.TransactionOccuranceResponse;
-import com.kamis.financemanager.rest.domain.transactions.TransactionTotals;
 import lombok.Data;
 
 import java.util.List;
@@ -9,7 +10,9 @@ import java.util.List;
 @Data
 public class UserMonthlySummaryResponse {
 
-    public TransactionTotals totals;
+    public String month;
+    private TransactionIncomeTotals incomeTotals;
+    private TransactionExpenseTotals expenseTotals;
     public List<TransactionOccuranceResponse> transactions;
 
 }

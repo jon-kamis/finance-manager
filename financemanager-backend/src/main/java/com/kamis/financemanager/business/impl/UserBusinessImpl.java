@@ -9,15 +9,13 @@ import java.util.*;
 import com.kamis.financemanager.business.TransactionBusiness;
 import com.kamis.financemanager.database.domain.Transaction;
 import com.kamis.financemanager.database.repository.TransactionRepository;
-import com.kamis.financemanager.database.specifications.GenericSpecification;
-import com.kamis.financemanager.database.specifications.QueryOperation;
 import com.kamis.financemanager.enums.TransactionTypeEnum;
 import com.kamis.financemanager.factory.TransactionFactory;
+import com.kamis.financemanager.rest.domain.transactions.TransactionExpenseTotals;
+import com.kamis.financemanager.rest.domain.transactions.TransactionIncomeTotals;
 import com.kamis.financemanager.rest.domain.transactions.TransactionOccuranceResponse;
-import com.kamis.financemanager.rest.domain.transactions.TransactionTotals;
 import com.kamis.financemanager.rest.domain.users.UserMonthlySummaryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -121,7 +119,8 @@ public class UserBusinessImpl implements UserBusiness {
 
 		UserMonthlySummaryResponse response = new UserMonthlySummaryResponse();
 		List<TransactionOccuranceResponse> tOccurrences = new ArrayList<>();
-		TransactionTotals totals = new TransactionTotals();
+		TransactionIncomeTotals incomeTotals = new TransactionIncomeTotals();
+		TransactionExpenseTotals expenseTotals = new TransactionExpenseTotals();
 
 		Optional<User> u = userRepository.findById(id);
 
@@ -167,37 +166,40 @@ public class UserBusinessImpl implements UserBusiness {
 
 				switch (t.getCategory()) {
                     case LOAN:
-						totals.totalExpense += t.getAmount() * occurrences.size();
-						totals.totalLoanPayments += t.getAmount() * occurrences.size();
+						expenseTotals.totalExpense += t.getAmount() * occurrences.size();
+						expenseTotals.totalLoanPayments += t.getAmount() * occurrences.size();
                         break;
                     case TAXES :
-						totals.totalExpense += t.getAmount() * occurrences.size();
-						totals.totalTax += t.getAmount() * occurrences.size();
+						expenseTotals.totalExpense += t.getAmount() * occurrences.size();
+						expenseTotals.totalTax += t.getAmount() * occurrences.size();
 						break;
 					case PAYCHECK:
-						totals.totalIncome += t.getAmount() * occurrences.size();
+						incomeTotals.grossTotal += t.getAmount() * occurrences.size();
+						incomeTotals.totalPaycheck += t.getAmount() * occurrences.size();
 						break;
 					case BENEFIT:
 						if (t.getType() == TransactionTypeEnum.EXPENSE) {
-							totals.totalExpense += t.getAmount() * occurrences.size();
-							totals.totalBenefit += t.getAmount() * occurrences.size();
+							expenseTotals.totalExpense += t.getAmount() * occurrences.size();
+							expenseTotals.totalBenefit += t.getAmount() * occurrences.size();
 						} else {
-							totals.totalIncome += t.getAmount() * occurrences.size();
+							incomeTotals.grossTotal += t.getAmount() * occurrences.size();
+							incomeTotals.totalBenefit += t.getAmount() * occurrences.size();
 						}
 						break;
 					case BILL:
-						totals.totalBills += t.getAmount() * occurrences.size();
-						totals.totalExpense += t.getAmount() * occurrences.size();
+						expenseTotals.totalBills += t.getAmount() * occurrences.size();
+						expenseTotals.totalExpense += t.getAmount() * occurrences.size();
 						break;
 				}
 			}
 		}
 
-		totals.setMonth(Month.of(month).getDisplayName(TextStyle.FULL, Locale.US));
-		totals.setNetIncome(totals.getTotalIncome() - totals.getTotalExpense());
+		response.setMonth(Month.of(month).getDisplayName(TextStyle.FULL, Locale.US));
+		incomeTotals.setNetTotal(incomeTotals.grossTotal - expenseTotals.totalExpense);
 
+		response.setIncomeTotals(incomeTotals);
+		response.setExpenseTotals(expenseTotals);
 		response.setTransactions(tOccurrences);
-		response.setTotals(totals);
 		return response;
 	}
 }

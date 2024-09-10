@@ -265,7 +265,7 @@ public class LoanController {
 					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }),
 			@ApiResponse(responseCode = "500", description = "INTERNAL_SERVER_ERROR", content = {
 					@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)) }) })
-	@PreAuthorize("@securityService.hasAccess(authentication, #userId)")
+	@PreAuthorize("@securityService.hasAccessToLoan(authentication, #loanId)")
 	@PostMapping("/loans/{loanId}/payments")
 	public ResponseEntity<?> addManualLoanPayment(
 			@Parameter(description = "id of the loan to fetch") @PathVariable Integer loanId,

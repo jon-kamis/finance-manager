@@ -68,6 +68,10 @@ const HomeHeader = () => {
       data.push({ id: 1, color: 'purple', value: userMonthSummary.totals.totalBills, label: `Bills` });
     }
 
+    if (userMonthSummary.totals.totalBenefit > 0) {
+      data.push({ id: 1, color: 'brown', value: userMonthSummary.totals.totalBenefit, label: `Benefits`})
+    }
+
     if (userMonthSummary.totals.totalMisc > 0) {
       data.push({ id: 1, color: 'orange', value: userMonthSummary.totals.totalMisc, label: `Misc` });
     }

@@ -78,6 +78,19 @@ CREATE TABLE IF NOT EXISTS FMDB.loans (
     last_update_by character varying(255)
 );
 
+CREATE SEQUENCE IF NOT EXISTS FMDB.bills_id_seq;
+CREATE TABLE IF NOT EXISTS FMDB.bills (
+    id integer unique NOT NULL default nextval('FMDB.bills_id_seq'),
+    user_id integer NOT NULL references FMDB.users(id),
+    account_name character varying(255) NOT NULL,
+    amount NUMERIC(10,2) NOT NULL,
+    category character varying(255) NOT NULL,
+    frequency character varying(255) NOT NULL,
+    create_dt timestamp without time zone,
+    last_update_dt timestamp without time zone,
+    last_update_by character varying(255)
+);
+
 CREATE SEQUENCE IF NOT EXISTS FMDB.loan_manual_payments_id_seq;
 CREATE TABLE IF NOT EXISTS FMDB.loan_manual_payments (
     id integer unique NOT NULL default nextval('FMDB.loan_manual_payments_id_seq'),

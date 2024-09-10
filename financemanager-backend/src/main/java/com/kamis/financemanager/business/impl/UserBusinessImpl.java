@@ -180,13 +180,14 @@ public class UserBusinessImpl implements UserBusiness {
 					case BENEFIT:
 						if (t.getType() == TransactionTypeEnum.EXPENSE) {
 							totals.totalExpense += t.getAmount() * occurrences.size();
-							totals.totalMisc += t.getAmount() * occurrences.size();
+							totals.totalBenefit += t.getAmount() * occurrences.size();
 						} else {
 							totals.totalIncome += t.getAmount() * occurrences.size();
 						}
 						break;
 					case BILL:
 						totals.totalBills += t.getAmount() * occurrences.size();
+						totals.totalExpense += t.getAmount() * occurrences.size();
 						break;
 				}
 			}

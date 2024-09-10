@@ -16,6 +16,7 @@ import com.kamis.financemanager.enums.TableNameEnum;
 import com.kamis.financemanager.enums.TransactionCategoryEnum;
 import com.kamis.financemanager.enums.TransactionTypeEnum;
 import com.kamis.financemanager.enums.WeekdayEnum;
+import com.kamis.financemanager.rest.domain.bills.BillPostRequest;
 import com.kamis.financemanager.rest.domain.incomes.IncomePostRequest;
 import com.kamis.financemanager.rest.domain.transactions.*;
 import com.kamis.financemanager.util.FinanceManagerUtil;
@@ -262,5 +263,47 @@ public class TransactionFactory {
 		day.setStartDate(loanPayment.getPaymentDate());
 
 		return day;
+	}
+
+	/**
+	 * Creates a Transaction object for a Bill post request
+	 * @param request The request to build from
+	 * @param userId The id of the user who owns the new transaction
+	 * @return A Transaction built for the given request and user
+	 */
+    public static Transaction buildTransactionFromBillPostRequest(BillPostRequest request, Integer userId) {
+    	Transaction transaction = new Transaction();
+		transaction.setUserId(userId);
+		transaction.setAmount(request.getAmount());
+		transaction.setFrequency(PaymentFrequencyEnum.valueOfLabel(request.getFrequency()));
+		transaction.setCategory(TransactionCategoryEnum.valueOfLabel(request.getCategory()));
+		transaction.setType(TransactionTypeEnum.EXPENSE);
+		transaction.setName(request.getName() + FinanceManagerConstants.LOAN_PAYMENT_TRANSACTION_SUFFIX);
+		transaction.setEffectiveDate(request.getEffectiveDate());
+		transaction.setExpirationDate(request.getExpirationDate());
+		transaction.setAuditInfo(FinanceManagerUtil.getAuditInfo());
+
+		switch(transaction.getFrequency()) {
+			case WEEKLY -> transaction.addTransactionDay(buildTransactionDayWeekly(request.getWeekday()));
+			case SEMI_MONTHLY -> transaction.addAllTransactionDays(buildTransactionDaysSemiMonthly(request.getDaysOfMonth()));
+			default -> transaction.addTransactionDay(buildTransactionDayBiweekly(request.getStartDate()));
+		}
+
+		return transaction;
+	}
+
+	/**
+	 * Builds a list of transaction days for a semi-monthly type pay frequency
+	 * @param daysOfMonth The days to add transactions for
+	 * @return A list of transaction days
+	 */
+	private static List<TransactionDay> buildTransactionDaysSemiMonthly(List<Integer> daysOfMonth) {
+		List<TransactionDay> transactionDays = new ArrayList<>();
+
+		for (int day : daysOfMonth) {
+			transactionDays.add(buildTransactionDay(day));
+		}
+
+		return transactionDays;
 	}
 }

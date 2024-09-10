@@ -9,6 +9,7 @@ public class TransactionTotals {
     public String month;
     public float totalIncome;
     public float totalExpense;
+    public float totalBenefit;
     public float netIncome;
     public float totalTax;
     public float totalBills;

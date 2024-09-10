@@ -1,6 +1,7 @@
 package com.kamis.financemanager.database.domain;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -89,5 +90,11 @@ public class Transaction {
 	
 		transactionDay.setTransaction(this);
 		transactionDays.add(transactionDay);
+	}
+
+	public void addAllTransactionDays(Collection<TransactionDay> transactionDays) {
+		for (TransactionDay t : transactionDays) {
+			addTransactionDay(t);
+		}
 	}
 }

@@ -37,7 +37,7 @@ public class ControllerAdvice extends LoggingConstants {
 
 	@ExceptionHandler(FinanceManagerException.class)
 	public ResponseEntity<?> handleFinanceManagerException(FinanceManagerException e) {
-		log.info(e.getMessage());
+		log.info(e.getMessage(), e);
 		return new ResponseEntity<>(new ErrorResponse(e.getMessage()), e.getStatusCode());
 	}
 	
@@ -53,7 +53,7 @@ public class ControllerAdvice extends LoggingConstants {
 	@ResponseBody
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	public ErrorResponse handleNoResourceFoundException(Exception e) {
-		log.info(e.getMessage());
+		log.info(e.getMessage(), e);
 		return new ErrorResponse(myConfig.getGenericNotFoundMessage());
 	}
 	

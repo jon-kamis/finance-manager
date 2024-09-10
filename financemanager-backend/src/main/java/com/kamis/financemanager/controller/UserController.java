@@ -56,7 +56,7 @@ public class UserController {
 		return userBusiness.getUserById(id);
 	}
 
-	@Operation(summary = "Get a user by its id")
+	@Operation(summary = "Get a user's monthly summary")
 	@ApiResponses( value = {
 			@ApiResponse(
 					responseCode = "200", description = "OK",
@@ -76,7 +76,7 @@ public class UserController {
 	})
 	@PreAuthorize("@securityService.hasAccess(authentication, #id)")
 	@GetMapping("/{id}/summary")
-	public ResponseEntity<?> getUserById(@Parameter(description = "id of the user to retrieve") @PathVariable int id,
+	public ResponseEntity<?> getUserSummary(@Parameter(description = "id of the user to retrieve") @PathVariable int id,
 										 @Parameter(description = "year to retrieve. Default value is the current year", required = false, schema = @Schema(example ="yyyy")) @RequestParam(required = false) String year,
 										 @Parameter(description = "month to retrieve. Default value is the current month", required = false, schema = @Schema(example ="mm")) @RequestParam(required = false) String month) {
 

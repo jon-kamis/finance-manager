@@ -6,3 +6,6 @@
 
 ### Postgres ###
 **/postgres-data/
+
+### Environment Files ###
+.env

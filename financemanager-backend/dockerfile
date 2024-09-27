@@ -6,12 +6,11 @@ COPY .mvn/ .mvn/
 COPY mvnw pom.xml ./
 RUN ./mvnw dependency:go-offline
 COPY ./src ./src
-RUN ./mvnw clean install -DSkipTests
-RUN ./mvnw package
+RUN ["./mvnw","-Dmaven.test.skip=true", "clean", "install", "package"] 
 
 FROM eclipse-temurin:latest
 
-RUN addgroup spring 
+RUN groupadd spring 
 RUN useradd -g spring spring
 USER spring:spring
 
